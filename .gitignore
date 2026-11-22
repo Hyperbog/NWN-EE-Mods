@@ -1,0 +1,44 @@
+# Local/editor state
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.swp
+.DS_Store
+
+# C# / Windows native build output
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+*.pdb
+*.ilk
+*.obj
+*.dll
+*.exe
+
+# Generated and temporary experiment artifacts
+*.zip
+*.7z
+*.rar
+*.bak
+*.tmp
+*.log
+*.dmp
+*.cache
+*~ 
+__pycache__/
+.pytest_cache/
+
+# Game-specific local settings, saves and backups
+cx.cfg
+*.nws
+*.sav
+*_BACKUP/
+**/*_BACKUP/
+*.pre_jump_*.bak
+
+# Local environment files
+.env
+.env.*
