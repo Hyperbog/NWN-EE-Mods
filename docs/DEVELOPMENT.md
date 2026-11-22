@@ -56,6 +56,14 @@ The log was configured with `general.logs=0`. No per-frame movement, collision-r
 
 **Next milestone:** retain the working camera and combat tracking; add an opt-in blocked-drive state diagnostic comparing input-held, actual horizontal displacement, engine desired-position movement, camera retraction and animation ID. Separately test restricted first-person color rendering of the local neck/torso/cloak meshes during camera retraction, without changing shadows or other actors. Avoid source or DLL changes until those separate mechanisms can be validated.
 
+### Fix 14C — movement/animation timeline (read-only experiment)
+
+[Source: `FirstPersonMoveProbe.cs`](../src/diagnostics/FirstPersonMoveProbe.cs)
+
+Adds bounded event logging to distinguish input and engine-driving intent from actual horizontal motion during wall contact, and to correlate this with animation IDs, desired-position gap, cumulative StepGuard refusal counters, and helmet/head model changes. It consumes the existing Fix14B `fpvisibility.probe` toggle; no movement, jump, camera, or rendering values are written. Events use the `[fpmove]` prefix in `cx.log`, capped at 160 lines per run. The triggers `wall-stall` and `uncommanded-gait` are heuristics, not confirmed causes.
+
+Implementation has a separate **Fix14C local test package** with exact source rollback and independent DLL/`cx.cfg` backups. Python source-patch and installer simulations passed; .NET 10 / Windows build and gameplay verification are pending. The existing working Fix14B game DLLs must not be overwritten before BUILD_TEST succeeds. Collect a test timeline during: idle, ordinary run, holding W into a wall, releasing W, sprinting into the wall, and swapping helmets near a wall. Keep raw logs private.
+
 ## Priority: first-person character rendering
 
 **Observed defect:** the camera can see through or intersect the local character's head, torso, clothing, armor, or other equipment, especially during attack animations and near walls.
