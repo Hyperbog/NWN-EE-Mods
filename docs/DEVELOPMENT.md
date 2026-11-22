@@ -19,6 +19,8 @@ The [model-part probe source](../src/diagnostics/FirstPersonModelProbe.cs) is no
 The upstream NWNCX:EE `main` HEAD inspected for this milestone was `44a12be8485b3994d390ebf3329705f4de40c40d`, **63 commits** ahead of the original custom patch base `b4b43a54ed68aa1072ce1715c0479b2fb127b5ef`. The camera service and SceneRay were unchanged in that comparison; rendering code changed. The local checkout version and Windows runtime remain to be verified.
 
 **Test status:** Python source-patching, rollback, archive extraction and simulated DLL/config restoration passed. The .NET 10 smoke test and NWNCX:EE Windows build have not run in this environment; runtime behavior is unverified.
+**Build compatibility correction:** The first Fix 14B package incorrectly checked for a `PartWorld[` usage in `SceneDb.cs`; that file declares `Matrix4x4[] PartWorld` without indexing it locally. The corrected `Fix14B_ApiFix` package validates the actual `PartModel`, `PartNode`, `PartWorld`, and `ObjAttachTo` typed declarations instead. Offline patch/rollback and installer tests pass; the corrected package still awaits a Windows NWNCX build and game test. No additional branch or GitHub release was created.
+
 
 ## Priority: first-person character rendering
 
