@@ -22,6 +22,18 @@ The upstream NWNCX:EE `main` HEAD inspected for this milestone was `44a12be8485b
 **Build compatibility correction:** The first Fix 14B package incorrectly checked for a `PartWorld[` usage in `SceneDb.cs`; that file declares `Matrix4x4[] PartWorld` without indexing it locally. The corrected `Fix14B_ApiFix` package validates the actual `PartModel`, `PartNode`, `PartWorld`, and `ObjAttachTo` typed declarations instead. Offline patch/rollback and installer tests pass; the corrected package still awaits a Windows NWNCX build and game test. No additional branch or GitHub release was created.
 
 
+### First in-game model-probe results (local Windows test, 2026-11-21)
+
+The Fix14B probe **ran successfully** and emitted 24 snapshots over about three minutes. It resolved all 24 local-player parts sampled each time (`unmapped=0`, `unknownModel=0`). Names of relevant parts included `helm_026`, `pmh0_head002`, `pmh0_neck001`, `pmh0_chest016`, `pmh0_bicepl004`, `pmh0_bicepr004`, and `pmh0_cloak_003` (`Cloak_Skin`). One sample recorded `pmh0_head002` between samples showing `helm_026`, confirming that the probe observes head model replacement when equipment changes.
+
+Part pivots were approximately 0.07–0.08 m from the mapped head for helmet/neck, 0.28 m for upper arms, 0.34–0.50 m for cloak, and 0.55 m for chest. **These are not mesh extents or camera collision measurements**; never use them alone to decide what geometry to hide.
+
+The same log still reports NWNCX build `b4b43a54` as its runtime base. Replacing NWNCX binaries with a custom patch build may have overwritten a newer installed release. The startup also had `general.logs=0`; while the probe logged, it did not capture actionable drive-state, actual-displacement, step-refusal, or animation-transition evidence. Do not attribute the reported wall-running or helmet-induced run-in-place to any one subsystem yet.
+
+**Next isolated diagnostic:** correlate drive intent and key state, physical horizontal position change, engine desired/corrected position, step-guard result, animation ID and gait phase, and equipment changes over the same frame. Instrument only, leave movement/animation physics unchanged until a failing timeline exists.
+
+Do not publish raw game logs or screenshots containing local user information.
+
 ## Priority: first-person character rendering
 
 **Observed defect:** the camera can see through or intersect the local character's head, torso, clothing, armor, or other equipment, especially during attack animations and near walls.
