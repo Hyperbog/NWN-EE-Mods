@@ -30,6 +30,7 @@ internal static unsafe class DbKeyhole
             System.Span<float> pl = c.KeyholePlane;
             p0 = pl[0]; p1 = pl[1]; p2 = pl[2]; p3 = pl[3];
         }
+        if (FirstPersonWorldGuard.SuppressKeyhole) on = 0;
         Write(on, cut, p0, p1, p2, p3, order, n, slotPart, camera);
     }
 
@@ -96,6 +97,7 @@ internal static unsafe class DbKeyhole
     {
         if (cameraShell == 0) return;
         var cam = new Camera(cameraShell);
+        if (FirstPersonWorldGuard.SuppressKeyhole) { cam.KeyholeState = 0; return; }
         nint sc = SceneDb.Scenes.Valid(scene) ? SceneDb.SceneFacade[scene.Index] : 0;
         // The WORLD camera only: this slot runs for every camera the frame draws through, GUI panels
         // included, and a panel's camera has no roof to pierce.

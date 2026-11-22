@@ -51,6 +51,10 @@ public sealed unsafe class CameraDriveService : IExtenderService
     /// <summary>Face mode (<c>&lt;mode&gt;.face</c>): the turn keys' camera yaw, +1 left / -1 right, consumed by
     /// <see cref="CameraService"/> before Control as a yaw velocity of <c>move.keyturn</c> deg/s.</summary>
     internal static int TurnAxis { get; private set; }
+    // Captured from the real drive-key path before the engine predicts movement.
+    // Read by airborne physics, even when the native walkmesh refuses to move.
+    internal static Vector2 AirWish { get; private set; }
+
     private static Why _why = Why.Idle;
     private static int _sentTenths = -1, _tenths;
     /// <summary>The slewed heading in degrees, East 0 CCW; seeded from the creature's facing when a drive starts.</summary>
@@ -105,11 +109,14 @@ public sealed unsafe class CameraDriveService : IExtenderService
         Why why = !held ? Why.Idle : !_probeOk ? Why.Probe : Wanted(app, out cre, out cam);
         float f = 0f, s = 0f;
         int liveMode = CameraService.Mode;
-        bool face = liveMode >= 0 && CameraModes.ByMode[liveMode].Face.V;
+        // In first-person, turn-key slots are strafes; mouse-look alone owns yaw.
+        bool firstPersonStrafe = liveMode == 2 && CameraModes.Driving.FirstPerson.V
+            && MouseLookService.ActionHeld;
+        bool face = firstPersonStrafe || (liveMode >= 0 && CameraModes.ByMode[liveMode].Face.V);
         // Side run: a turn key under <mode>.siderun, or any side key while locked on a target, runs the
         // creature sideways facing where it runs -- no orbit for the turn keys, no held facing to strafe under.
         bool sideRun = false;
-        if (face)
+        if (face && !firstPersonStrafe)
         {
             bool locked = TabTargetService.LockedOn;
             sideRun = locked || CameraModes.ByMode[liveMode].SideRun.V;
@@ -122,8 +129,10 @@ public sealed unsafe class CameraDriveService : IExtenderService
             f = (keys[Fwd] | walk) != 0 ? 1f : 0f; f -= keys[Back] != 0 ? 1f : 0f;
             if (face)
             {
-                s = keys[StrafeR] != 0 ? 1f : 0f; s -= keys[StrafeL] != 0 ? 1f : 0f;
-                TurnAxis = (keys[TurnL] != 0 ? 1 : 0) - (keys[TurnR] != 0 ? 1 : 0);
+                s = (keys[StrafeR] != 0 || (firstPersonStrafe && keys[TurnR] != 0)) ? 1f : 0f;
+                s -= (keys[StrafeL] != 0 || (firstPersonStrafe && keys[TurnL] != 0)) ? 1f : 0f;
+                TurnAxis = firstPersonStrafe ? 0 :
+                    (keys[TurnL] != 0 ? 1 : 0) - (keys[TurnR] != 0 ? 1 : 0);
             }
             else
             {
@@ -132,6 +141,14 @@ public sealed unsafe class CameraDriveService : IExtenderService
             if (f == 0f && s == 0f) why = TurnAxis != 0 ? Why.TurnOnly : Why.Cancelled;
         }
         _why = why;
+        AirWish = Vector2.Zero;
+        if (why == Why.Active && firstPersonStrafe && (f != 0f || s != 0f))
+        {
+            Vector3 airRight = CameraService.Right(new CX.Engine.Camera(cam).Rot);
+            Vector2 move = new(airRight.X * s - airRight.Y * f,
+                               airRight.Y * s + airRight.X * f);
+            if (move.LengthSquared() > 1e-6f) AirWish = Vector2.Normalize(move);
+        }
         NoForward = why == Why.Active && !face && f <= 0f;
         if (why != Why.Active)
         {
@@ -192,6 +209,14 @@ public sealed unsafe class CameraDriveService : IExtenderService
         (keys[Fwd], walk) = ForwardSlots(face, f, k0, w0);
         if (face) { keys[Back] = f < 0f ? 1 : 0; keys[StrafeL] = s < 0f ? 1 : 0; keys[StrafeR] = s > 0f ? 1 : 0; }
         else keys[Back] = keys[StrafeL] = keys[StrafeR] = 0;
+        // Change only the normal walk/run input slots; engine/server still own
+        // movement speed, collision, prediction and path updates.
+        if (mk.ShiftRun.V && MouseLookService.ActionHeld && (!face || f > 0f) && (f != 0f || s != 0f))
+        {
+            bool shift = EngineFn.SdlGetModState != null && (EngineFn.SdlGetModState() & 3) != 0;
+            keys[Fwd] = shift ? 1 : 0;
+            walk = shift ? 0 : 1;
+        }
         Step(app, a);
         walk = w0; keys[0] = k0; keys[1] = k1; keys[2] = k2; keys[3] = k3; keys[4] = k4; keys[5] = k5;
         if (a.DriveLastSend != sendBefore) { _sentTenths = tenths; _lastSendTick = now; _sends++; }
@@ -203,6 +228,7 @@ public sealed unsafe class CameraDriveService : IExtenderService
     {
         Span<int> keys = a.DriveKeys;
         Held = (a.DriveWalk | keys[Fwd] | keys[Back] | keys[StrafeL] | keys[StrafeR]) != 0;
+        Fix14CProbe.Drive(Held, a.DriveWalk, keys[Fwd], keys[Back], keys[TurnL], keys[TurnR], keys[StrafeL], keys[StrafeR]);
         _orig(app);
     }
 

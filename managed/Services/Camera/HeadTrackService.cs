@@ -87,6 +87,7 @@ public sealed unsafe class HeadTrackService : IExtenderService
         if (gob == IntPtr.Zero) { _gob = IntPtr.Zero; _updateOrig(creature); return; }
         var head = RigMap.Head(RigMap.Appearance(creature));
         _gob = gob; _drives++;
+        Fix14CProbe.Head(gob, head.Text);
         if (Renderer.On) { DriveDb(gob, head.Text); return; }
         fixed (byte* node = head.Name) _begin(gob, gob, node, node, MouseLook.HeadYaw.V, MouseLook.HeadPitch.V, Blend, Reach);
     }

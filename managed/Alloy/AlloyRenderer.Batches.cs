@@ -131,7 +131,80 @@ public sealed unsafe partial class AlloyRenderer
         }
         }
         }
-        return n;
+        return HideLocalPlayerFromColourPass(HideLocalHeadFromColourPass(n));
+    }
+
+    /// <summary>OPTIONAL TEST ADD-ON. Filter only final colour draw commands, after routing.
+    /// Scene, pose, combat, hit-tests, and movement are untouched. The shadow stage
+    /// runs separately, before this draw list is filtered.</summary>
+    private static int HideLocalPlayerFromColourPass(int count)
+    {
+        if (!CameraModes.Driving.HideBody.V || !CameraModes.Driving.FirstPerson.V
+            || !CameraModes.Driving.Action.V || CameraService.Mode != 2 || CameraService.GateUp)
+            return count;
+        DbId root = _fpHideRoot;
+        if (!SceneDb.Objects.Valid(root)) return count; // fail open: draw normally
+        int write = 0;
+        for (int read = 0; read < count; read++)
+        {
+            int slot = _pass[read], part = _oDbPart[slot];
+            bool skip = false;
+            if (part >= 0 && SceneDb.Parts.LiveAt(part))
+            {
+                DbId o = SceneDb.PartObj[part];
+                skip = SceneDb.Objects.Valid(o) &&
+                       (o.Value == root.Value || SceneDb.ObjRunRoot[o.Index].Value == root.Value);
+            }
+            if (skip) continue;
+            if (write != read)
+            {
+                _pass[write] = slot;
+                _passCls[write] = _passCls[read];
+                _passAlpha[write] = _passAlpha[read];
+                _passDis[write] = _passDis[read];
+            }
+            write++;
+        }
+        return write;
+    }
+
+    /// <summary>Optional head-only filter over the final Vulkan colour draw list.
+    /// Does not touch the combat model, animation, shadows or cursor picking.</summary>
+    private static int HideLocalHeadFromColourPass(int count)
+    {
+        if (!CameraModes.Driving.HideHead.V || !CameraModes.Driving.FirstPerson.V
+            || !CameraModes.Driving.Action.V || CameraService.Mode != 2 || CameraService.GateUp)
+            return count;
+        DbId head = FirstPersonHeadFilter.HeadId;
+        if (!SceneDb.Objects.Valid(head)) return count; // Cannot identify the head: leave body unchanged.
+        int write = 0;
+        for (int read = 0; read < count; read++)
+        {
+            int slot = _pass[read], part = _oDbPart[slot];
+            bool hide = false;
+            if (part >= 0 && SceneDb.Parts.LiveAt(part))
+            {
+                DbId obj = SceneDb.PartObj[part];
+                for (int d = 0; d < SceneDb.PieceDepthCap && SceneDb.Objects.Valid(obj); d++)
+                {
+                    if (obj.Value == head.Value) { hide = true; break; }
+                    DbId parent = SceneDb.ObjAttachTo[obj.Index];
+                    if (!SceneDb.Objects.Valid(parent)) parent = SceneDb.ObjSeamAppendOwner[obj.Index];
+                    if (!SceneDb.Objects.Valid(parent)) break;
+                    obj = parent;
+                }
+            }
+            if (hide) continue;
+            if (write != read)
+            {
+                _pass[write] = slot;
+                _passCls[write] = _passCls[read];
+                _passAlpha[write] = _passAlpha[read];
+                _passDis[write] = _passDis[read];
+            }
+            write++;
+        }
+        return write;
     }
 
     /// <summary>The route-time validation contract, shared by all four class runs -- resolve the ordered slot,
@@ -166,6 +239,7 @@ public sealed unsafe partial class AlloyRenderer
         byte tree = SceneDb.PartLodTree[part];
         if (SceneDb.LodHidden(tree, SceneDb.ObjLodShown[obj.Index]))
         { Counters._skipLod++; SetCastOk(i, false); return false; }
+        if (FirstPersonVisibility.Exclude(obj, part)) return false;
         if (samp) FrameZones.AddSampled(FrameZones.Zone.Ident, t0, ChaseEvery);
         return true;
     }

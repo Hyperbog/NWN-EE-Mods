@@ -4,6 +4,7 @@ using System.Numerics;
 using CX.Alloy.Db;
 using CX.Framework;
 using CX.Graphics;
+using CX.Services.Camera;
 
 namespace CX.Alloy;
 
@@ -273,6 +274,18 @@ public sealed unsafe partial class AlloyRenderer
         var f = default(RecordFrameState);
         f.HasModel = true;
         f.Model = SceneDb.PartWorld[part];
+        // Fix14D-C2: local-player colour-only model follows the eye's final
+        // wall displacement. Never edit SceneDb transforms or creature XYZ.
+        if (_inColourPass)
+        {
+            Vector3 visual = FirstPersonVisibility.LocalEyeShift(obj);
+            if (visual != Vector3.Zero)
+            {
+                f.Model.M41 += visual.X;
+                f.Model.M42 += visual.Y;
+                f.Model.M43 += visual.Z;
+            }
+        }
         f.Dissolve = dis ? 1f : 0f;
         Vector4 tint = SceneDb.ObjTint[o];
         f.Alpha = SceneDb.PartAlpha[part] * SceneDb.PartFade[part] * GhostAlpha(i, cls, Unseen.Alpha(o, tint.W, lit));
@@ -405,6 +418,11 @@ public sealed unsafe partial class AlloyRenderer
     /// static part is written beside a part or object mark, and the rest sit behind the epoch and the texture stamp.</summary>
     private static bool StageSettled(int i, int part, int cls, int k)
     {
+        // Always restage the local player's model in EVERY pass, including
+        // shadows: an earlier colour pass may have left a camera-relative
+        // matrix in the persistent draw record. Outside colour the vanilla
+        // SceneDb.PartWorld matrix must be restored, not served from cache.
+        if (FirstPersonVisibility.LocalRenderPart(SceneDb.PartObj[part])) return false;
         ref SettledStage s = ref _settled[i];
         ref RouteGate g = ref _gate[i];
         return s.Valid && s.Part == part && cls <= (int)AlloyClass.Blended && s.Row.Cls == cls && s.Row.Dis == _passDis[k]

@@ -2,6 +2,7 @@ using System.Numerics;
 using System;
 using CX.Alloy.Db;
 using CX.Framework;
+using CX.Services.Camera;
 using CX.Graphics;
 
 namespace CX.Alloy;
@@ -22,6 +23,8 @@ public sealed unsafe partial class AlloyRenderer
     /// <summary>The scene the last world pass drew: what the post-process passes read, having no scene
     /// argument of their own.</summary>
     internal static DbId DbPassScene;
+    // OPTIONAL TEST ADD-ON: world camera's followed scene root; never a game-engine pointer.
+    private static DbId _fpHideRoot;
 
     /// <summary>Register the world pass with <c>SeamDraw</c>. Called at Initialize; a no-op when Alloy is
     /// switched off at boot.</summary>
@@ -42,6 +45,13 @@ public sealed unsafe partial class AlloyRenderer
         if (!AlloyGate.Alloy) return;
         _dbPasses++;
         DbPassScene = scene;
+        // The renderer has already identified the world camera's followed actor.
+        // Use database identities, NOT an unsafe GetModel/game-thread call in the draw pass.
+        DbId follow = SceneDb.Cameras.Valid(camera) ? SceneDb.CamFollow[camera.Index] : default;
+        _fpHideRoot = SceneDb.Objects.Valid(follow)
+            ? (SceneDb.Objects.Valid(SceneDb.ObjRunRoot[follow.Index])
+               ? SceneDb.ObjRunRoot[follow.Index] : follow)
+            : default;
         // The camera chain, once: five separate things can leave the world camera at the origin, and this
         // names which.
         if (!_saidCam)
@@ -228,8 +238,9 @@ public sealed unsafe partial class AlloyRenderer
         _dbPassScene = scene;
         bool prev = _inColourPass;
         _inColourPass = true;
-        DrawOwned();
-        _inColourPass = prev;
+        FirstPersonVisibility.BeginWorldColor(_dbCamFollow);
+        try { DrawOwned(); }
+        finally { FirstPersonVisibility.EndWorldColor(); _inColourPass = prev; }
     }
 
     /// <summary>The DB world pass's clause on the period line.</summary>

@@ -113,6 +113,12 @@ public sealed unsafe class CameraService : IExtenderService
 
         FrameRegistry.Global.Register(FramePhase.PostPresent, 50, OnFrameEnd, "CameraService", log);
         KnobSurface.Note(Report);
+        KnobSurface.Note(FirstPersonVisibility.Diagnostics);
+        FirstPersonModelProbe.Attach(log);
+        KnobSurface.Note(AttackCameraFollow.Diagnostics);
+        KnobSurface.Note(FirstPersonWorldGuard.Diagnostics);
+        KnobSurface.Note(HeadBoneCamera.Diagnostics);
+        KnobSurface.Note(JumpPositionService.Diagnostics);
         SceneRay.Init();
     }
 
@@ -129,6 +135,7 @@ public sealed unsafe class CameraService : IExtenderService
         FirstCall();
         IntPtr target = new CAurBehaviorCameraFollow(self).Target;
         if (target == IntPtr.Zero) return;
+        BeforeWorldCameraJump(self, dt);
         var b = new CAurBehaviorCameraFollow(self);
         if (!float.IsNaN(_distAfter) && b.ZoomVel == 0f && b.Dist < _distAfter - 1e-4f)
         { if (_offsetOn) _pullInsOffset++; else _pullIns++; }
@@ -167,6 +174,7 @@ public sealed unsafe class CameraService : IExtenderService
         var b = new CAurBehaviorCameraFollow(self);
         // Read BEFORE the call: with no target the engine detaches (owner->SetBehavior(0)) and `self` is freed.
         IntPtr target = b.Target;
+        if (target != IntPtr.Zero) BeforeWorldCameraJump(self, dt);
         if (target != IntPtr.Zero && !float.IsNaN(_distAfter) && b.ZoomVel == 0f
             && b.Dist < _distAfter - 1e-4f) { if (_offsetOn) _pullInsOffset++; else _pullIns++; }
         // Before the solve: the velocity is consumed by this call (the engine's chase writes it in the same slot).
@@ -237,6 +245,35 @@ public sealed unsafe class CameraService : IExtenderService
     /// <summary>One-shot: the layer had a pose to write and no live camera to write it to (DB mode only).</summary>
     private static bool _noSinkSaid;
 
+    // Only the world camera advances jumping; the game must remain the
+    // authority for the camera's rotation and follow relationship.
+    private static void BeforeWorldCameraJump(IntPtr self, float dt)
+    {
+        IntPtr module = Module();
+        if (module == IntPtr.Zero || new CAurBehavior(self).OwnerCamera != new CNWCModule(module).Camera.Ptr) return;
+        JumpPositionService.Tick(dt, true);
+        // Prevent first-person native pull-in from colliding with the body.
+        if (CameraService.Mode == 2 && CameraModes.Driving.Enabled.V
+            && CameraModes.Driving.FirstPerson.V && MouseLookService.ActionHeld
+            && !FreeCameraService.Active)
+        {
+            _wantNoCollision = true;
+            SettleCollision(module);
+        }
+    }
+
+    private static Vector3 PlayerModelAnchor(IntPtr player)
+    {
+        Vector3 actor = new CNWCObject(player).Position;
+        IntPtr body = new CNWCCreature(player).GetModel(0xff, 1);
+        if (body == IntPtr.Zero) return actor;
+        Vector3 model = new Gob(body).Position;
+        if (!float.IsFinite(model.X) || !float.IsFinite(model.Y) || !float.IsFinite(model.Z)
+            || Vector3.DistanceSquared(actor, model) > 4f)
+            return actor;
+        return model;
+    }
+
     private static void Adjust(IntPtr self, float dt)
     {
         var b = new CAurBehaviorCameraFollow(self);
@@ -254,6 +291,7 @@ public sealed unsafe class CameraService : IExtenderService
         }
         Gate g = Check(self, cam, out int mode);
         _gate = g; _mode = mode;
+        // Phase 3.1: jump is stepped BEFORE camera follow, not during Adjust.
         _yaw = b.Yaw; _pitch = b.Pitch; _dist = b.Dist;
         _fovRead = c.ViewAngle;
         _pos = c.Pos;
@@ -266,6 +304,7 @@ public sealed unsafe class CameraService : IExtenderService
         }
         if (g != Gate.Active)
         {
+            if (g != Gate.NotWorldCamera) JumpPreview.Reset();
             // Off is enterable by the free camera: the seed it reads (Rendered) must be the engine's pose, not a stale lag.
             if (g == Gate.Off) { RestoreFov(c); _sYaw = _yaw; _outPitch = _pitch; }
             _welded = true; _offsetOn = _wantNoCollision = false; _arm = 1f; return;
@@ -303,6 +342,46 @@ public sealed unsafe class CameraService : IExtenderService
         float pitch = Math.Clamp(_sPitch + m.PitchCurve.V * (_sDist - m.PitchRef.V), lo, hi);
         _outPitch = pitch;
         Quaternion q = Pose(_sYaw, pitch);
+        if (mode != 2 || !m.FirstPerson.V) JumpPreview.Reset();
+        // Use the player actor's *world position*, not the orbit's follow focus:
+        // turning or pitching cannot move the camera in a circle around the feet.
+        // This is a calibrated eye height, NOT a head-bone attachment.
+        if (m.FirstPerson.V && MouseLook.Action.V)
+        {
+            IntPtr player = PlayerCreature();
+            if (player != IntPtr.Zero)
+            {
+                // Horizontal-only forward offset: looking up/down must not lift or lower the eyes.
+                Vector3 back = Forward(q);
+                back.Z = 0f;
+                float len = back.Length();
+                back = len > 1e-4f ? back / len : Vector3.UnitY;
+                // Dock to the visible model root, rather than a potentially
+                // stale creature prediction inside the camera's own update.
+                Vector3 feet = PlayerModelAnchor(player);
+                Vector3 eye = feet + Vector3.UnitZ * m.EyeHeight.V
+                              - back * m.EyeForward.V;
+                // Fix8: camera-only first-person attack motion. Never touches
+                // the player, jump motor, reticle, or input controls.
+                FirstPersonVisibility.Publish(player);
+        HeadBoneCamera.Apply(player, dt, ref eye, q);
+        AnimationCameraMotion.Apply(true, player, dt, ref eye, ref q);
+        AttackCameraFollow.Apply(player, dt, ref eye, ref q);
+        HeadBoneCamera.MaintainHeadClearance(player, ref eye, q);
+        HeadBoneCamera.KeepMovementModelBehindEye(player, dt, ref eye, q);
+        FirstPersonWorldGuard.Resolve(player, ref eye, q);
+        FirstPersonVisibility.PublishEyeCollision(player, FirstPersonWorldGuard.LastEyeCorrection);
+                c.Place(eye, q);
+                _pos = eye;
+                _offsetOn = false;
+                _arm = 1f;
+                _wantNoCollision = true;
+                float eyeFov = m.Fov.V;
+                c.SetViewAngle(eyeFov);
+                _fovWritten = eyeFov;
+                return;
+            }
+        }
         Vector3 pos = _sFocus + _sDist * Forward(q);
         float offX = m.OffsetX.V, offY = m.OffsetY.V;
         _offsetOn = offX != 0f || offY != 0f;
@@ -344,10 +423,25 @@ public sealed unsafe class CameraService : IExtenderService
         }
         CameraModeKnobs m = CameraModes.ByMode[mode];
         if (m.PinYaw.V >= 0f) { b.Yaw = m.PinYaw.V; b.YawVel = 0f; b.YawImpulse = 0f; }
+        bool enteringFirstPerson = MouseLookService.TakeEntryPitch();
         if (m.PinPitch.V >= 0f) b.Pitch = m.PinPitch.V;
+        else if (enteringFirstPerson && m.EntryPitch.V >= 0f)
+        {
+            b.Pitch = m.EntryPitch.V;
+            b.PitchImpulse = 0f;
+        }
         if (m.PinDist.V >= 0f) { b.Dist = m.PinDist.V; b.ZoomVel = 0f; }
         bool aim = TabTargetService.AimPoint(out float ax, out float ay, out float az);
         if (!aim) _aimBase = float.NaN;
+        // Keep the first-person view controlled by mouse, never by motion or turn keys.
+        if (!aim && mode == 2 && m.FirstPerson.V && MouseLookService.ActionHeld)
+        {
+            var chase = new CNWCModule(Module());
+            chase.ChaseSuppressed = 1;
+            chase.ChaseWasIdle = 0;
+            _hold = Hold.Off; _pursuing = false; _recenterVel = 0f;
+            return;
+        }
         if (!aim && !m.Recenter.V) { _hold = Hold.Off; _pursuing = false; return; }
         var mod = new CNWCModule(Module());
         mod.ChaseSuppressed = 1;

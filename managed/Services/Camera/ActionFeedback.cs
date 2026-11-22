@@ -16,6 +16,9 @@ namespace CX.Services.Camera;
 internal static unsafe class ActionFeedback
 {
     private static bool _ready;
+    private sealed class HitMarkState { internal long Last; }
+    private static readonly HitMarkState HitMark = new();
+    private const long HitMarkerMs = 180;
     private static SendPlayerToServerMessageFn* _next;
 
     // ---- the wire frame ----
@@ -122,6 +125,20 @@ internal static unsafe class ActionFeedback
         }
     }
 
+    // The game reported damage on a current target, not a client-side guess based on a swing.
+    // The server damage event does not contain an attacker here: a party member may have dealt it.
+    internal static void NoteDamage(uint victim)
+    {
+        if (!CameraModes.Driving.HitMarker.V || victim == 0) return;
+        long now = Environment.TickCount64;
+        bool attackingVictim = _attacking && _aiTarget == victim;
+        bool recentTargetedAction = _at != 0 && now - _at >= 0 && now - _at < 5000
+            && _target == victim && (_kind == MinorAttack || _kind == MinorCastSpell ||
+                _kind == MinorUseFeat || _kind == MinorUseItem);
+        if (attackingVictim || recentTargetedAction)
+            System.Threading.Interlocked.Exchange(ref HitMark.Last, now);
+    }
+
     // ---- the per-frame read + draw ----
 
     /// <summary>What the crosshair adds: a pulse on a fresh order, a red ring while the player is attacking, a
@@ -148,7 +165,22 @@ internal static unsafe class ActionFeedback
             b.Rect(cx - d - t, cy - half, cx - d + t, cy + half, 1f, 1f, 1f, al);
             b.Rect(cx + d - t, cy - half, cx + d + t, cy + half, 1f, 1f, 1f, al);
         }
-        if (attacking) Ring(b, cx, cy, AttackRing * s, t, AttackR, AttackG, AttackB, 0.55f);
+        if (attacking && !CameraModes.Driving.CleanReticle.V)
+            Ring(b, cx, cy, AttackRing * s, t, AttackR, AttackG, AttackB, 0.55f);
+        if (CameraModes.Driving.HitMarker.V)
+        {
+            long hitAt = System.Threading.Volatile.Read(ref HitMark.Last);
+            long ms = Environment.TickCount64 - hitAt;
+            if (hitAt != 0 && ms >= 0 && ms < HitMarkerMs)
+            {
+                // Four small corner-free white hit ticks: distinct from attack colour and aim brackets.
+                float d = 7f * s, w = 2f * s, a = (1f - ms / (float)HitMarkerMs) * 0.95f;
+                b.Rect(cx - d - w, cy - d - w, cx - d + w, cy - d + w, 1f, 1f, 1f, a);
+                b.Rect(cx + d - w, cy - d - w, cx + d + w, cy - d + w, 1f, 1f, 1f, a);
+                b.Rect(cx - d - w, cy + d - w, cx - d + w, cy + d + w, 1f, 1f, 1f, a);
+                b.Rect(cx + d - w, cy + d - w, cx + d + w, cy + d + w, 1f, 1f, 1f, a);
+            }
+        }
         if (queued > 0)
         {
             float k = DotHalf * s, y = cy + DotDrop * s;

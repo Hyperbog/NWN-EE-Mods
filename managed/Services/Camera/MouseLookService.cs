@@ -40,6 +40,12 @@ public sealed unsafe class MouseLookService : IExtenderService
     private static int _looks, _clicks, _actions;
     /// <summary>Action camera held (relative mode ours) and the centre the events are pinned to.</summary>
     private static bool _action;
+    // One toggle lifecycle, no re-level on Alt releases or UI focus changes.
+    private static class EntryPitchState
+    {
+        internal static int Pending;
+        internal static bool Armed = true;
+    }
     /// <summary>Is the action camera actually held this frame (the knob is on AND nothing is pausing it)?
     /// What <see cref="HeadTrackService"/> turns the head on.</summary>
     internal static bool ActionHeld => _action;
@@ -71,6 +77,7 @@ public sealed unsafe class MouseLookService : IExtenderService
                                SymbolMap.GuiMan, SymbolMap.GuiObjectHitCheck, SymbolMap.GetModule, SymbolMap.AppManager)) return;
         _modState = EngineFn.SdlGetModState;
         Crosshair.Register();
+        FirstPersonHeadFilter.Init(log);
         ActionKeyChanged();
         UiHost.AddChordConsumer(new ActionToggle());
         // The action camera's two refusals: no click-to-move, and the player is never what the crosshair picks.
@@ -100,12 +107,23 @@ public sealed unsafe class MouseLookService : IExtenderService
     {
         if (ev == IntPtr.Zero) return Forward(ev);
         if (!MouseLook.Enabled.V) { if (_state != State.Idle) Release(); return Forward(ev); }
-        // Only while the action camera would otherwise be up: Alt+Tab, an Alt chord in a dialog and any Alt the
-        // GUI or a CX window owns the keyboard for are not the cursor toggle.
-        if (MouseLook.AltToggle.V && ActionGateOpen() && *(uint*)ev == SdlKeyDown && ((SdlEvent*)ev)->Repeat == 0
-            && ((SdlEvent*)ev)->SymU is SdlkLAlt or SdlkRAlt) _altFree = !_altFree;
+        // Toggle the gameplay cursor with Z. Alt remains available as a quickbar modifier.
+        // Do not intercept text entry in a dialogue, chat or focused CX window.
+        if (MouseLook.AltToggle.V && ActionGateOpen() && *(uint*)ev == SdlKeyDown &&
+            ((SdlEvent*)ev)->SymU == (uint)'z')
+        {
+            if (((SdlEvent*)ev)->Repeat == 0) _altFree = !_altFree;
+            bool capture = ActionWanted();
+            if (capture != _action) SetAction(capture);
+            return 0;
+        }
+        if (MouseLook.AltToggle.V && MouseLook.Action.V && GameGate.InGame &&
+            !UiHost.AnyKeyboardOwner && *(uint*)ev == 0x301 &&
+            ((SdlEvent*)ev)->SymU == (uint)'z') return 0; // SDL_KEYUP
         bool want = ActionWanted();
         if (want != _action) SetAction(want);
+        if (JumpPreview.CaptureKey(*(uint*)ev, ((SdlEvent*)ev)->SymU,
+            ((SdlEvent*)ev)->Repeat, _action)) return 0;
         if (_action) return OnActionEvent(ev);
         switch (*(uint*)ev)
         {
@@ -176,6 +194,8 @@ public sealed unsafe class MouseLookService : IExtenderService
 
     // ---- the action camera ----
 
+    internal static bool TakeEntryPitch() => System.Threading.Interlocked.Exchange(ref EntryPitchState.Pending, 0) != 0;
+
     private static bool ActionWanted() => ActionGateOpen() && !AltFreed();
 
     /// <summary>Everything the action camera needs except the Alt release itself -- the gate the Alt toggle is
@@ -185,14 +205,19 @@ public sealed unsafe class MouseLookService : IExtenderService
         => MouseLook.Action.V && GameGate.InGame && CameraService.Mode >= 0 && !CameraService.GateUp && !FreeCameraService.Active
            && !UiHost.AnyKeyboardOwner && !UiHost.AnySuppressChords;
 
-    private static bool AltFreed()
-        => MouseLook.AltToggle.V ? _altFree : _modState != null && (_modState() & KmodAlt) != 0;
+    // v0.4: Alt no longer releases the mouse; the Z toggle above owns this latch.
+    private static bool AltFreed() => MouseLook.AltToggle.V && _altFree;
 
     private static void SetAction(bool on)
     {
         if (on)
         {
             if (_state != State.Idle) Release();
+            if (EntryPitchState.Armed)
+            {
+                System.Threading.Interlocked.Exchange(ref EntryPitchState.Pending, 1);
+                EntryPitchState.Armed = false;
+            }
             ViewportCentre(out _cx, out _cy);
             EngineFn.SdlSetRelativeMouseMode(1); _actions++;
         }
@@ -302,7 +327,16 @@ public sealed unsafe class MouseLookService : IExtenderService
 
     /// <summary>The action toggle's <c>changed:</c>: the off edge frees the cursor at once (the on edge waits for
     /// the next event, which reads the knob).</summary>
-    internal static void ActionChanged() { _altFree = false; if (!MouseLook.Action.V && _action) SetAction(false); }
+    internal static void ActionChanged()
+    {
+        _altFree = false;
+        if (MouseLook.Action.V) EntryPitchState.Armed = true;
+        else
+        {
+            System.Threading.Interlocked.Exchange(ref EntryPitchState.Pending, 0);
+            if (_action) SetAction(false);
+        }
+    }
 
     /// <summary>The master's <c>changed:</c>: the off edge releases a look or a held press at once, so the
     /// cursor is never left captured waiting for the next mouse event. Nothing on the on edge -- the next press
@@ -405,6 +439,9 @@ internal static class Crosshair
     private static unsafe void Draw()
     {
         if (!Visible) return;
+        int mode = CameraService.Mode;
+        if (mode < 0 || mode >= CameraModes.ByMode.Length || !CameraModes.ByMode[mode].Reticle.V) return;
+        int style = CameraModes.ByMode[mode].ReticleStyle.V;
         GlyphAtlas? sheet = TextRig.Atlas;
         if (sheet == null) return;
         int id = AimAssist.CursorId();
@@ -415,13 +452,47 @@ internal static class Crosshair
         float cx = TextRig.ViewportW * 0.5f, cy = TextRig.ViewportH * 0.5f, a = Arm * s * arms, g = Gap * s, t = Thick * s * 0.5f;
         VertexBatch b = _batch ??= new VertexBatch(sheet.SolidU, sheet.SolidV);
         b.Reset(sheet.SolidU, sheet.SolidV);
-        // Dark outline under a light cross so it reads on any ground.
-        Emit(b, cx, cy, a + 1f, g - 1f, t + 1f, 0f, 0f, 0f, 0.6f);
-        Emit(b, cx, cy, a, g, t, r, gr, bl, 0.9f);
+        // Keep CX's native hover/interaction tint and its action feedback for every style.
+        switch (style)
+        {
+            case 1: // Dot
+                b.Rect(cx - t - 1f, cy - t - 1f, cx + t + 1f, cy + t + 1f, 0f, 0f, 0f, 0.65f);
+                b.Rect(cx - t, cy - t, cx + t, cy + t, r, gr, bl, 0.94f);
+                break;
+            case 2: // Ring
+                Ring(b, cx, cy, 9f * s, t * 1.5f, 0f, 0f, 0f, 0.65f);
+                Ring(b, cx, cy, 9f * s, t, r, gr, bl, 0.94f);
+                break;
+            case 3: // Four L corners
+                Corners(b, cx, cy, 11f * s, 7f * s, t + 0.8f, 0f, 0f, 0f, 0.6f);
+                Corners(b, cx, cy, 11f * s, 7f * s, t, r, gr, bl, 0.94f);
+                break;
+            case 4: // Cross plus ring
+                Ring(b, cx, cy, 14f * s, t, r, gr, bl, 0.75f);
+                goto default;
+            default: // 0 = CX's original four-arm reticle
+                Emit(b, cx, cy, a + 1f, g - 1f, t + 1f, 0f, 0f, 0f, 0.6f);
+                Emit(b, cx, cy, a, g, t, r, gr, bl, 0.9f);
+                break;
+        }
         if (fam == FamRefused) b.Rect(cx - t, cy - t, cx + t, cy + t, r, gr, bl, 0.9f);
-        if (AimAssist.AssistTarget != 0) Corners(b, cx, cy, Bracket * s, BracketTick * s, t, r, gr, bl, 0.75f);
+        if (!CameraModes.Driving.CleanReticle.V && AimAssist.AssistTarget != 0)
+            Corners(b, cx, cy, Bracket * s, BracketTick * s, t, r, gr, bl, 0.75f);
         ActionFeedback.Draw(b, cx, cy, s, t);
         TextRig.DrawBatch(b.AsSpan(), b.VertexCount);
+    }
+
+    // VertexBatch exposes rectangles but not line loops. Small segments approximate a circular reticle.
+    private static void Ring(VertexBatch b, float cx, float cy, float radius, float t,
+                             float r, float gr, float bl, float alpha)
+    {
+        for (int i = 0; i < 24; i++)
+        {
+            float angle = i * (MathF.PI * 2f / 24f);
+            float x = cx + MathF.Cos(angle) * radius;
+            float y = cy + MathF.Sin(angle) * radius;
+            b.Rect(x - t, y - t, x + t, y + t, r, gr, bl, alpha);
+        }
     }
 
     private static void Emit(VertexBatch b, float cx, float cy, float a, float g, float t, float r, float gr, float bl, float al)

@@ -30,6 +30,7 @@ public sealed unsafe class StepGuardService : IExtenderService
     public void Initialize(ExtenderLog log, HookService hooks)
     {
         _log = log;
+        Fix14CProbe.Configure(log);
         CameraKnobs.Declare();
         SelfCheck(log);
         if (!EngineLayout.Require(log, "StepGuard", "CClientExoApp", "CClientExoAppInternal", "CNWCObject", "CNWCCreature", "CNWCModule", "CPathfindInformation")) return;
@@ -65,11 +66,13 @@ public sealed unsafe class StepGuardService : IExtenderService
         Vector3 before = desired;
         int r = (*_next)(cre);
         Vector3 after = desired;
+        Fix14CProbe.Step(cre, before, after, creature.Driving);
         if (!IsStep(before, after) || new CNWCModule(module).CurrentArea.Ptr != area.Ptr) return r;
         Span<float> space = pathfind.SpaceArgs;
         // TestDirectLine takes both Vectors BY VALUE: the copies are what VectorArg points Win64 at.
         Vec3 from = Vec(before), to = Vec(after);
         int clear = _testLine(area.Ptr, cre, VectorArg.Of(&from), VectorArg.Of(&to), space[0], space[1], NoCreatures);
+        Fix14CProbe.Guard(clear, creature.Driving, before, after);
         if (clear == 1) { _steps++; return r; }
         desired = before;
         creature.SetPosition(VectorArg.Of(&from));

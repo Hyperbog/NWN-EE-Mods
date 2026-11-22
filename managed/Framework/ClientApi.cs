@@ -24,10 +24,10 @@ public static unsafe class ClientApi
 
     public static IntPtr Message()
     {
-        if (LiveMessage != IntPtr.Zero) return LiveMessage;
-        if (AppMgr == IntPtr.Zero || EngineFn.GetNWCMessage == null) return IntPtr.Zero;
-        IntPtr app = *(IntPtr*)AppMgr;
-        return app == IntPtr.Zero ? IntPtr.Zero : new CClientExoApp(app).GetNWCMessage();
+        // Never dereference AppMgr here. On NWN:EE 8193.37-17 the fallback
+        // GetNWCMessage() can read 0x208 before the engine message object is
+        // available. A hook-published message is safe; otherwise send nothing.
+        return LiveMessage;
     }
 
     public static void Send(byte major, byte minor, byte* payload, uint len)

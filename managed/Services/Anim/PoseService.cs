@@ -824,6 +824,101 @@ public sealed unsafe class PoseService : IExtenderService
 
     /// <summary>A creature's Gob, through the engine's own accessor: <c>GetModel(0xff, 1)</c> forwards to the
     /// CNWCAnimBase at +0x78 (as <see cref="HeadTrackService"/> reaches it).</summary>
+    /// <summary>Read the local player's animated chest relative to its body root.
+    /// Returns false for unsupported rigs; never changes animation or visibility.</summary>
+    internal static bool TryCameraTorso(IntPtr creature, out Vector3 relative,
+                                       out Quaternion relativeRotation,
+                                       out Quaternion rootRotation)
+    {
+        relative = default;
+        relativeRotation = Quaternion.Identity;
+        rootRotation = Quaternion.Identity;
+        if (creature == IntPtr.Zero) return false;
+        IntPtr gob = GobOf(creature);
+        if (gob == IntPtr.Zero) return false;
+        IntPtr root = PoseRig.Root(gob);
+        if (root == IntPtr.Zero) return false;
+        Bones bones = default;
+        PoseRig.FindBones(gob, root, RigOf(gob, IntPtr.Zero), ref bones);
+        if (bones.Torso == IntPtr.Zero) return false;
+        PoseRig.World(root, out Vector3 rootWorld, out Quaternion rootQuat);
+        PoseRig.World(bones.Torso, out Vector3 torsoWorld, out Quaternion torsoQuat);
+        if (!float.IsFinite(rootWorld.X) || !float.IsFinite(rootWorld.Y) || !float.IsFinite(rootWorld.Z)
+            || !float.IsFinite(torsoWorld.X) || !float.IsFinite(torsoWorld.Y) || !float.IsFinite(torsoWorld.Z)
+            || rootQuat.LengthSquared() < 0.5f || torsoQuat.LengthSquared() < 0.5f)
+            return false;
+        rootRotation = Quaternion.Normalize(rootQuat);
+        Quaternion inverseRoot = Quaternion.Inverse(rootRotation);
+        relative = Vector3.Transform(torsoWorld - rootWorld, inverseRoot);
+        relativeRotation = Quaternion.Normalize(inverseRoot * torsoQuat);
+        return true;
+    }
+
+    /// <summary>Read animation geometry using this character's actual rig mapping.
+    /// Model/head swaps and unsupported rigs fail without modifying the pose.</summary>
+    internal struct CameraRigSample
+    {
+        internal IntPtr Root;
+        internal Vector3 TorsoLocal, TorsoUp, HeadLocal, HeadWorld;
+        internal Quaternion RootRotation;
+        internal bool HasHead;
+    }
+
+    internal static bool TryCameraRig(IntPtr creature, out CameraRigSample sample)
+    {
+        sample = default;
+        // Reuse the working Fix8 torso sampler and its finite/rig validation.
+        if (!TryCameraTorso(creature, out Vector3 torso, out Quaternion torsoRot,
+                            out Quaternion rootRot)) return false;
+        IntPtr gob = GobOf(creature);
+        if (gob == IntPtr.Zero) return false;
+        IntPtr root = PoseRig.Root(gob);
+        if (root == IntPtr.Zero) return false;
+        sample.Root = root;
+        sample.TorsoLocal = torso;
+        sample.TorsoUp = Vector3.Transform(Vector3.UnitZ, torsoRot);
+        sample.RootRotation = rootRot;
+        Bones bones = default;
+        PoseRig.FindBones(gob, root, RigOf(gob, IntPtr.Zero), ref bones);
+        // HEAD_NAME comes from appearance.2da and cx_rig.2da; neck is a safe
+        // fallback for a model with an unusual or missing head node.
+        IntPtr head = bones.Head != IntPtr.Zero ? bones.Head : bones.Neck;
+        if (head != IntPtr.Zero && head != root)
+        {
+            PoseRig.World(head, out Vector3 headWorld, out _);
+            PoseRig.World(root, out Vector3 rootWorld, out _);
+            if (float.IsFinite(headWorld.X) && float.IsFinite(headWorld.Y) && float.IsFinite(headWorld.Z)
+                && float.IsFinite(rootWorld.X) && float.IsFinite(rootWorld.Y) && float.IsFinite(rootWorld.Z))
+            {
+                sample.HeadWorld = headWorld;
+                sample.HeadLocal = Vector3.Transform(headWorld - rootWorld, Quaternion.Inverse(rootRot));
+                sample.HasHead = float.IsFinite(sample.HeadLocal.X) &&
+                                 float.IsFinite(sample.HeadLocal.Y) && float.IsFinite(sample.HeadLocal.Z);
+            }
+        }
+        return true;
+    }
+
+    /// <summary>Map the player's actual appearance-specific head to a DB part.
+    /// Runs at the camera solve, not inside the renderer. Unsupported rigs fail open.</summary>
+    internal static bool TryFirstPersonHead(IntPtr creature, out int part)
+    {
+        part = -1;
+        if (!PoseRig.Db || creature == IntPtr.Zero) return false;
+        IntPtr gob = GobOf(creature);
+        if (gob == IntPtr.Zero) return false;
+        IntPtr root = PoseRig.Root(gob);
+        if (root == IntPtr.Zero) return false;
+        Bones bones = default;
+        PoseRig.FindBones(gob, root, RigOf(gob, IntPtr.Zero), ref bones);
+        // Head only: intentionally do NOT fall back to the neck or torso.
+        if (bones.Head == IntPtr.Zero) return false;
+        int candidate = PoseRig.Index(bones.Head);
+        if ((uint)candidate >= SceneDb.MaxParts || !SceneDb.Parts.LiveAt(candidate)) return false;
+        part = candidate;
+        return true;
+    }
+
     internal static IntPtr GobOf(IntPtr creature)
     {
         if (*(IntPtr*)creature == IntPtr.Zero) return IntPtr.Zero;

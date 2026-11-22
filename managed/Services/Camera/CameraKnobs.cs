@@ -9,7 +9,7 @@ internal static class CameraKnobs
 {
     internal static void Declare()
     {
-        _ = CameraModes.ByMode; _ = Walls.G; _ = FreeCam.G; _ = TabTarget.G;
+        _ = CameraModes.ByMode; _ = Walls.G; _ = FreeCam.G; _ = TabTarget.G; _ = AnimationCameraSettings.G; _ = FirstPersonVisibility.G; _ = AttackCameraFollow.G; _ = FirstPersonWorldGuard.G; _ = HeadBoneCamera.G;
     }
 
     internal const float FovMin = 10f, FovMax = 120f;
@@ -76,6 +76,10 @@ public sealed class CameraModeKnobs
 {
     public readonly KnobGroup G;
     public readonly Knob<bool> Enabled, Drive, Face, SideRun, Recenter;
+    // OPTIONAL TEST ADD-ON: rendering only, off by default.
+    public readonly Knob<bool> HideBody;
+    // Optional head-only visibility and reticle experiments.
+    public readonly Knob<bool> HideHead, CleanReticle, HitMarker;
     /// <summary><see cref="Smooth"/> is <see cref="LagPos"/>, the one panel row for the feel; a set carries the rotation
     /// and zoom lag along. The mode's User rows are exactly <see cref="KnobGroup.MaxUserRows"/>: a new one must replace one.</summary>
     public readonly Knob<float> PinYaw, PinPitch, PinDist, Fov, Smooth, LagPos, LagRot, LagZoom, PitchCurve, PitchRef, OffsetX, OffsetY;
@@ -85,6 +89,12 @@ public sealed class CameraModeKnobs
     public readonly Knob<bool> Look, Right, Invert, Action, AltToggle, HeadTrack, Assist, AutoTarget, Feedback;
     public readonly Knob<float> Sens, HeadYaw, HeadPitch;
     public readonly Knob<int> Threshold, AssistPx;
+    // First-person preset extension; chat/config-only, no extra settings-panel rows.
+    public readonly Knob<bool> Reticle;
+    public readonly Knob<int> ReticleStyle;
+    public readonly Knob<bool> FirstPerson, ShiftRun;
+    public readonly Knob<bool> JumpPreview;
+    public readonly Knob<float> EyeHeight, EyeForward, EntryPitch;
     public readonly Knob<string> ActionKey;
 
     internal CameraModeKnobs(string name, string submenu, int mode, int order, bool moveDefault, bool faceDefault = false)
@@ -114,6 +124,17 @@ public sealed class CameraModeKnobs
                           help: "How long a turn takes to settle. 0 is welded.");
         LagZoom = G.Slider("lagzoom", "Zoom smoothing", 0f, 2f, 0.01f, ZoomSmooth, "s", Tier.ChatOnly,
                            help: "Smooths the mouse wheel's stepped zoom. 0 is the stock game's steps.");
+        // All are config / chat-only; the upstream settings panel has a row limit.
+        JumpPreview = G.Toggle("jumppreview", "TEST: Native position jump", false, Tier.ChatOnly,
+            help: "Experimental local creature-position jump. Host/server may reject it. Use only on flat ground in a disposable offline save.");
+        FirstPerson = G.Toggle("firstperson", "Eye-level first-person camera", false, Tier.ChatOnly,
+            help: "When Action Camera is on, position the view from your character's origin and eye height, independent of third-person follow distance.");
+        EyeHeight = G.Slider("eyeheight", "Camera height above feet", 0.3f, 2.7f, 0.05f, 1.65f, "m", Tier.ChatOnly,
+            help: "Tune to your character's race and height; this is not animated eye-bone tracking.");
+        EyeForward = G.Slider("eyeforward", "Camera forward offset", 0f, 0.75f, 0.01f, 0.32f, "m", Tier.ChatOnly,
+            help: "Places camera forward of face to avoid seeing inside the character's head.");
+        EntryPitch = G.Slider("entrypitch", "Level pitch on action camera entry", -1f, 179f, 1f, -1f, "deg", Tier.ChatOnly,
+            help: "90 faces horizon; -1 keeps current pitch. Camera pitch is free afterward.");
         G.Section("Offset");
         OffsetX = G.Slider("offsetx", "Sideways offset", -10f, 10f, 0.25f, 0f, "m",
                            help: "Moves your character off centre; positive puts them on the left. 0 is the stock orbit.");
@@ -142,6 +163,8 @@ public sealed class CameraModeKnobs
         Hz = G.Slider("hz", "Heading updates per second", 1f, 60f, 1f, 10f, "", Tier.ChatOnly,
                       help: "Most heading packets sent per second; the stock game sends 2.");
         Turn = G.Slider("turn", "Heading turn rate", 0f, 3600f, 30f, 540f, "deg/s", Tier.ChatOnly, help: "0 = snap.");
+        ShiftRun = G.Toggle("shiftrun", "Hold Shift to run", false, Tier.ChatOnly,
+            help: "When Action Camera is enabled: walk on forward and sideways movement, hold either Shift for native run. Backpedal stays native.");
         G.Section("Mouse-look");
         Look = G.Toggle("mouselook", "Enable CX mouse-look", true, changed: MouseLookService.MasterChanged,
                         help: "CX handles the mouse-drag camera: the cursor stays put and the view never stalls at the screen edge. Off, the stock middle-drag orbit runs.");
@@ -152,6 +175,15 @@ public sealed class CameraModeKnobs
         Threshold = G.Slider("threshold", "Click-to-drag threshold", 0, 100, 1, 4, "px", Tier.ChatOnly,
                              help: "Pixels of movement before a right press becomes a look instead of a click.");
         G.Section("Action camera");
+        HideHead = G.Toggle("hidehead", "Hide local head only", false, Tier.ChatOnly,
+            help: "Only hide your own head in first-person Driving mode. Body and equipment remain visible; other camera modes restore the head.");
+        CleanReticle = G.Toggle("cleanreticle", "No target or attack squares", false, Tier.ChatOnly,
+            help: "Hide the assist brackets and combat square; keep the contextual red crosshair and other feedback.");
+        HitMarker = G.Toggle("hitmarker", "Show target-damage marker", false, Tier.ChatOnly,
+            help: "Flash a white X when a damage number is reported on your current attack target. This cannot prove which party member caused the damage.");
+        // OPTIONAL TEST ADD-ON: the Vulkan world colour pass omits this player's model.
+        HideBody = G.Toggle("hidebody", "Hide local player model in first person", false, Tier.ChatOnly,
+                            help: "Test option: hide your character's visible model and attachments only in the first-person Vulkan world view. Does not change movement or combat.");
         Action = G.Toggle("action", "Action camera", false, changed: MouseLookService.ActionChanged,
                           help: "Hides the cursor and pins it to a crosshair in the centre of the screen. Moving the mouse turns the camera; whatever the crosshair points at is what you hover, tooltip and click, so aiming replaces pointing. Left-click acts on it, a right-click opens its menu. Clicking the ground does not walk you there (use the movement keys) and the crosshair never picks your own character. Alt frees the cursor for the game's panels (held, or a tap with the toggle option below); the toggle key switches the camera on and off.");
         ActionKey = G.Text("actionkey", "Action camera toggle key", "]", changed: MouseLookService.ActionKeyChanged,
@@ -166,6 +198,10 @@ public sealed class CameraModeKnobs
                               help: "Under the action camera, a spell, feat or item that asks you to pick a target fires straight away on whatever the crosshair is pointing at, with no second click. A ground-targeted spell still asks you to aim it.");
         Feedback = G.Toggle("feedback", "Action feedback on the crosshair", true, Tier.ChatOnly,
                             help: "Under the action camera, the crosshair answers what you did: a pulse when an order goes out, a red ring while you are attacking, and a dot underneath while an action is still waiting to happen.");
+        Reticle = G.Toggle("reticle", "Show first-person reticle", true, Tier.ChatOnly,
+                           help: "Hide the reticle graphic but retain centred native mouse picking and actions.");
+        ReticleStyle = G.Slider("reticlestyle", "First-person reticle style", 0, 4, 1, 0, "", Tier.ChatOnly,
+                                help: "0 cross, 1 dot, 2 ring, 3 corners, 4 cross and ring.");
         HeadTrack = G.Toggle("headtrack", "Head follows the crosshair", true, Tier.Advanced,
                              help: "Under the action camera, your character turns their head toward whatever you are aiming at. The body still faces where it is walking. Only you see it -- other players see your character the way the game has always shown it.");
         HeadYaw = G.Slider("headyaw", "Head turn limit", 0f, 89f, 1f, 70f, "deg", Tier.ChatOnly,
