@@ -34,6 +34,28 @@ The same log still reports NWNCX build `b4b43a54` as its runtime base. Replacing
 
 Do not publish raw game logs or screenshots containing local user information.
 
+## Fix 14B — first runtime diagnostic results
+
+A Windows gameplay log from the read-only probe confirms that the diagnostic runs: **24 snapshots**, **24 local model parts per snapshot**, **one mapped head part**, and **zero unrecognized model nodes** in the sampled character. The log is not published because it contains local system details.
+
+Verified rendered part labels included:
+
+- Equipped helmet: `helm_026` (`helm_026g`); unequipped head: `pmh0_head002` (`pmh0_head002g`).
+- `pmh0_neck001`, approximately 0.08 m from the mapped head pivot.
+- `pmh0_bicepl004` and `pmh0_bicepr004`, approximately 0.28 m from the head pivot.
+- `pmh0_cloak_003` (`Cloak_Skin`), approximately 0.34–0.50 m from the head pivot.
+- `pmh0_chest016` and `pmh0_pelvis008`, approximately 0.55 m from the head pivot.
+
+A single sampled helmet-removal interval appeared before the same helmet returned in later snapshots. These are **part-pivot distances, not triangle-to-eye clearances**.
+
+**Important runtime version finding:** the session identified itself as NWNCX:EE `v0.13.2-11-gb4b43a54` with original revision `b4b43a54`, despite a separately reported installation of a newer NWNCX version. The actual mod/game DLL set in this run is therefore still based on the older commit.
+
+The log was configured with `general.logs=0`. No per-frame movement, collision-refusal, drive-state, actual horizontal displacement, or locomotion-state entries were captured. The log therefore **does not determine the cause of blocked-wall running-in-place or the helmet-change animation switch**.
+
+**Relevant source-level mechanism:** the existing Fix 12 camera-only wall guard retracts the eye toward `feetXY + eyeZ - cameraForward * fpsurface.near` when blocked. That position can be inside the local character's torso/clothing. This is a likely contributor to the reported self-clipping, but needs a wall-contact runtime comparison to validate.
+
+**Next milestone:** retain the working camera and combat tracking; add an opt-in blocked-drive state diagnostic comparing input-held, actual horizontal displacement, engine desired-position movement, camera retraction and animation ID. Separately test restricted first-person color rendering of the local neck/torso/cloak meshes during camera retraction, without changing shadows or other actors. Avoid source or DLL changes until those separate mechanisms can be validated.
+
 ## Priority: first-person character rendering
 
 **Observed defect:** the camera can see through or intersect the local character's head, torso, clothing, armor, or other equipment, especially during attack animations and near walls.
