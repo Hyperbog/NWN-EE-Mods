@@ -5,6 +5,7 @@
 | M1 | [M1 settings patch](../src/first-person/milestones/M1/EnhancedFirstPerson_CX_Settings.patch) | Windows DLL verified | Menu displayed; movement jitter/wall and helmet issues | Installed before M3 |
 | M2 | [M2 menu clarity patch](../src/first-person/milestones/M2/M2_MenuClarity.patch) | Source staging passed | Not separately installed | Incorporated into M3 |
 | **M3-rc1** | [M3 baked controls and turn correction](../src/first-person/milestones/M3/M3_BakedControlsAndTurn.patch) | Managed compile passed; NativeAOT and five-DLL ZIP integrity passed; offline M1↔M3 rollback passed; live read-only Status passed | **Pending immediate game test** | Ready for `InstallM3` |
+| **M4-source** | [M4 mandatory Action Camera patch](../src/first-person/milestones/M4/M4_MandatoryActionCamera.patch) | Source patch replay verified; Windows build pending | Not yet tested | New staged build, never touches game directly |
 
 The source patch for each milestone is committed to Git. The exact compiled artifact digests, stage paths, provenance and rollback paths for **M3-rc1** are in [M3_RELEASE_MANIFEST.json](../src/first-person/milestones/M3/M3_RELEASE_MANIFEST.json). The M3 compiled DLL and ZIP are stored in the developer's existing Windows source stage, **not as binary files in Git**.
 
@@ -23,3 +24,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_RuntimeSwitc
 ```
 
 Launch NWN and compare first-person menu, mouse turning idle and during walking, wall collision, helmet unequip, and combat animations. For a severe regression, close NWN and use `-Action RestoreM1`. The switch script writes separate non-overwriting reports for InstallM3 and RestoreM1. Do not use M1's older switch script for M3. Gameplay remains unverified until a real test.
+
+
+## M4 source checkpoint
+
+[M4_VERSION.json](../src/first-person/milestones/M4/M4_VERSION.json) records the exact patch, base-stage pin and staging recipe. M4 makes Action Camera mandatory in Driving and uses Z for temporary cursor release, while hiding obsolete control toggles. Build with [M4_StageBuild.ps1](../src/first-person/milestones/M4/M4_StageBuild.ps1), then record the new native DLL SHA-256 in Git before installation. Do not mistake a Git source commit for a committed executable binary.

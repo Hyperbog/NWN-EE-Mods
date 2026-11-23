@@ -56,8 +56,10 @@ try {
  if($LASTEXITCODE -ne 0){throw "M4 managed compile failed. Log: $managedLog"}
  $bash='C:\Program Files\Git\bin\bash.exe'
  if(-not(Test-Path -LiteralPath $bash -PathType Leaf)){throw "Git Bash missing: $bash"}
- & $bash './build-win-native.sh' *> $nativeLog
- if($LASTEXITCODE -ne 0){throw "M4 NativeAOT failed. Log: $nativeLog"}
+ $nativeErr='C:\Projects\M4_NativeBuild.stderr.log'
+ if(Test-Path -LiteralPath $nativeErr){throw "Refusing to overwrite: $nativeErr"}
+ $run=Start-Process -FilePath $bash -ArgumentList @('./build-win-native.sh') -WorkingDirectory $M4 -Wait -PassThru -NoNewWindow -RedirectStandardOutput $nativeLog -RedirectStandardError $nativeErr
+ if($run.ExitCode -ne 0){throw "M4 NativeAOT failed (exit $($run.ExitCode)). Logs: $nativeLog and $nativeErr"}
 } finally { Pop-Location }
 $dir=Join-Path $M4 'cx-windows-x64'
 $archive=Join-Path $M4 'cx-windows-x64.zip'
