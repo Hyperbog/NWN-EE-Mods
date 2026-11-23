@@ -1,7 +1,7 @@
 {
-  "version": "M5-source",
+  "version": "M5-rc1",
   "parent_release": "M4-rc1",
-  "status": "Source patch and single-command isolated build recipe committed; Windows compilation and live test pending",
+  "status": "Managed and NativeAOT build PASS, all five DLLs ZIP/folder hashes verified; guarded M4→M5 runtime install pending",
   "cause": "CameraService.Check returns Gate.Dialog when CNWCModule.DialogCamera is set, which stops first-person eye placement during NPC conversation.",
   "evidence": "User NPC screenshots and cx.log [camera] gate: dialog camera while mode 2; M4 install SWITCHED_AND_VERIFIED",
   "changes": [
@@ -15,11 +15,23 @@
   "source_base": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE_R02",
   "source_stage": "C:\\Projects\\NWN_FP_M5_NPC_DIALOG_STAGE",
   "expected_M4_version_dll_sha256": "29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2",
-  "new_version_dll_sha256": "Pending M5 build report",
+  "new_version_dll_sha256": "27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d",
   "untouched": [
     "installed M4 runtime",
     "cx.cfg",
     "M4/M3/M1 stage",
     "M1 and original rollback backups"
-  ]
+  ],
+  "build_evidence": "C:\\Projects\\M5_StageBuildReport.txt uploaded and reviewed (PASS); all five package hashes matched",
+  "new_version_dll_size_bytes": 25260032,
+  "installer": "src/first-person/milestones/M5/M5_RuntimeSwitch.ps1",
+  "rollback": "RestoreM4 from verified M4-rc1 stage; random named displaced DLL preserved; M1 and pre-M1 backups unchanged",
+  "runtime_status": "User screenshot + cx.log still show 'gate: dialog camera, mode 2'; no M5 [fpdialog] marker; installed runtime hash not yet checked",
+  "dlls": {
+    "version.dll": "27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d",
+    "cx_openal.dll": "3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4",
+    "phonon.dll": "ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d",
+    "shaderc_shared.dll": "8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6",
+    "vma.dll": "504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e"
+  }
 }

@@ -18,3 +18,11 @@ Git contains the exact [M5 patch](../src/first-person/milestones/M5/M5_NpcDialog
 **Build gate:** Windows compilation is not yet proven. After the M5 report, commit the new exact checksum to Git and update the existing guarded runtime switch to accept M5. Then test two conversations, movement after exiting dialogue and Z cursor release without separate redundant preflight rounds.
 
 **Preserved baseline:** M4 `version.dll` SHA-256 `29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2`. Current M4 install and existing M1/pre-M1 rollback backups remain intact.
+
+## M5 build verified and guarded runtime installation
+
+The user's `M5_StageBuildReport.txt` confirms **PASS** for managed/NativeAOT compilation and identical SHA-256 hashes for all five staged ZIP/folder DLLs. The M5 `version.dll` is `27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d` (25,260,032 bytes); M4's is `29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2`.
+
+The screenshot and contemporaneous runtime `cx.log` still exhibit `gate: dialog camera, mode 2`, and no `[fpdialog]` entry. This is compatible with M4 still running: the M5 build helper deliberately does **not** install. A runtime hash check is required to establish exactly which version was loaded.
+
+The new [M5 runtime switch](../src/first-person/milestones/M5/M5_RuntimeSwitch.ps1) allows only `Status`, `InstallM5` and `RestoreM4`. It checks `nwmain.exe`, original/M1 backup DLLs, M4/M5 DLL hashes and source markers, all four companion DLLs, and each DLL inside the M5 ZIP. Installation requires the game to be closed and the existing `version.dll` to equal verified M4 or M5. Only `version.dll` is replaced, using `File.Replace` with a retained unique named displaced backup; `RestoreM4` is the reversible option. `cx.cfg` is never touched. The script was reviewed statically; Windows runtime installation/test still awaits the user's run.
