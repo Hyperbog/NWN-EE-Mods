@@ -149,3 +149,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_RuntimeSwitc
 ```
 
 Upload `C:\Projects\M3_RuntimeSwitch_Status.txt`; expected `Result: READ_ONLY`, with installed M1 `version.dll` unchanged. **Do not run `InstallM3` until the report has been reviewed.** Once verified, that action switches only one game DLL to M3 under an exact checksum. If needed, `-Action RestoreM1` is the hash-pinned M1 restoration path, not the retired M1-to-original installer. A gameplay smoke test remains necessary before treating M3 menu, movement and mouse-turn animations as working.
+
+## Final read-only live preflight passed (2026-11-22)
+
+The uploaded `M3_RuntimeSwitch_Status.txt` shows `Result: READ_ONLY`, with M1's installed `version.dll` SHA-256 `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86` unchanged before/after; all four companions, the M3 stage, and both rollback generations verified. M3 is cleared for the `InstallM3` action of the already-committed runtime switch, not for a separate chain of further pre-installation tests.
+
+The release manifest [M3_RELEASE_MANIFEST.json](../src/first-person/milestones/M3/M3_RELEASE_MANIFEST.json) records the checked M3 NativeAOT output `version.dll` SHA-256 `1ec40d2fd60454dc92e8bfd29ca591600fba0db1d3f5e2ccc4232b09868e891d`, all five DLL sizes and hashes, source patch order, current stage location, and rollback routes. Actual in-game menu and movement outcomes remain **unverified** and are the next gate. Preserve the pre-M1 and M1 backups.
+
+The process changes from here: versioned Git source commit and manifest for every milestone; consolidate repeatable build+hash checks; single protected switch/restore; then test gameplay instead of serializing redundant safe-to-repeat verifiers.
