@@ -14,3 +14,31 @@ This is an isolated source correction for a likely competing-writers cause, not 
 
 ## Safe workflow
 Apply the M3 patch only through M3_StageBaked.ps1 after checking the published M2 CameraKnobs hash. Build the separate stage with dotnet managed compiler and the Windows NativeAOT script, check the new DLLs, then construct a NEW pinned reversible installer. The existing M1_RuntimeSwitchFix1 installer only accepts the old M1 DLL hash and must not be used for M3. Never touch the original cx checkout, cx.cfg or the five-DLL rollback backup. Motion blur is deferred until turning quality is evaluated.
+
+
+## M3 isolated source staging passed (2026-11-22)
+
+The developer supplied `M3_BakedStageReport.txt` confirming:
+
+```text
+M3 SOURCE STAGE: PASS
+M2: C:\Projects\NWN_FP_M2_SETTINGS_STAGE
+M3: C:\Projects\NWN_FP_M3_BAKED_STAGE
+M3 CameraKnobs SHA256: 59881B5270A25F62D75EEFEF82DCE186A262B309D02D24A7563CF793D35250DC
+M1 game DLL, cx.cfg, backup, CX original, M1 and M2 source: UNCHANGED
+Windows managed build, NativeAOT and animation runtime: NOT TESTED
+```
+
+This verifies separate-stage patch application, not compilation or character-turn smoothness.
+
+### Next isolated gate: managed C# compilation
+
+In the Visual Studio Developer Command Prompt:
+
+```cmd
+cd /d "C:\Projects\NWN_FP_M3_BAKED_STAGE"
+dotnet build managed\cx_managed.csproj -c Release -r win-x64 -p:PublishAot=false -v:minimal > "C:\Projects\M3_ManagedCompile.log" 2>&1
+echo M3_MANAGED_BUILD_EXIT=%ERRORLEVEL%
+```
+
+Upload `C:\Projects\M3_ManagedCompile.log` and its exit code. Do not install or overwrite any DLL. If compilation fails, the log will identify the precise M3 source errors; if it succeeds, plan an isolated NativeAOT Windows build and reverify all package hashes. Runtime jitter and mouse-capture behavior remain unverified until a guarded M3 installation and gameplay test.
