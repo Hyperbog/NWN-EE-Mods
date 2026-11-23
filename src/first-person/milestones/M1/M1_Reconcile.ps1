@@ -15,7 +15,7 @@ $sha = [Security.Cryptography.SHA256]::Create()
 try { $originalHash = [BitConverter]::ToString($sha.ComputeHash($original)).Replace('-', '').ToLowerInvariant() }
 finally { $sha.Dispose() }
 $bom = $original.Length -ge 3 -and $original[0] -eq 239 -and $original[1] -eq 187 -and $original[2] -eq 191
-$utf8 = New-Object Text.UTF8Encoding($false, $true)
+$utf8 = [System.Text.UTF8Encoding]::new($false, $true)
 if ($bom) { $sourceText = $utf8.GetString($original, 3, $original.Length - 3) }
 else { $sourceText = $utf8.GetString($original) }
 $crlf = [string]([char]13) + [string]([char]10)
@@ -106,8 +106,14 @@ if ([Convert]::ToBase64String($now) -cne [Convert]::ToBase64String($original)) {
 $backupDir = Join-Path (Split-Path -Parent $CxRoot) 'NWN_FP_M1_BACKUPS'
 [IO.Directory]::CreateDirectory($backupDir) | Out-Null
 $backup = Join-Path $backupDir ("CameraKnobs.preM1." + $originalHash.Substring(0,12) + "." + (Get-Date -Format 'yyyyMMdd_HHmmss_fff') + ".cs")
-$encode = New-Object Text.UTF8Encoding($bom)
-$outputBytes = $encode.GetBytes($updated)
+$payload = $utf8.GetBytes($updated)
+if ($bom) {
+    $outputBytes = New-Object byte[] ($payload.Length + 3)
+    [Array]::Copy([byte[]](239, 187, 191), 0, $outputBytes, 0, 3)
+    [Array]::Copy($payload, 0, $outputBytes, 3, $payload.Length)
+} else {
+    $outputBytes = $payload
+}
 $temp = "$target.m1tmp"
 if (Test-Path -LiteralPath $temp) { throw "Temporary file already exists: $temp" }
 try {
