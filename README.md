@@ -1,55 +1,52 @@
-# NWN:EE Mods
+# NWN:EE Mods — Enhanced First Person
 
-Mod development for **Neverwinter Nights: Enhanced Edition**.
+**Enhanced First Person** is an experimental, body-aware first-person camera and movement modification for **Neverwinter Nights: Enhanced Edition (NWN:EE)**, built on [NWNCX:EE](https://github.com/nwncxee/cx). It aims to make exploration and combat feel more natural in first person **without changing NWN's native character speeds, equipment, animation system, or server authority**.
 
-## First-Person Controller & Movement
+**Current preserved milestone:** Fix 14D / **J4 World-Space Jump** with C3C camera clearance and R3 combat reticle. Windows gameplay-tested in a limited set of scenarios. **Development preview, not a broadly verified stable release.**
 
-An experimental first-person experience built with [NWNCX:EE](https://github.com/nwncxee/cx). The aim is to retain NWN's characters, equipment, combat and world while making first-person movement feel natural.
+## What Enhanced First Person does
 
-**Status:** Active development — no public stable release yet. Windows testing is ongoing.
+| Feature | Description |
+| --- | --- |
+| **First-person camera** | Mouse-look from the character's animated head/eye viewpoint, with camera-relative navigation and careful positioning near walls. |
+| **Reticle** | Small central dot; stays **red in combat**. Two small **red side crescents** flash for approximately 160 ms when the selected target's damage event is reported. The small pending-action square beneath the dot is removed. |
+| **Synchronized combat movement and animations** | Camera and player facing respond to combat and attack animation. The mod attempts to keep visible hands, arms, legs, shields, and weapons while keeping the head/torso from crossing the eye position. |
+| **Running, walking, and strafing** | Camera-relative WASD input with native game walk/run rates and existing speed modifiers, including gameplay effects. No artificial slippery momentum or speed boost is added to ordinary ground movement. |
+| **Jumping** | J4 world-space jump trajectory with airborne steering; landing responds to **walkable uphill and downhill terrain** instead of forcing the takeoff elevation. |
+| **Clipping safeguards** | Adaptive first-person local-model clearance and world/wall safety logic. Body adjustments are **render-only**, not authoritative character repositioning. |
+| **Combat feedback and diagnostics** | Existing action/hit feedback plus bounded camera, movement, position, and jump diagnostics used during development. |
 
-### Working in local tests
+See the [full feature reference and update history](docs/ENHANCED_FIRST_PERSON_FEATURES.md) for behavior, implementation boundaries, and what is *not* supported.
 
-- First-person mouse-look, centered aiming reticle and camera-relative WASD movement.
-- Character facing follows horizontal camera rotation; strafing remains available.
-- Physical jumping with airborne momentum and directional steering.
-- Subtle attack-animation camera movement and experimental head-bone tracking.
-- First-person wall-clearance testing and suppression of the keyhole effect.
+## Known limits
 
-These are development observations, **not** a claim of universal compatibility.
+- **Requires NWNCX:EE.** Enhanced First Person is currently integrated into a **matching custom CX build**, not an independent plugin. Installing/updating stock CX may replace the modified `version.dll` and disable the mod. Do not mix DLLs from different CX builds.
+- Landing on **arbitrary crates, furniture, and non-walkable placeables is not implemented**. Visually elevated objects are not necessarily valid supporting surfaces.
+- The hit crescents use selected-target damage feedback, **not verified attacker attribution**; party-member damage may also trigger them.
+- Tested behavior does **not** establish compatibility with every race, custom model, tileset, multiplayer server, or future NWNCX/game build. Native collision and server authority still apply.
 
-### Still being developed
+## Source code
 
-- Preventing the local character's head, torso, armor and other equipment from clipping into the first-person camera while keeping appropriate body and weapon visibility.
-- Refining jump/camera transitions and edge-case collision behavior.
-- Compatibility with different races, phenotypes, animations, builds and custom content.
-- Multiplayer/host-authoritative movement behavior.
+The [30-file annotated J4 source overlay](src/first-person/managed) is preserved here, with a [source integrity manifest](src/first-person/SOURCE_MANIFEST.json) and a [reconstruction/provenance report](docs/PUBLICATION_PROVENANCE.md). These files are **modifications to NWNCX:EE**, not an independently buildable C# project.
 
-## Project documentation
-
-- [Development status and test plan](docs/DEVELOPMENT.md)
+- [Feature reference and ongoing change history](docs/ENHANCED_FIRST_PERSON_FEATURES.md)
+- [J4 technical behavior and test results](docs/FIRST_PERSON_J4.md)
+- [Source code map](docs/FIRST_PERSON_CODEMAP.md)
+- [Source integration, build and safety notes](docs/FIRST_PERSON_SOURCE.md)
+- [Historical development and diagnostics](docs/DEVELOPMENT.md)
 - [Technical references](docs/REFERENCES.md)
 
 ## Downloads and installation
 
-There is **no stable public download yet**. Tested releases, installation instructions and compatibility notes will be provided through [GitHub Releases](https://github.com/Hyperbog/NWN-EE-Mods/releases) when ready. Experimental builds should not be mistaken for validated releases.
+There is **no stable public binary release yet**. Once a matching runtime has been packaged and verified for distribution, downloads and install instructions will appear under [GitHub Releases](https://github.com/Hyperbog/NWN-EE-Mods/releases).
 
-## Development and repository policy
+**Never replace an existing CX installation without backing up all five runtime DLLs**: `version.dll`, `cx_openal.dll`, `phonon.dll`, `shaderc_shared.dll`, and `vma.dll`. Local configuration is normally in `Documents\Neverwinter Nights\cx.cfg`. Preserve saved games and existing configuration.
 
-- **Single branch:** work is maintained on `main`; Git commits and releases record milestones.
-- **Clean history:** avoid separate version folders, temporary patch ZIPs, local backups, game files and generated binaries in the source tree.
-- **Modular changes:** camera, player movement, animation, visibility and collision systems are tested independently and can be disabled or rolled back.
-- **Preserve the baseline:** no unverified change should replace the last working version.
+## Development policy
 
-This project builds on NWNCX:EE and the NWN modding community's research. It is not affiliated with Beamdog or BioWare. Third-party code and assets remain subject to their respective licenses.
+- Maintain **one documented feature reference**; update it whenever a feature is added, removed, or changed. Include the milestone and whether it has been tested.
+- Preserve a last-known-working source and runtime before changes. Keep debugging patches and temporary installation archives out of the main source tree.
+- Separate NWNCX upstream changes from Enhanced First Person's mod code. Revalidate hooks, build-specific offsets and the complete DLL set after upstream updates.
+- Preserve source attribution and third-party license notices; do not publish local saves, user configuration, logs, or backup state.
 
-
-## Fix 14D — validated J4 first-person controller
-
-The **J4 development snapshot** has been tested locally with a body-aware first-person camera, native-speed WASD control, a combat-red dot with red side-crescent hit feedback, and a world-space jump arc that lands on valid uphill or downhill walkable terrain. This is still an experimental source distribution, not a standalone NWN:EE module or a stable binary release.
-
-- [J4 features, controls and known limits](docs/FIRST_PERSON_J4.md)
-- [Source integration and publication notes](docs/FIRST_PERSON_SOURCE.md)
-- [First-person source overlay](src/first-person/README.md)
-
-The [30-file annotated J4 source overlay](src/first-person/managed) is published, with an [integrity manifest](src/first-person/SOURCE_MANIFEST.json), [source map](docs/FIRST_PERSON_CODEMAP.md) and [provenance report](docs/PUBLICATION_PROVENANCE.md). It depends on a matching NWNCX:EE build; a tested public binary release has not yet been published. The development package deliberately contains no game DLLs, save files, config secrets or private logs.
+This project depends on the [NWNCX:EE upstream project](https://github.com/nwncxee/cx) and community engine research. It is not affiliated with Beamdog or BioWare.
