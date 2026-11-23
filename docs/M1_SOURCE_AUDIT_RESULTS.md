@@ -140,3 +140,23 @@ powershell -NoProfile -Command "Get-Content -LiteralPath 'C:\Projects\M1_NativeB
 ```
 
 **Do not copy the new five DLLs into the game.** Native build success is not CX self-check success and does not verify runtime behavior, settings persistence, or the J4 wall/helmet movement regression.
+
+
+## Isolated NativeAOT Windows build passed (2026-11-22)
+
+The developer ran `git submodule update --init --recursive` and the pinned stage's `build-win-native.sh` in the Visual Studio Developer Command Prompt. Reported exit codes were **M1_SUBMODULE_EXIT=0** and **M1_NATIVE_BUILD_EXIT=0**.
+
+This confirms that the native build script returned success. **The native build log and generated artifacts were not uploaded or inspected**, so file-level integrity, CX initialization, settings-panel self-checks, and game behavior remain pending. The earlier managed build remained at **0 errors / 150 warnings**.
+
+### Next gate — verify the five packaged DLLs without installing them
+
+Use [M1_VerifyNative.ps1](../src/first-person/milestones/M1/M1_VerifyNative.ps1) to verify the stage's `cx-windows-x64` directory and ZIP. The script checks five expected DLL names, AMD64 Windows PE headers, non-missing readme/license files, SHA-256 equality of each DLL between directory and ZIP, and the presence of the staged M1 settings marker. It reads the staged artifacts and writes one report **outside** the stage: `C:\Projects\M1_NativeArtifacts.txt`. It does not copy, install, or modify DLLs, and refuses to overwrite an existing report.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_VerifyNative.ps1' -OutFile 'C:\Projects\M1_VerifyNative.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_VerifyNative.ps1"
+```
+
+If successful, upload `M1_NativeArtifacts.txt` (text metadata and hashes only; no executable DLLs). If unsuccessful, share the exact exception and do not install anything.
+
+A source-build pass does not establish that the J4+M1 runtime will load or behave correctly. Dedicated off-device self-checks and a **reversible isolated game test** remain mandatory, including the known blocked-wall walking-in-place and helmet-swap running-in-place regression. Do not replace installed working DLLs or `cx.cfg` yet. The verifier has not yet been Windows-executed.
