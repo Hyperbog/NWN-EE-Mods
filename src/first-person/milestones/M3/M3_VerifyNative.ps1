@@ -58,7 +58,7 @@ function Get-Machine([string]$path) {
         return $reader.ReadUInt16()
     } finally { $reader.Dispose(); $stream.Dispose() }
 }
-function Get-ZipSha([IO.Compression.ZipArchive]$zip, [string]$name) {
+function Get-ZipSha([object]$zip, [string]$name) {
     $matches = @($zip.Entries | Where-Object { $_.FullName -ceq $name })
     if ($matches.Count -ne 1) { throw "ZIP entry missing/duplicated: $name" }
     $stream = $matches[0].Open()
