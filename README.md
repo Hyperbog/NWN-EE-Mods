@@ -42,3 +42,14 @@ There is **no stable public download yet**. Tested releases, installation instru
 - **Preserve the baseline:** no unverified change should replace the last working version.
 
 This project builds on NWNCX:EE and the NWN modding community's research. It is not affiliated with Beamdog or BioWare. Third-party code and assets remain subject to their respective licenses.
+
+
+## Fix 14D — validated J4 first-person controller
+
+The **J4 development snapshot** has been tested locally with a body-aware first-person camera, native-speed WASD control, a combat-red dot with red side-crescent hit feedback, and a world-space jump arc that lands on valid uphill or downhill walkable terrain. This is still an experimental source distribution, not a standalone NWN:EE module or a stable binary release.
+
+- [J4 features, controls and known limits](docs/FIRST_PERSON_J4.md)
+- [Source integration and publication notes](docs/FIRST_PERSON_SOURCE.md)
+- [First-person source overlay](src/first-person/README.md)
+
+The initial GitHub documentation commit includes one verified, commented native jump-bridge source file. The **full local source overlay still requires publication from the Windows working checkout**; the complete tested mod is not yet in this GitHub repository. The development package deliberately contains no game DLLs, save files, config secrets or private logs.
