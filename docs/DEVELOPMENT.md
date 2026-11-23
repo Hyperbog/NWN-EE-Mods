@@ -1,10 +1,16 @@
+## Current J4 source checkpoint
+
+[Enhanced First Person J4 source](../src/first-person/README.md) is preserved in 30 commented C# files with exact implementation checksums. The milestones below are historical; they do not describe the latest J4 runtime. See [features](FIRST_PERSON_J4.md), [source integration](FIRST_PERSON_SOURCE.md), and [provenance](PUBLICATION_PROVENANCE.md).
+
+---
+
 # First-Person Mod — Development
 
 ## Current baseline
 
 The first-person controller, mouse-look, character-facing lock, jump motor, airborne steering, attack camera response and first-person wall/keyhole adjustments have been exercised in local Windows builds.
 
-These are **experimental observations**, not a shipped compatibility guarantee. The working baseline currently exists in the developer's local NWNCX:EE checkout; the complete tested source and redistributable build have not yet been published here.
+These are **experimental observations**, not a shipped compatibility guarantee. The working baseline currently exists in the developer's local NWNCX:EE checkout; the 30-file tested J4 source overlay has now been published under `src/first-person/managed/`; no public binary release has been published.
 
 ## Fix 14B — read-only model diagnostic (experimental)
 

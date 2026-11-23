@@ -1,0 +1,248 @@
+{
+  "description": "EFP J4 source overlay preserved from pinned Git checkpoint and verified post-checkpoint development package fixtures",
+  "upstream": "https://github.com/nwncxee/cx",
+  "upstream_base": "b4b43a54ed68aa1072ce1715c0479b2fb127b5ef",
+  "local_checkpoint": "2470f0d27be0a29c152456aa60222f1f4fc25c34",
+  "modules": {
+    "managed/Alloy/AlloyRenderer.Batches.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "5ce74f63e15df014b6d4643532b71c3ffd46d3ec3ed8d2b578b43e4c03f41244",
+      "published_sha256_lf": "7ec351eb3833a4800f9eea2eb0d7039acf8feb2dca3894f76ba614827c6bebbe",
+      "published_path": "src/first-person/managed/Alloy/AlloyRenderer.Batches.cs",
+      "comment_header_bytes": 933,
+      "original_bytes": 77691
+    },
+    "managed/Alloy/Db/DbKeyhole.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "dd76a33b6458153dd3dd288e482c4c0c05467243c5377c088a22a08f77bc4326",
+      "published_sha256_lf": "8c2426860df6165018eba27e9582b23a88d5b9445733e88f7b7caafe922fd584",
+      "published_path": "src/first-person/managed/Alloy/Db/DbKeyhole.cs",
+      "comment_header_bytes": 850,
+      "original_bytes": 18119
+    },
+    "managed/Alloy/Scene/AlloyRenderer.DbPass.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "494d05139541b48d8a0e56ada7b1fbaf097be7a1e1d648c7082268277f6757cd",
+      "published_sha256_lf": "bb41e965c732e952879fb2a5d1b8e56a4a2186e247b9803027e63abac57fb7cc",
+      "published_path": "src/first-person/managed/Alloy/Scene/AlloyRenderer.DbPass.cs",
+      "comment_header_bytes": 907,
+      "original_bytes": 15836
+    },
+    "managed/Alloy/Scene/AlloyRenderer.DbStage.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "b6849338393f6b278b9cda333678e3b7d2560ac3dd05b04f583a9b79599b1d6a",
+      "published_sha256_lf": "6229bcc7d43131a29f3d8c0237d716c8fdb17181933ff60bdbd45971c56b1f52",
+      "published_path": "src/first-person/managed/Alloy/Scene/AlloyRenderer.DbStage.cs",
+      "comment_header_bytes": 868,
+      "original_bytes": 40132
+    },
+    "managed/Framework/ClientApi.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "2894fb6c018e7c635dab8a08bbf23e8b0d6f6c5833f5312d3705d19db4fb16b2",
+      "published_sha256_lf": "62dadd815376908185f56d7fbef533be39a95675fd91059162a42057d2027ded",
+      "published_path": "src/first-person/managed/Framework/ClientApi.cs",
+      "comment_header_bytes": 840,
+      "original_bytes": 2337
+    },
+    "managed/Services/Anim/PoseService.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "8eb5526a4c0c40aa3f7e830303a15a1c312f6b56da27cff6f180d0f7e2d0922c",
+      "published_sha256_lf": "d84a5e180b4709fb1f575988823b1628a02a278bdc3815c3c5b7e9de805daf4d",
+      "published_path": "src/first-person/managed/Services/Anim/PoseService.cs",
+      "comment_header_bytes": 915,
+      "original_bytes": 74784
+    },
+    "managed/Services/Camera/ActionFeedback.cs": {
+      "origin": "NWN_EE_DotCrescent_CombatRed_R3/source/ActionFeedback.after.cs",
+      "original_sha256_lf": "497bea017915970ad4aca73ab38c05152121cc6c891ab15d2e586ff5f705d569",
+      "published_sha256_lf": "bdecd98eed2fdfaf7c286e81cb890b61cf02bb497e0be9af03a848157fcdcebf",
+      "published_path": "src/first-person/managed/Services/Camera/ActionFeedback.cs",
+      "comment_header_bytes": 952,
+      "original_bytes": 13393
+    },
+    "managed/Services/Camera/AnimationCameraMotion.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "1dbdaccffae9942a0b84d344b9a2c76c07fb8be6bfa84751a7d8c7cf3a9d6d1f",
+      "published_sha256_lf": "da58d57ddd3c3f4c23bb8b43f74eede584ba68c7e74960d7afcafd726b8f556d",
+      "published_path": "src/first-person/managed/Services/Camera/AnimationCameraMotion.cs",
+      "comment_header_bytes": 875,
+      "original_bytes": 7908
+    },
+    "managed/Services/Camera/AnimationCameraSettings.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "792bb5c7409cdc94819384054b3cd4914f558a0206c6d82c1209481e80003cbf",
+      "published_sha256_lf": "032186696db3a4e35e55d608cee95727c5b0256b7bea3a50dfdd8976b66eb516",
+      "published_path": "src/first-person/managed/Services/Camera/AnimationCameraSettings.cs",
+      "comment_header_bytes": 862,
+      "original_bytes": 1510
+    },
+    "managed/Services/Camera/AttackCameraFollow.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "f8ff34f21b0708ecfc4c9cabda90291ddedb78cdd6b01e20d88c6765906c92ea",
+      "published_sha256_lf": "21bf256fcabc2f388e1c86032a377db43aa8561825b7970b8e8fe7b7cece30b9",
+      "published_path": "src/first-person/managed/Services/Camera/AttackCameraFollow.cs",
+      "comment_header_bytes": 901,
+      "original_bytes": 9191
+    },
+    "managed/Services/Camera/CameraDriveService.cs": {
+      "origin": "NWN_EE_DrivePosition_Trace_D4/source/CameraDriveService.D4.cs",
+      "original_sha256_lf": "56c083389bc94cf878e301cc52174dbd0fad1d2daeea3547b43a57664fe563f7",
+      "published_sha256_lf": "db08a962d44da9c0d687da2f84b62a9a2d7bcfbeb863495b7bea016c52fb27ab",
+      "published_path": "src/first-person/managed/Services/Camera/CameraDriveService.cs",
+      "comment_header_bytes": 928,
+      "original_bytes": 34948
+    },
+    "managed/Services/Camera/CameraKnobs.cs": {
+      "origin": "NWN_EE_DotCrescent_CombatRed_R2/source/CameraKnobs.after.cs",
+      "original_sha256_lf": "3895b9e6cd0497237bc82acb35ae2c20e5139c40d42a9c25e3f6f18980998fb3",
+      "published_sha256_lf": "f6cabb44cf6c29bd0cf23aae0aa5f5f79907cf305a51061040a3511343320941",
+      "published_path": "src/first-person/managed/Services/Camera/CameraKnobs.cs",
+      "comment_header_bytes": 903,
+      "original_bytes": 33072
+    },
+    "managed/Services/Camera/CameraService.cs": {
+      "origin": "NWN_FP_AdaptiveCore_Fix14D_C3C/source/CameraService.C3C.cs",
+      "original_sha256_lf": "3c29018f1bccbd34a1f17d855f449b3c5b1d14b362f9c188026591090bc21dc3",
+      "published_sha256_lf": "8946eff1595f9c5e86c7e3c8cd59c4b1a2bcb53a6d48c6addb189610901f0213",
+      "published_path": "src/first-person/managed/Services/Camera/CameraService.cs",
+      "comment_header_bytes": 957,
+      "original_bytes": 45098
+    },
+    "managed/Services/Camera/FirstPersonHeadFilter.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "c92818f6762651ebe713dddb18063c56cff658a700b5b39bba751cf419eedbd1",
+      "published_sha256_lf": "a97be53597a1ca9ebaf3e0f24707927936d0050a315db5bad3a37420706eb5be",
+      "published_path": "src/first-person/managed/Services/Camera/FirstPersonHeadFilter.cs",
+      "comment_header_bytes": 864,
+      "original_bytes": 1481
+    },
+    "managed/Services/Camera/FirstPersonModelProbe.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "edc5e5a2c136dc84184c56c18f9ef4a8e902c2be006c3bd6ac60c80cb34ccf71",
+      "published_sha256_lf": "a71fdef0d88317eb1479cb795a1238fd842fb1b26c7e66d6f213cbdf288cac1a",
+      "published_path": "src/first-person/managed/Services/Camera/FirstPersonModelProbe.cs",
+      "comment_header_bytes": 891,
+      "original_bytes": 5352
+    },
+    "managed/Services/Camera/FirstPersonVisibility.cs": {
+      "origin": "NWN_FP_AdaptiveCore_Fix14D_C3C/source/FirstPersonVisibility.C3C.cs",
+      "original_sha256_lf": "2a48ec8f1c77116274c89f4ff8fc2d99760941feeb51fc9b7a14110ed6ed9911",
+      "published_sha256_lf": "e982ac7856d7f7168f09ec527d82cd169d966141ae9e06c62dbe550ce336bd40",
+      "published_path": "src/first-person/managed/Services/Camera/FirstPersonVisibility.cs",
+      "comment_header_bytes": 921,
+      "original_bytes": 11651
+    },
+    "managed/Services/Camera/FirstPersonWorldGuard.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "f82b2f20b1e9f58a5c1014c082f115387a63197f1d11d05ef521009284b89d6c",
+      "published_sha256_lf": "36d57f8b5e7f3b02ae2b0acf76f5af6435ed28f84a324c0887733b1ab10b68eb",
+      "published_path": "src/first-person/managed/Services/Camera/FirstPersonWorldGuard.cs",
+      "comment_header_bytes": 901,
+      "original_bytes": 10871
+    },
+    "managed/Services/Camera/Fix14CProbe.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "8ee95b5eb5e68945c1308954f96ee14001f2731fd33900ed6e0c517afa0ac9ed",
+      "published_sha256_lf": "497bbe9d685bd99eb35a1bcf55283e524cbbfac70e212b3910a3d156ad462961",
+      "published_path": "src/first-person/managed/Services/Camera/Fix14CProbe.cs",
+      "comment_header_bytes": 899,
+      "original_bytes": 3815
+    },
+    "managed/Services/Camera/HeadBoneCamera.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "1071b53d07e0f4985482954a00d4406b038e5c96c4486c150926217bf2b9a9be",
+      "published_sha256_lf": "20898e9ccf02318969b1d0a1bf5f4137e52c9844529ed5a3765c0bf7a5e765a4",
+      "published_path": "src/first-person/managed/Services/Camera/HeadBoneCamera.cs",
+      "comment_header_bytes": 881,
+      "original_bytes": 16944
+    },
+    "managed/Services/Camera/HeadTrackService.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "30aa5561747a783e0fb51e9e81ba09d764f9bad8b8cd4650f94926d3a80b5811",
+      "published_sha256_lf": "9fce504a897f1f514d4a237922bba457d1e3fefe0bff9ceb65951ff7be71226c",
+      "published_path": "src/first-person/managed/Services/Camera/HeadTrackService.cs",
+      "comment_header_bytes": 886,
+      "original_bytes": 12558
+    },
+    "managed/Services/Camera/JumpPhysics/AirMomentumMotor.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "688b095c802663a14464b46251a12ae2909ccbeae0f2e488d6bde03f44237692",
+      "published_sha256_lf": "ac6d6f10c46e1adb8371ff47d04f30d1778e5afcfbb41a71ee6a4d34aec9f38a",
+      "published_path": "src/first-person/managed/Services/Camera/JumpPhysics/AirMomentumMotor.cs",
+      "comment_header_bytes": 864,
+      "original_bytes": 2233
+    },
+    "managed/Services/Camera/JumpPhysics/JumpMotor.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "198a10c03e8e9d56b86ed171ff6c76c167f0cf69f83fad08086da26666767b2e",
+      "published_sha256_lf": "d770d0bbff06b8d2e293a635c55b94840449bce25b9924e6a976bbc17c80a232",
+      "published_path": "src/first-person/managed/Services/Camera/JumpPhysics/JumpMotor.cs",
+      "comment_header_bytes": 901,
+      "original_bytes": 8304
+    },
+    "managed/Services/Camera/JumpPhysics/JumpPositionService.cs": {
+      "origin": "NWN_EE_Jump_WorldArc_J4/source/JumpPositionService.after.cs",
+      "original_sha256_lf": "37f106f64a42e5aebdac6879800cdd139aae0e774722195b4b9faa35064d7de3",
+      "published_sha256_lf": "f00668c43a69a50e2ec396c7d167ee9f05921493c65e1e372a3a049be21425e0",
+      "published_path": "src/first-person/managed/Services/Camera/JumpPhysics/JumpPositionService.cs",
+      "comment_header_bytes": 1039,
+      "original_bytes": 16930
+    },
+    "managed/Services/Camera/JumpPhysics/JumpPreview.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "a6d6cc6ada4e654b2374cc65fe8073f3f3477408d0b4104f8da4228766454b49",
+      "published_sha256_lf": "b733f729b3de959bbe26af34268b0a931e99bc96a8a963441c818d72bc7eb320",
+      "published_path": "src/first-person/managed/Services/Camera/JumpPhysics/JumpPreview.cs",
+      "comment_header_bytes": 849,
+      "original_bytes": 1008
+    },
+    "managed/Services/Camera/JumpPhysics/JumpWalkBridgeService.cs": {
+      "origin": "NWN_EE_JumpSlope_Trace_J1/source/JumpWalkBridgeService.after.cs",
+      "original_sha256_lf": "593955ded18cc8c12b4851d50f9c5e00d39085dedb50b9ae5f38c67df9110b36",
+      "published_sha256_lf": "755cf507d0220410693affa0e6a1ce0183af68e4a3e2b55cdba47a4f87320841",
+      "published_path": "src/first-person/managed/Services/Camera/JumpPhysics/JumpWalkBridgeService.cs",
+      "comment_header_bytes": 935,
+      "original_bytes": 1289
+    },
+    "managed/Services/Camera/JumpPhysics/RayCollisionWorld.cs": {
+      "origin": "git checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34",
+      "original_sha256_lf": "6c1a4a1c1ae241d71fb8bda1581e57fc822171e13e05de010069ae3bc4ef703e",
+      "published_sha256_lf": "f86c6ebe04a3d0ca49b993686c21d1ab261f3f8017a0c94805c103f6124b093b",
+      "published_path": "src/first-person/managed/Services/Camera/JumpPhysics/RayCollisionWorld.cs",
+      "comment_header_bytes": 872,
+      "original_bytes": 5181
+    },
+    "managed/Services/Camera/MouseLookService.cs": {
+      "origin": "NWN_EE_DotCrescent_CombatRed_R2/source/MouseLookService.after.cs",
+      "original_sha256_lf": "656cf769c51aacd37fbf0a4b1a88eeff8e0f8966dc98d096e02ef5e69f23e1fe",
+      "published_sha256_lf": "f43524c50c258c219ba4eaf547a3d817ddc82059383940d9fca8d314f6554b44",
+      "published_path": "src/first-person/managed/Services/Camera/MouseLookService.cs",
+      "comment_header_bytes": 935,
+      "original_bytes": 28541
+    },
+    "managed/Services/Camera/StepGuardService.cs": {
+      "origin": "NWN_EE_WalkMutation_Trace_D5_R1/source/StepGuardService.D5.cs",
+      "original_sha256_lf": "4c0c2158048c260048a1a7ccd30ef3af44d0734b80fc2c0a74fbf65e671cf66a",
+      "published_sha256_lf": "48d4564eba148e9ff503db3df297275ee2411de46021e17349f53c9d5ffba861",
+      "published_path": "src/first-person/managed/Services/Camera/StepGuardService.cs",
+      "comment_header_bytes": 919,
+      "original_bytes": 8956
+    },
+    "managed/Services/Camera/UniversalEyeClearance.cs": {
+      "origin": "NWN_FP_AdaptiveCore_Fix14D_C3C/source/UniversalEyeClearance.C3C.cs",
+      "original_sha256_lf": "d7a7b3159d344f8b79a2f1510d75deb5e175b2009c816bcc2f702254c75d63c4",
+      "published_sha256_lf": "8c19b66192a97654c13c808e6321d88317745336e7b7edc5260795ecd925732a",
+      "published_path": "src/first-person/managed/Services/Camera/UniversalEyeClearance.cs",
+      "comment_header_bytes": 948,
+      "original_bytes": 11735
+    },
+    "managed/Services/Hotkeys/HotkeyServerLinkService.cs": {
+      "origin": "D4 observer applied to pinned checkpoint source",
+      "original_sha256_lf": "c7d157484697e71841b8f42230368324c8cf7964b51f06adb03c05f7598db82c",
+      "published_sha256_lf": "bab42e3413677e1f769bb84dbb6643ff7282390207e4c3a78b992c8644f682a3",
+      "published_path": "src/first-person/managed/Services/Hotkeys/HotkeyServerLinkService.cs",
+      "comment_header_bytes": 966,
+      "original_bytes": 9888
+    }
+  }
+}

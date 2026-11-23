@@ -52,4 +52,4 @@ The **J4 development snapshot** has been tested locally with a body-aware first-
 - [Source integration and publication notes](docs/FIRST_PERSON_SOURCE.md)
 - [First-person source overlay](src/first-person/README.md)
 
-The initial GitHub documentation commit includes one verified, commented native jump-bridge source file. The **full local source overlay still requires publication from the Windows working checkout**; the complete tested mod is not yet in this GitHub repository. The development package deliberately contains no game DLLs, save files, config secrets or private logs.
+The [30-file annotated J4 source overlay](src/first-person/managed) is published, with an [integrity manifest](src/first-person/SOURCE_MANIFEST.json), [source map](docs/FIRST_PERSON_CODEMAP.md) and [provenance report](docs/PUBLICATION_PROVENANCE.md). It depends on a matching NWNCX:EE build; a tested public binary release has not yet been published. The development package deliberately contains no game DLLs, save files, config secrets or private logs.

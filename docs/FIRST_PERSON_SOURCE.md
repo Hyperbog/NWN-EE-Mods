@@ -6,7 +6,7 @@ The commented source overlay is located under `src/first-person/managed/`, mirro
 
 The source package comprises 29 previously checkpointed first-person changes plus later C3C/D4/D5/R3/J4 additions. It must be exported from the **validated local working checkout** to preserve the exact combination of fixes. The existing `src/diagnostics/` probes are earlier historical experiments and should not be confused with the integrated J4 code.
 
-The initial GitHub documentation milestone contains only the verified jump-bridge sample. **Until the remaining source is pushed, GitHub does not contain a complete J4 source snapshot.**
+The complete 30-file J4 source overlay is tracked under `src/first-person/managed/`, reconstructed from the pinned local checkpoint and exact C3C/D4/D5/R3/J4 fixtures. See `SOURCE_MANIFEST.json` for per-file implementation hashes. It still requires a compatible NWNCX:EE build.
 
 ## Safety rules for source publication
 
