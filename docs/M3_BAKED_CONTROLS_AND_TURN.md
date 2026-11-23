@@ -86,3 +86,19 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_VerifyNative
 ```
 
 Report: `C:\Projects\M3_NativeArtifacts.txt`. Upload the text report only. The verifier has **not** been run on Windows yet. No M3 installation should be attempted before examining the new package hash and preparing a separate, reversible switch that preserves the existing installed M1 `version.dll`, the previous original backup and `cx.cfg`. Do not use the old M1-pinned switch script to install M3.
+
+
+## M3 NativeAOT artifacts verified; preserve currently installed M1 (2026-11-22)
+
+The developer uploaded M3_NativeArtifacts.txt, confirming PASS for all five AMD64 DLLs and ZIP SHA-256 matches, and intact README and LICENSES ZIP entries. The new M3 version.dll is **25,254,400 bytes**, SHA-256 **1ec40d2fd60454dc92e8bfd29ca591600fba0db1d3f5e2ccc4232b09868e891d**. The four companion DLLs exactly match the prior verified M1 package. The source CameraKnobs checksum matches the staged M3 checksum (59881B5270A25F62D75EEFEF82DCE186A262B309D02D24A7563CF793D35250DC). NativeAOT packaging integrity has passed; runtime startup, menu, and mouse-turn behavior have not been tested.
+
+The next safety gate is to preserve the **currently installed M1** runtime separately from the older pre-M1 backup. M3_BackupInstalledM1.ps1 refuses existing backup/report paths and verifies the installed executable, installed M1 DLLs, old pre-M1 backup, and new M3 stage package before copying all five installed M1 DLLs into C:\Projects\M3_PreM3_M1_Runtime_Backup. Each copy is independently SHA-256 verified, and a text report is written at C:\Projects\M3_M1_BackupVerification.txt. The script does not install M3 or modify the game/cx.cfg. It is statically checked but has not yet been executed on Windows.
+
+Run with NWN closed:
+
+~~~cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M3/M3_BackupInstalledM1.ps1' -OutFile 'C:\Projects\M3_BackupInstalledM1.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_BackupInstalledM1.ps1"
+~~~
+
+Upload only the verification text report. Stop for mismatched hashes or an existing backup, and preserve the original baseline backup. The next step is a scratch-only restore rehearsal before any new hash-pinned live M3 installer. The old M1 RuntimeSwitchFix1 tool is not suitable for installing M3.
