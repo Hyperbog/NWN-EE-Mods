@@ -36,3 +36,12 @@ git -C "C:\Projects\cx" apply -R "C:\Projects\M1_CX_Settings.patch"
 Build only against the compatible pinned CX source. Run CX's settings self-check: registry uniqueness, 14 User rows in the Driving submenu, and correct persisted legacy keys. Verify `/settings` visibility, toggle and slider persistence after restart, action-camera prerequisites, Chase/Top-down stability, disabled/re-enabled options, walk/run, blocked-wall contact, jumping, attacks and helmet swaps. Do not replace any game DLLs before a successful matching Windows build and reversible installer test.
 
 **Not yet verified:** build, actual UI rendering, game persistence, input-release behavior, and runtime regression results. MB1 adjustable motion blur is a separate future milestone.
+
+
+## M1 local source reconciliation (2026-11-22)
+
+A local `git apply --check` reported **hunk failure at CameraKnobs.cs:142**. This establishes a mismatch between the published J4 source and the developer's live `C:\Projects\cx` checkout, not a failed build. The check did not change the local file. Do not apply with relaxed hunk context or replace the local source with the archived copy.
+
+Use the [M1 source reconciler](../src/first-person/milestones/M1/M1_Reconcile.ps1) for a declaration-only alternative. Download it into `C:\Projects\M1_Reconcile.ps1`. First run with **no arguments** to preview and validate all 11 expected declarations. It refuses mismatched or partially applied declarations; only after a successful preview, use `-Apply`. Application saves the previous source bytes in `C:\Projects\NWN_FP_M1_BACKUPS` before writing. Unrelated local edits are preserved, and the originally published archive and its manifest are not changed.
+
+The reconciler has been checked against the published J4 source, **not** the inaccessible Windows working tree. Build/runtime verification remains pending. If validation reports missing or ambiguous declarations, stop and collect the local matching source lines; do not force a patch.

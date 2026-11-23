@@ -68,7 +68,7 @@
 
 ### 8. In-game CX settings — M1 source patch ready; not yet built or tested
 
-An isolated [M1 patch](M1_CX_SETTINGS_MENU.md) reorganizes the existing Driving-mode CX knob rows into a **Controls → Enhanced First Person** submenu. It exposes the current `driving.firstperson`, sensitivity, head tracking, reticle, and hit-marker values without introducing duplicate configuration keys. This does **not** alter J4 jumping, movement, animation, camera synchronization, or C3C protection. The preserved 30-file J4 source archive is unchanged. **A committed patch is not proof of a working in-game menu; local integration, Windows build, and gameplay tests remain pending.**
+An isolated [M1 patch](M1_CX_SETTINGS_MENU.md), with a [source-drift reconciler](../src/first-person/milestones/M1/M1_Reconcile.ps1), reorganizes the existing Driving-mode CX knob rows into a **Controls → Enhanced First Person** submenu. It exposes the current `driving.firstperson`, sensitivity, head tracking, reticle, and hit-marker values without introducing duplicate configuration keys. This does **not** alter J4 jumping, movement, animation, camera synchronization, or C3C protection. The preserved 30-file J4 source archive is unchanged. **A committed patch is not proof of a working in-game menu; local integration, Windows build, and gameplay tests remain pending.**
 
 ## Dependencies, installation, and compatibility
 
