@@ -89,3 +89,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\\Projects\\M1_SourceAudi
 The audit reads the current `HEAD`, branch, tracked modified-source count and **30 source-file SHA-256 comparisons** against the J4 manifest. It makes **no writes to the CX source or Git repository**. It writes only `C:\\Projects\\M1_SourceAudit.txt` outside the checkout; send that report in the development conversation. The script's PowerShell runtime and local Windows compatibility are not yet independently tested.
 
 **M1 status: blocked pending full source comparison.** The previous M1 patch and reconciler are retained as artifacts with explicit application refusal; do not run `-Apply` against the newer upstream file. Keep existing DLLs, local source edits, configuration and all game assets unchanged.
+
+See [M1 audit results](M1_SOURCE_AUDIT_RESULTS.md) for the verified 16/14/0 split and the safe source collection instructions.
