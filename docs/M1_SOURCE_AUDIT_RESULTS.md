@@ -262,3 +262,26 @@ The script does not launch the game or run CX self-checks. File replacement is a
 ### Initial gameplay smoke test after a successful install
 
 Start NWN:EE normally with the test DLL. Check that the game reaches the main menu without a CX initialization failure, open `/settings` in-game, verify Controls → Enhanced First Person and the regular/Advanced controls, then use a disposable offline save for the reticle, action camera, turning, walking against a wall, jumping, combat animations, and helmet unequip/re-equip. In particular, the previously observed blocked-wall walking-in-place and helmet-triggered running-in-place are **not known resolved** by M1. Exit the game before restoring the original baseline. Do not interpret a clean DLL hash as proof of gameplay correctness.
+
+
+## Guarded runtime status action passed (2026-11-22)
+
+The user ran the existing pinned `M1_RuntimeSwitch.ps1 -Action Status` on Windows and uploaded `M1_RuntimeSwitch_Status.txt`. The report states `Action: Status` and `Result: READ_ONLY`. Both before and after checksums of the installed `version.dll` are `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0`, the verified original working build. The five original backup DLLs, four installed companion DLLs, and the expected `nwmain.exe` checksum passed. The script reported no modifications to `cx.cfg`, the game executable, or CX sources.
+
+**Next checkpoint: optional user-executed, one-file runtime installation.** After closing NWN, run:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitch.ps1" -Action InstallM1
+```
+
+Expected result: `M1_RuntimeSwitch_InstallM1.txt` reporting `SWITCHED_AND_VERIFIED` and the installed `version.dll` hash `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86`. The other four DLLs remain unchanged. If the command fails, stop and report the exact exception; do not bypass the refused state or attempt a manual DLL swap.
+
+After successful installation, start NWN, confirm the client and CX initialize, open `/settings`, and inspect **Controls → Enhanced First Person** including Advanced disclosure. Test camera/action activation and persistence in an offline save, and separately reticle, combat feedback, walls, helmet swaps, and jumping. The known blocked-wall walking-in-place and helmet-related running-in-place behaviors remain open regressions and were not corrected by M1, which is a settings UI change.
+
+**Restoration command**, only with NWN closed:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitch.ps1" -Action RestoreOriginal
+```
+
+Never run InstallM1 and RestoreOriginal together. Restore writes `M1_RuntimeSwitch_RestoreOriginal.txt` and verifies the original `version.dll` hash; the five-DLL backup remains intact. None of these game actions have yet been performed or verified in the developer's environment.
