@@ -72,3 +72,17 @@ echo M3_NATIVE_BUILD_EXIT=%ERRORLEVEL%
 ```
 
 Upload `M3_NativeBuild.log` and the exit code; on failure, do not retry without reviewing the error. A successful command exit does not replace the subsequent five-DLL PE/hash/ZIP integrity check and a new pinned reversible installer. **Do not deploy the M3 package or use the M1 hash-pinned switch script.** The installed M1 DLL, original CX checkout, `cx.cfg`, and rollback backup remain protected. Turning smoothness is untested until an actual M3 gameplay test.
+
+
+## NativeAOT M3 build passed — five-DLL integrity gate (2026-11-22)
+
+The developer reported `M3_NATIVE_BUILD_EXIT=0` and supplied `M3_NativeBuild.log`. The log records successful funchook, bootstrap/thunk, xatlas, audio, FSR 3.1, DoF permutations, NativeAOT linker and ZIP/package assembly. Two warnings about CMake compatibility and policy CMP0194 were nonfatal; no build errors appear. The native symbol check was **skipped** because `nwmain.exe` was not in the build's location. The full package contains five DLLs plus `README.txt` and `LICENSES.txt`, but the log alone does not prove file-by-file integrity.
+
+Next, run the separate read-only [M3_VerifyNative.ps1](../src/first-person/milestones/M3/M3_VerifyNative.ps1). It pins the M3 staged CameraKnobs SHA-256 `59881B5270A25F62D75EEFEF82DCE186A262B309D02D24A7563CF793D35250DC`, checks the five AMD64 PE headers and byte-identical SHA-256 ZIP contents, checks both metadata files, confirms four companion DLLs remain equal to the previously installed M1 baseline, and records the **new, not-yet-pinned M3 `version.dll` SHA-256**. It refuses existing reports and never installs files.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M3/M3_VerifyNative.ps1' -OutFile 'C:\Projects\M3_VerifyNative.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_VerifyNative.ps1"
+```
+
+Report: `C:\Projects\M3_NativeArtifacts.txt`. Upload the text report only. The verifier has **not** been run on Windows yet. No M3 installation should be attempted before examining the new package hash and preparing a separate, reversible switch that preserves the existing installed M1 `version.dll`, the previous original backup and `cx.cfg`. Do not use the old M1-pinned switch script to install M3.
