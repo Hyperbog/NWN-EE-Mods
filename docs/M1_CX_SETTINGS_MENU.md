@@ -1,6 +1,6 @@
 # M1 — Enhanced First Person in CX settings
 
-**Status (2026-11-22): J4+M1 builds, five-DLL backup, offline rollback rehearsal, and guarded read-only runtime status passed. Actual DLL installation, CX self-checks, and in-game testing remain pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
+**Status (2026-11-22): builds and original-runtime backup verified; first controlled InstallM1 attempt stopped with a File.Replace argument exception. Post-failure DLL hash and scratch API probe pending. No successful runtime installation or in-game testing.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
 
 ## What it changes
 

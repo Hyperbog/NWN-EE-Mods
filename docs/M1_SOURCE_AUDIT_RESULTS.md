@@ -285,3 +285,25 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitc
 ```
 
 Never run InstallM1 and RestoreOriginal together. Restore writes `M1_RuntimeSwitch_RestoreOriginal.txt` and verifies the original `version.dll` hash; the five-DLL backup remains intact. None of these game actions have yet been performed or verified in the developer's environment.
+
+
+## M1 runtime installation blocked by File.Replace argument exception (2026-11-22)
+
+The developer ran `M1_RuntimeSwitch.ps1 -Action InstallM1`. The procedure reached `[IO.File]::Replace($temp, $target, $null)` and PowerShell reported `ArgumentException: The path is not of a legal form` (three-argument Replace invocation). This was **not** a verified installation success. The script did not write an InstallM1 completion report. The installed DLL hash after the exception is **not yet observed** and must not be assumed unchanged.
+
+Microsoft's `System.IO.File.Replace` documentation permits a null backup argument in principle but includes path-format exceptions; a Windows-specific invocation or path problem has not yet been isolated. Do **not** rerun InstallM1, make manual file replacements or claim game startup validation.
+
+1. Re-run the existing **read-only Status** action with a fresh report output:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitch.ps1" -Action Status -ReportPath "C:\Projects\M1_RuntimeSwitch_AfterError.txt"
+```
+
+2. Download and run [M1_ReplaceApiProbe.ps1](../src/first-person/milestones/M1/M1_ReplaceApiProbe.ps1). The probe creates **only disposable text files** under `D:\SteamLibrary\steamapps\common\M1_ReplaceApiProbe` (outside the game), attempts both null-backup and named-backup `File.Replace` invocations on the same volume, checks the resulting scratch contents, and writes `C:\Projects\M1_ReplaceApiProbe_Result.txt`. It **never reads or writes game DLLs**, the original backup or the CX checkout.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_ReplaceApiProbe.ps1' -OutFile 'C:\Projects\M1_ReplaceApiProbe.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_ReplaceApiProbe.ps1"
+```
+
+The probe refuses any existing scratch destination or report. If either script fails, collect the exact error and stop. After both reports are reviewed, correct the installer with an isolated regression test before any actual retry. Do not delete or overwrite the five-DLL backup. The diagnostic probe is statically checked but not yet executed on Windows.
