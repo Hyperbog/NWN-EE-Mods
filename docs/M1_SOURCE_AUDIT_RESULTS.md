@@ -405,3 +405,28 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitc
 Save `C:\Projects\M1_RuntimeSwitchFix1_RestoreOriginal.txt` if restoration is necessary. The script verifies exact original and new checksums and preserves another displaced DLL copy. Never use the retired original `M1_RuntimeSwitch.ps1`. Do not modify or remove the baseline backup at `C:\Projects\M1_PreM1_Runtime_Backup`.
 
 Request from the developer: observed CX game startup result, screenshot or short description of **Controls → Enhanced First Person**, and the CX log for review if a self-check fails. Gameplay validation has not yet been observed.
+
+
+## Initial in-game feedback — M2 corrective source audit (2026-11-22)
+
+The developer confirms that **Controls → Enhanced First Person** appears in NWN:EE with installed M1. The **Head follows the crosshair** toggle appears ineffective, and several settings descriptions are difficult to understand. This is an in-game menu-visibility pass, **not** evidence that all toggles work. The user requests each toggle be checked, clearer labels/tooltips, then highest-quality motion blur.
+
+Source audit identified that `driving.headtrack` controls the player's **look-at animation**, but `fphead.mode` separately controls how the first-person camera follows the animated head joint. `HeadTrackService.Wanted` already reads `MouseLook.HeadTrack.V` each frame and also requires the action-camera capture and valid animation hooks. The current toggle could therefore appear ineffective from first person. The actual animation-hook behavior requires runtime diagnostics and is **not yet fixed or proven**.
+
+A second definite mismatch is `driving.face`: camera-facing movement is forced on during first-person action aiming, so its old visible toggle cannot affect that mode. The source-only M2 repair makes it Advanced and explains the limitation. Recenter and right-drag are similarly conditional. The source also showed that the optional cursor-release key is **Z**, contrary to the older Alt-toggle text.
+
+[M2 source audit](M2_SETTINGS_AUDIT.md) and [M2 clarity patch](../src/first-person/milestones/M2/M2_MenuClarity.patch) preserve existing knob keys/defaults and J4 movement and rendering. The source patch was reconstructed and **applied in an independent patch-context simulation** against the published J4+M1 text (7 M1 hunks + 5 M2 hunks). Its Windows `git apply`, compilation and runtime remain unverified. Do not update the installed M1 DLL using this source patch until another isolated build and rollback verification.
+
+### Next: create separate M2 settings source stage
+
+Download the patch and stage helper from the audited GitHub commit, then run:
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M2/M2_MenuClarity.patch' -OutFile 'C:\Projects\M2_MenuClarity.patch'"
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M2/M2_StageClarity.ps1' -OutFile 'C:\Projects\M2_StageClarity.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M2_StageClarity.ps1"
+```
+
+Expected report: `C:\Projects\M2_SettingsStageReport.txt`. This produces a separate `C:\Projects\NWN_FP_M2_SETTINGS_STAGE` and does not change `C:\Projects\cx`, installed DLLs, `cx.cfg` or the verified M1 stage.
+
+**MB1 design direction:** reuse the pinned Alloy renderer's existing camera + per-object/skinned/dangly motion vectors and depth, then add a shutter-based, occlusion-aware, adaptive blur before HUD composite. The rendering order and upscaling compatibility must be audited against the **actual pinned source** before creating MB1 code. Motion blur is a separate milestone after the M2 in-game toggle audit.

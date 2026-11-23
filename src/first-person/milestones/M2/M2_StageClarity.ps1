@@ -17,8 +17,15 @@ if (Test-Path -LiteralPath $ReportPath) { throw 'Refusing to replace an existing
 if (-not (Test-Path -LiteralPath $PatchPath -PathType Leaf)) { throw "Patch missing: $PatchPath" }
 $original = [IO.Path]::GetFullPath('C:\Projects\cx')
 $game = [IO.Path]::GetFullPath('D:\SteamLibrary\steamapps\common\Neverwinter Nights')
-if ($M2Root -eq $M1Root -or $M2Root -eq $original -or $M2Root.StartsWith($game + '\', [StringComparison]::OrdinalIgnoreCase)) {
-    throw 'M2 destination must be a separate staging directory.'
+function IsUnder([string]$child, [string]$parent) {
+    $prefix = $parent.TrimEnd([char[]]@([char]'\', [char]'/')) + [IO.Path]::DirectorySeparatorChar
+    return $child.Equals($parent, [StringComparison]::OrdinalIgnoreCase) -or
+           $child.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)
+}
+foreach ($protected in @($M1Root, $original, $game, 'C:\Projects\M1_PreM1_Runtime_Backup')) {
+    if ((IsUnder $M2Root $protected) -or (IsUnder $protected $M2Root)) {
+        throw "M2 must be a new directory separate from protected game, backup and CX trees: $protected"
+    }
 }
 $sourceCamera = Join-Path $M1Root 'managed\Services\Camera\CameraKnobs.cs'
 if (-not (Test-Path -LiteralPath $sourceCamera -PathType Leaf)) { throw 'M1 camera source missing.' }
