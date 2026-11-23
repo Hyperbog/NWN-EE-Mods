@@ -65,6 +65,11 @@
 - Configurable first-person reticle, hit marker and optional UI feedback. The `cx.cfg` file belongs to each player and is not included in source control.
 - Diagnostics are for reproducing behavior; do not publish raw `cx.log` files that contain local machine or session details.
 
+
+### 8. In-game CX settings — M1 source patch ready; not yet built or tested
+
+An isolated [M1 patch](M1_CX_SETTINGS_MENU.md) reorganizes the existing Driving-mode CX knob rows into a **Controls → Enhanced First Person** submenu. It exposes the current `driving.firstperson`, sensitivity, head tracking, reticle, and hit-marker values without introducing duplicate configuration keys. This does **not** alter J4 jumping, movement, animation, camera synchronization, or C3C protection. The preserved 30-file J4 source archive is unchanged. **A committed patch is not proof of a working in-game menu; local integration, Windows build, and gameplay tests remain pending.**
+
 ## Dependencies, installation, and compatibility
 
 This mod **depends on [NWNCX:EE](https://github.com/nwncxee/cx)**. The J4 mod is integrated into a matching custom NWNCX:EE runtime and is *not* a standalone NWScript module or an independent drop-in plugin. A newer upstream release may overwrite the custom `version.dll`, requiring integration and another tested build. Never combine DLLs from different builds. See [source integration](FIRST_PERSON_SOURCE.md).
@@ -80,9 +85,10 @@ The 30-file modified source overlay is published under [src/first-person/managed
 | **R1–R3** | Minimal dot, compact red side crescents, combat-red dot, removal of pending-action square |
 | **J1–J3** | Diagnosed and guarded terrain-relative jumping and elevation discontinuities |
 | **J4 — current working milestone** | Independent jump arc with validated native terrain-contact landings uphill and downhill |
+| **M1 — CX settings source patch** | Driving-mode settings submenu exposed through existing knobs; patch committed, build and in-game validation pending |
 
 ## How this reference is maintained
 
 For each gameplay change, update the **affected feature section**, its **status/limits**, and the **change-history table**. Where applicable, add a short test result and link to the relevant source commit. Keep planned features clearly distinguished from implemented features; never describe an experimental interaction as universally supported.
 
-**Not implemented as of J4:** arbitrary object/platform jumping; guaranteed compatibility with every NWN:EE model, server and future CX build; independently attributable personal hit confirmations.
+**Not implemented or verified as of M1:** arbitrary object/platform jumping; guaranteed compatibility with every NWN:EE model, server and future CX build; independently attributable personal hit confirmations; tested M1 in-game menu; velocity-based adjustable motion blur.

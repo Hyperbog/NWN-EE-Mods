@@ -33,6 +33,7 @@ The [30-file annotated J4 source overlay](src/first-person/managed) is preserved
 - [J4 technical behavior and test results](docs/FIRST_PERSON_J4.md)
 - [Source code map](docs/FIRST_PERSON_CODEMAP.md)
 - [Source integration, build and safety notes](docs/FIRST_PERSON_SOURCE.md)
+- [M1 Enhanced First Person CX settings patch — unbuilt / untested](docs/M1_CX_SETTINGS_MENU.md)
 - [Historical development and diagnostics](docs/DEVELOPMENT.md)
 - [Technical references](docs/REFERENCES.md)
 
