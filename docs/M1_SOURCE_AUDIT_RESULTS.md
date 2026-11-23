@@ -160,3 +160,33 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_VerifyNative
 If successful, upload `M1_NativeArtifacts.txt` (text metadata and hashes only; no executable DLLs). If unsuccessful, share the exact exception and do not install anything.
 
 A source-build pass does not establish that the J4+M1 runtime will load or behave correctly. Dedicated off-device self-checks and a **reversible isolated game test** remain mandatory, including the known blocked-wall walking-in-place and helmet-swap running-in-place regression. Do not replace installed working DLLs or `cx.cfg` yet. The verifier has not yet been Windows-executed.
+
+
+## Five-DLL NativeAOT artifact gate — passed (2026-11-22)
+
+The developer supplied both `M1_NativeBuild.log` and `M1_NativeArtifacts.txt`. The native build log confirms MSVC compiled the funchook, bootstrap/thunk, xatlas, audio, FSR/DoF and NativeAOT components and packaged `cx-windows-x64/` and its ZIP. No error lines were reported; two informational CMake warnings concerned minimum version compatibility and policy CMP0194. The build **skipped a native symbol check** because the Windows script lacks `nwmain.exe`.
+
+The verifier report lists all five expected AMD64 PE DLLs, with matching SHA-256 values in the package directory and ZIP. The aggregate DLL byte size is 89,197,208 bytes. These results establish **artifact-level integrity**, not startup, runtime self-check, gameplay safety or a functioning settings panel.
+
+| DLL | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `version.dll` | 25,240,064 | `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86` |
+| `cx_openal.dll` | 3,834,368 | `3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4` |
+| `phonon.dll` | 52,950,168 | `ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d` |
+| `shaderc_shared.dll` | 6,962,688 | `8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6` |
+| `vma.dll` | 209,920 | `504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e` |
+
+### Independent CX settings registry capacity check
+
+The pinned CX registry `KnobGroup.SelfCheck.cs` enforces a maximum of 14 `Tier.User` rows per submenu. An independent declaration-level analysis of J4+M1's Driving group found 13 ordinary User knobs plus the one User-tier group master = **14**; the four new visible controls replace four previous default-visible controls moved to Advanced. This does not replace an actual runtime `KnobGroup.SelfCheck` or settings panel visual test.
+
+### Read-only game preflight
+
+The next safe gate is [M1_GamePreflight.ps1](../src/first-person/milestones/M1/M1_GamePreflight.ps1). Provide the actual folder containing `nwmain.exe` via `-GameBin`; it refuses CX source/staging paths and running game processes. It pins the five verified package SHA-256 hashes, reads the installed game executable and currently installed same-named DLL hashes without changing them, and saves `C:\Projects\M1_GamePreflight.txt` **outside the game and staging checkout**. The script does **not install or back up** any files. If the report exists, it refuses overwrite.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_GamePreflight.ps1' -OutFile 'C:\Projects\M1_GamePreflight.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_GamePreflight.ps1" -GameBin "FULL_DIRECTORY_CONTAINING_nwmain.exe"
+```
+
+Once the report is reviewed, create a verified restorable backup and test the new M1 package in a controlled, reversible install, followed by CX self-check logs, menu toggles/persistence, combat/reticle, walls, helmet swaps, jumping and movement regressions. **Never install the native package without a restorable current runtime snapshot.** Motion blur MB1 remains a separate milestone. The preflight script has not yet been Windows-tested.
