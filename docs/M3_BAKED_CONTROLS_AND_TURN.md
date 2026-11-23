@@ -42,3 +42,33 @@ echo M3_MANAGED_BUILD_EXIT=%ERRORLEVEL%
 ```
 
 Upload `C:\Projects\M3_ManagedCompile.log` and its exit code. Do not install or overwrite any DLL. If compilation fails, the log will identify the precise M3 source errors; if it succeeds, plan an isolated NativeAOT Windows build and reverify all package hashes. Runtime jitter and mouse-capture behavior remain unverified until a guarded M3 installation and gameplay test.
+
+
+## Isolated M3 managed compilation verified (2026-11-22)
+
+The developer uploaded `M3_ManagedCompile.log`, generated in `C:\Projects\NWN_FP_M3_BAKED_STAGE` with:
+
+```cmd
+dotnet build managed\cx_managed.csproj -c Release -r win-x64 -p:PublishAot=false -v:minimal
+```
+
+Full log review confirms **Build succeeded, 150 warnings, 0 errors**, elapsed **9.21 seconds**. All warnings occur outside the modified `managed\Services\Camera` code. The warning profile matches the earlier managed baseline (63 CS0649, 30 CS0219, 14 CS0169, 13 CS8602, 11 CA2014, 5 CS8600, 5 CS8604, 4 CS0162, 3 CS0675, 1 CS8793 and 1 CS0414). The generated managed artifact is `managed\bin\x64\Release\net10.0\win-x64\cx_managed.dll`, **not** a NativeAOT game-installable `version.dll`.
+
+### Next gate — Native Windows build in isolated M3 source
+
+Run from the Visual Studio Developer Command Prompt:
+
+```cmd
+cd /d "C:\Projects\NWN_FP_M3_BAKED_STAGE"
+git submodule update --init --recursive
+echo M3_SUBMODULE_EXIT=%ERRORLEVEL%
+```
+
+Proceed only on submodule exit 0. Then:
+
+```cmd
+"C:\Program Files\Git\bin\bash.exe" ./build-win-native.sh > "C:\Projects\M3_NativeBuild.log" 2>&1
+echo M3_NATIVE_BUILD_EXIT=%ERRORLEVEL%
+```
+
+Upload `M3_NativeBuild.log` and the exit code; on failure, do not retry without reviewing the error. A successful command exit does not replace the subsequent five-DLL PE/hash/ZIP integrity check and a new pinned reversible installer. **Do not deploy the M3 package or use the M1 hash-pinned switch script.** The installed M1 DLL, original CX checkout, `cx.cfg`, and rollback backup remain protected. Turning smoothness is untested until an actual M3 gameplay test.
