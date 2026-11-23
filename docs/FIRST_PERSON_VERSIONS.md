@@ -29,3 +29,7 @@ Launch NWN and compare first-person menu, mouse turning idle and during walking,
 ## M4 source checkpoint
 
 [M4_VERSION.json](../src/first-person/milestones/M4/M4_VERSION.json) records the exact patch, base-stage pin and staging recipe. M4 makes Action Camera mandatory in Driving and uses Z for temporary cursor release, while hiding obsolete control toggles. Build with [M4_StageBuild.ps1](../src/first-person/milestones/M4/M4_StageBuild.ps1), then record the new native DLL SHA-256 in Git before installation. Do not mistake a Git source commit for a committed executable binary.
+
+## M5 source checkpoint — NPC dialogue camera
+
+M4-rc1 was installed (report shows SWITCHED_AND_VERIFIED, M3→M4). The user observed the native conversation camera orbiting and zooming away from the eyes during NPC dialogue. The log confirms mode 2 with `gate: dialog camera`. [M5](../src/first-person/milestones/M5/M5_NpcDialogueCamera.patch) fixes the camera gate and separately frees the cursor, without changing chase/top-down, cutscenes or game files. The M5 patch and build script are versioned; Windows build/gameplay testing is pending.

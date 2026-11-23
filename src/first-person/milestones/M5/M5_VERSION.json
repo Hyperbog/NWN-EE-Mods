@@ -1,0 +1,25 @@
+{
+  "version": "M5-source",
+  "parent_release": "M4-rc1",
+  "status": "Source patch and single-command isolated build recipe committed; Windows compilation and live test pending",
+  "cause": "CameraService.Check returns Gate.Dialog when CNWCModule.DialogCamera is set, which stops first-person eye placement during NPC conversation.",
+  "evidence": "User NPC screenshots and cx.log [camera] gate: dialog camera while mode 2; M4 install SWITCHED_AND_VERIFIED",
+  "changes": [
+    "Ignore only ordinary DialogCamera gate when verified first-person Driving camera is active; do not bypass cutscene, attachment, lock or other camera modes.",
+    "Hold the pre-dialog yaw/pitch during NPC conversation and suppress engine dialogue turn impulses; restore that orientation on exit.",
+    "Keep player-eye placement and first-person head/body filtering active during NPC conversation.",
+    "Independently gate Action Camera's mouse capture off while a native NPC dialog is active so cursor and replies remain clickable."
+  ],
+  "patch": "src/first-person/milestones/M5/M5_NpcDialogueCamera.patch",
+  "build_script": "src/first-person/milestones/M5/M5_StageBuild.ps1",
+  "source_base": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE_R02",
+  "source_stage": "C:\\Projects\\NWN_FP_M5_NPC_DIALOG_STAGE",
+  "expected_M4_version_dll_sha256": "29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2",
+  "new_version_dll_sha256": "Pending M5 build report",
+  "untouched": [
+    "installed M4 runtime",
+    "cx.cfg",
+    "M4/M3/M1 stage",
+    "M1 and original rollback backups"
+  ]
+}
