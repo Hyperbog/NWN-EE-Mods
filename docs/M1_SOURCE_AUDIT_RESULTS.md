@@ -190,3 +190,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_GamePrefligh
 ```
 
 Once the report is reviewed, create a verified restorable backup and test the new M1 package in a controlled, reversible install, followed by CX self-check logs, menu toggles/persistence, combat/reticle, walls, helmet swaps, jumping and movement regressions. **Never install the native package without a restorable current runtime snapshot.** Motion blur MB1 remains a separate milestone. The preflight script has not yet been Windows-tested.
+
+
+## Read-only game preflight verified (2026-11-22)
+
+The developer ran the game preflight against a real NWN:EE Steam installation. It confirmed `nwmain.exe` was **not running**, found all five existing DLLs, and reverified all five staged M1 DLLs against their pinned SHA-256 values. The installed `version.dll` was the only file differing from M1: old SHA-256 `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0`, size **25,229,824** bytes; new M1 SHA-256 `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86`, size **25,240,064** bytes. All four companion DLLs are identical to the package. The current game executable SHA-256 is `3b7cb1252e0edb2ce22d7971f333aade027039ae30a45b4bc64732c3e6bec73a`.
+
+This is **not** a successful runtime test and no game or configuration files have been changed.
+
+### Next gate: preserve five-DLL original runtime backup
+
+The [M1_BackupInstalled.ps1](../src/first-person/milestones/M1/M1_BackupInstalled.ps1) script refuses an existing destination, rejects a running `nwmain.exe`, and revalidates the exact original `nwmain.exe` and five existing DLL SHA-256 hashes **before copying** anything. It writes copies of all five installed DLLs plus `BACKUP_MANIFEST.txt` to a new directory outside the game and both CX source trees. Each copied file is rehashed against both the original and the preflight checksum. It writes a short separate report at `C:\Projects\M1_BackupVerification.txt`. If any check fails, the source/game files are not modified; a partial backup is left intact for inspection rather than deleted.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_BackupInstalled.ps1' -OutFile 'C:\Projects\M1_BackupInstalled.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_BackupInstalled.ps1" -GameBin "D:\SteamLibrary\steamapps\common\Neverwinter Nights\bin\win32"
+```
+
+Expected output directory: `C:\Projects\M1_PreM1_Runtime_Backup` (five original DLL copies + manifest). Expected report: `C:\Projects\M1_BackupVerification.txt`. Upload **only the text report**; do not upload original DLLs or commit the private backup. No `cx.cfg` or `cx.log` data is read or modified. The script is currently **static-reviewed but not Windows-tested**.
+
+The backup is prerequisite to any test installation, not an installation or proof that restoration succeeds. The next checkpoint is a separately guarded reversible install/restore procedure plus CX self-check/in-game test plan. Continue to leave working `version.dll` and the other installed DLLs unchanged.
