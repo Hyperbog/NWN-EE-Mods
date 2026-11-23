@@ -1,7 +1,7 @@
 {
   "version": "M5-rc1",
   "parent_release": "M4-rc1",
-  "status": "Managed and NativeAOT build PASS, all five DLLs ZIP/folder hashes verified; guarded M4→M5 runtime install pending",
+  "status": "M5-rc1 confirmed installed and NPC dialogue camera regression resolved in live gameplay (2026-11-23)",
   "cause": "CameraService.Check returns Gate.Dialog when CNWCModule.DialogCamera is set, which stops first-person eye placement during NPC conversation.",
   "evidence": "User NPC screenshots and cx.log [camera] gate: dialog camera while mode 2; M4 install SWITCHED_AND_VERIFIED",
   "changes": [
@@ -17,21 +17,29 @@
   "expected_M4_version_dll_sha256": "29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2",
   "new_version_dll_sha256": "27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d",
   "untouched": [
-    "installed M4 runtime",
     "cx.cfg",
-    "M4/M3/M1 stage",
-    "M1 and original rollback backups"
+    "M4/M3/M1 source and build stages",
+    "original pre-M1 and pre-M3 M1 rollback backups",
+    "four companion runtime DLLs"
   ],
   "build_evidence": "C:\\Projects\\M5_StageBuildReport.txt uploaded and reviewed (PASS); all five package hashes matched",
   "new_version_dll_size_bytes": 25260032,
   "installer": "src/first-person/milestones/M5/M5_RuntimeSwitch.ps1",
   "rollback": "RestoreM4 from verified M4-rc1 stage; random named displaced DLL preserved; M1 and pre-M1 backups unchanged",
-  "runtime_status": "User screenshot + cx.log still show 'gate: dialog camera, mode 2'; no M5 [fpdialog] marker; installed runtime hash not yet checked",
+  "runtime_status": "PASS: user confirms dialogue camera no longer moves away from first person; installed M5 SHA256 verified in runtime switch; cx.log confirms six dialogue hold/resume pairs and zero 'gate: dialog camera' records.",
   "dlls": {
     "version.dll": "27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d",
     "cx_openal.dll": "3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4",
     "phonon.dll": "ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d",
     "shaderc_shared.dll": "8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6",
     "vma.dll": "504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e"
+  },
+  "gameplay_evidence": {
+    "test_date": "2026-11-23",
+    "installation_report": "M5_RuntimeSwitch_InstallM5.txt: InstallM5 SWITCHED_AND_VERIFIED; before M4 SHA256 29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2, after M5 SHA256 27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d; named displaced backup retained",
+    "runtime_log": "cx.log 2026-11-23T18:07:23-05:00; six [fpdialog] entry/exit pairs, zero 'gate: dialog camera' lines; active mode 2 frame diagnostics, hook install rc=0",
+    "user_confirmation": "Dialog camera issue is fixed.",
+    "scope": "Ordinary NPC conversation camera behavior in Driving first-person; other camera modes and combat/movement regressions not retested in this checkpoint.",
+    "unrelated_log_note": "SsaoPass.SelfCheck FAILED at startup; also reported prior to M5; not treated as a dialogue regression."
   }
 }

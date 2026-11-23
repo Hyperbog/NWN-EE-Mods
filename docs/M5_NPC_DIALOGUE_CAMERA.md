@@ -26,3 +26,11 @@ The user's `M5_StageBuildReport.txt` confirms **PASS** for managed/NativeAOT com
 The screenshot and contemporaneous runtime `cx.log` still exhibit `gate: dialog camera, mode 2`, and no `[fpdialog]` entry. This is compatible with M4 still running: the M5 build helper deliberately does **not** install. A runtime hash check is required to establish exactly which version was loaded.
 
 The new [M5 runtime switch](../src/first-person/milestones/M5/M5_RuntimeSwitch.ps1) allows only `Status`, `InstallM5` and `RestoreM4`. It checks `nwmain.exe`, original/M1 backup DLLs, M4/M5 DLL hashes and source markers, all four companion DLLs, and each DLL inside the M5 ZIP. Installation requires the game to be closed and the existing `version.dll` to equal verified M4 or M5. Only `version.dll` is replaced, using `File.Replace` with a retained unique named displaced backup; `RestoreM4` is the reversible option. `cx.cfg` is never touched. The script was reviewed statically; Windows runtime installation/test still awaits the user's run.
+
+## M5 in-game verified — 2026-11-23
+
+**Status: PASS for the NPC dialogue camera regression.** The uploaded `M5_RuntimeSwitch_InstallM5.txt` verifies `InstallM5` returned `SWITCHED_AND_VERIFIED`. The installed `version.dll` changed from M4 SHA-256 `29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2` to M5 SHA-256 `27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d`. The displaced M4 DLL is retained in a uniquely named backup, and all four companion DLLs, source directories, `cx.cfg`, and older backups were preserved.
+
+The session's `cx.log` records **six `[fpdialog]` camera-held events and six matching dialogue-finished events**, with no `gate: dialog camera` lines; the periodic camera diagnostics report active Driving camera mode 2. The user explicitly confirmed: **"Dialog camera issue is fixed."** This is in-game evidence, not solely a compile result.
+
+Scope: this checkpoint verifies the NPC dialogue viewpoint problem. It does not assert that movement, combat, cinematics or other camera modes were retested. The unrelated `SsaoPass.SelfCheck: FAILED` startup line also occurred before M5 and is tracked separately. M5 is the current installed and Git-versioned baseline for the next isolated fix. The M4 restoration command remains `M5_RuntimeSwitch.ps1 -Action RestoreM4` after exiting NWN.
