@@ -210,3 +210,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_BackupInstal
 Expected output directory: `C:\Projects\M1_PreM1_Runtime_Backup` (five original DLL copies + manifest). Expected report: `C:\Projects\M1_BackupVerification.txt`. Upload **only the text report**; do not upload original DLLs or commit the private backup. No `cx.cfg` or `cx.log` data is read or modified. The script is currently **static-reviewed but not Windows-tested**.
 
 The backup is prerequisite to any test installation, not an installation or proof that restoration succeeds. The next checkpoint is a separately guarded reversible install/restore procedure plus CX self-check/in-game test plan. Continue to leave working `version.dll` and the other installed DLLs unchanged.
+
+
+## Original five-DLL backup verified (2026-11-22)
+
+The user supplied `M1_BackupVerification.txt` showing `RESULT: PASS`. The backup contains the exact five installed DLL versions in `C:\Projects\M1_PreM1_Runtime_Backup`, with each independently checked against the game preflight hash. The `version.dll` backup remains the previous working package (`b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0`). The four other DLL hashes are unchanged between old and M1. The report confirms the source checkout, game installation and `cx.cfg` were not modified.
+
+This establishes a valid **backup**, not yet a tested restore or functional M1 release.
+
+### Next gate: offline copy-and-restore rehearsal
+
+[M1_OfflineRollbackTest.ps1](../src/first-person/milestones/M1/M1_OfflineRollbackTest.ps1) uses the fully validated five-file hashes for both installed and M1 DLLs. It checks `nwmain.exe` is not running and verifies all source hashes before creating a new scratch directory `C:\Projects\M1_OfflineRollbackTest`. It copies each M1 DLL into that scratch directory, verifies each SHA-256, copies the original backup files back into scratch, re-verifies all original SHA-256s, and finally rechecks the real installed game hashes. The **game is never modified**. Output report: `C:\Projects\M1_OfflineRollbackTest.txt`, which is not overwritten if present. A partially created scratch directory is retained for inspection after failure. This verifies copy/restore **in scratch only**, not the ability to restore over a loaded game DLL or the extension's runtime behavior.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_OfflineRollbackTest.ps1' -OutFile 'C:\Projects\M1_OfflineRollbackTest.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_OfflineRollbackTest.ps1"
+```
+
+This helper is statically checked but **not yet Windows-executed**. After the report passes, prepare a separate guarded installer/restore pair with explicit verification. Until then, do not replace the working `version.dll` or any of the four companion DLLs.
