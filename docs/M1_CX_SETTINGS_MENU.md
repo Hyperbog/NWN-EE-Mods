@@ -90,4 +90,4 @@ The audit reads the current `HEAD`, branch, tracked modified-source count and **
 
 **M1 status: blocked pending full source comparison.** The previous M1 patch and reconciler are retained as artifacts with explicit application refusal; do not run `-Apply` against the newer upstream file. Keep existing DLLs, local source edits, configuration and all game assets unchanged.
 
-See [M1 audit results](M1_SOURCE_AUDIT_RESULTS.md) for the verified 16/14/0 split and the safe source collection instructions.
+See [M1 audit results](M1_SOURCE_AUDIT_RESULTS.md) for the verified 16/14/0 split, the exact 14-file upstream comparison, and the separate-stage source reconstruction instructions. The live CX checkout is not to be modified until a reproducible build is verified.

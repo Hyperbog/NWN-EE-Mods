@@ -39,3 +39,38 @@ If an archive with that output name already exists, the script refuses to overwr
 
 No M1 patch or source overwrite is authorized by this audit. Preserve the last known working J4 runtime and source, diagnose the 13 other divergences, reconcile APIs, run the Windows CX self-checks and compile, then test in-game menu persistence and J4 movement/camera/combat safety before installing a matching five-DLL set.
 
+
+## Exact upstream comparison of uploaded 14-file ZIP
+
+The ZIP contains 14 precisely named C# files. Independent Git blob hashes computed from the ZIP bytes matched all 14 file blobs in upstream `nwncxee/cx` at revision `66fcc820ef746fdf155b81309f63e7da52d5c865` (100%). This is **byte-for-byte equality**, not an inference from source names, file lengths, or the earlier SHA-256 audit. No other unknown J4 variants remain among the audited 30 files.
+
+| Local ZIP source | Git blob SHA (first 12) | Classification |
+| --- | --- | --- |
+| `managed/Alloy/AlloyRenderer.Batches.cs` | `21f0a49eaa0b` | Exact upstream CX |
+| `managed/Alloy/Db/DbKeyhole.cs` | `ea418353171b` | Exact upstream CX |
+| `managed/Alloy/Scene/AlloyRenderer.DbPass.cs` | `21bf53338920` | Exact upstream CX |
+| `managed/Alloy/Scene/AlloyRenderer.DbStage.cs` | `09262644df8f` | Exact upstream CX |
+| `managed/Framework/ClientApi.cs` | `79959847a042` | Exact upstream CX |
+| `managed/Services/Anim/PoseService.cs` | `fdafd8e4b5e8` | Exact upstream CX |
+| `managed/Services/Camera/ActionFeedback.cs` | `762bc8121c7a` | Exact upstream CX |
+| `managed/Services/Camera/CameraDriveService.cs` | `f1584bcd3d8d` | Exact upstream CX |
+| `managed/Services/Camera/CameraKnobs.cs` | `e5f3ffdca4ac` | Exact upstream CX |
+| `managed/Services/Camera/CameraService.cs` | `24d4c6e608b1` | Exact upstream CX |
+| `managed/Services/Camera/HeadTrackService.cs` | `483e3d8254da` | Exact upstream CX |
+| `managed/Services/Camera/MouseLookService.cs` | `472f5f77e257` | Exact upstream CX |
+| `managed/Services/Camera/StepGuardService.cs` | `f1d79c292faf` | Exact upstream CX |
+| `managed/Services/Hotkeys/HotkeyServerLinkService.cs` | `1b1c3d85e5f8` | Exact upstream CX |
+The other 16 audited files matched the published J4 normalized implementation checksums. The local clone's additional 1,123 tracked modifications were not audited by this 30-file comparison.
+
+### Separate, guarded M1 staging
+
+Use [M1_StageJ4.ps1](../src/first-person/milestones/M1/M1_StageJ4.ps1). It makes an independent **local Git clone of pinned checkout HEAD 2470f0d**, downloads the 30 annotated J4 sources from immutable public commit `796a222cec17dfefe455ae42c8a97e149c33cee4`, checks each file against the published SHA-256 in `SOURCE_MANIFEST.json`, copies them into **the clone only**, and applies the M1 menu patch from immutable commit `55bb687c0116fadd6ddb6ff6a56dae5a034df318` there.
+
+Default staging directory: `C:\Projects\NWN_FP_M1_J4_STAGE`. The tool refuses an existing or nested destination and a changed local HEAD. It **never overwrites files in C:\Projects\cx** and never installs DLLs. After successful source staging, a compatible Windows build and self-check are still required; the script does not establish runtime behavior or prove that non-overlay dependencies are present. It uses Git and HTTPS, and is not yet Windows-tested.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_StageJ4.ps1' -OutFile 'C:\Projects\M1_StageJ4.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_StageJ4.ps1"
+```
+
+If Git clone or download fails, leave the partial staging directory alone for inspection rather than rerunning over it. Never reset, clean, overwrite, or replace the existing working checkout. Do not install any new DLLs until separate-stage build and full gameplay regression pass.
