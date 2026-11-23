@@ -332,3 +332,28 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitc
 ```
 
 After the report passes, use Fix1 `Status` to check hashes again, and only then consider a user-executed `InstallM1` in a separate step. Do **not** run the old switch script. Source checkout, existing `cx.cfg`, and original backup must remain untouched.
+
+
+## Fix1 scratch self-test passed on Windows (2026-11-22)
+
+The developer uploaded `M1_RuntimeSwitchFix1_SelfTest.txt`, whose complete result is:
+
+```text
+M1 RUNTIME SWITCH FIX1 SELFTEST: PASS
+Scratch: D:\SteamLibrary\steamapps\common\M1_RuntimeSwitchFix1_SelfTest
+Named-backup File.Replace succeeded; destination and backup contents verified.
+No game executable, DLL, backup, source or cx.cfg files accessed or modified.
+Live installation and runtime startup: NOT TESTED.
+```
+
+This validates Fix1's disposable-file named-backup replacement procedure on the relevant Windows filesystem, **not** a live game installation or CX startup. The prior read-only post-error status showed the original installed `version.dll` was unchanged and the five-DLL backup was still valid.
+
+### Next gate: read-only Fix1 status
+
+Run the **new** guarded switch with `-Action Status`:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitchFix1.ps1" -Action Status
+```
+
+Expected report: `C:\Projects\M1_RuntimeSwitchFix1_Status.txt`. Verify `Result: READ_ONLY` and the original installed `version.dll` hash `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0` before allowing `InstallM1` on another turn. Do not run the retired original installer. A successful Fix1 status does not prove that M1 works in-game.

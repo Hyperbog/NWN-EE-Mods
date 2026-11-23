@@ -1,6 +1,6 @@
 # M1 — Enhanced First Person in CX settings
 
-**Status (2026-11-22): post-failure read-only status confirms original runtime untouched; null-backup File.Replace fails on Windows 5.1 CLR, named backup passes in scratch. Fix1 has been committed for a separate scratch self-test; actual installation and runtime testing remain pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
+**Status (2026-11-22): Fix1 named-backup scratch self-test passed on Windows. Original DLL backup and post-failure original runtime verified. Fix1 read-only Status and actual M1 installation/runtime testing still pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
 
 ## What it changes
 
