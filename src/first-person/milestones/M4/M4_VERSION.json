@@ -1,0 +1,20 @@
+{
+  "version": "M4-source",
+  "predecessor": "M3-rc1",
+  "commit_base": "a928bb857a81d6a211d2ac58e52b1c683c54f2e1",
+  "status": "source patch committed; Windows M4 build and runtime not yet tested",
+  "changes": [
+    "Mandatory Action Camera in Driving",
+    "Z releases/recaptures cursor without disabling Action Camera",
+    "Obsolete Driving-only toggle controls removed from UI",
+    "Old driving.action/mouselook/actionkey values are inert",
+    "First-person movement/camera behavior retained during cursor release"
+  ],
+  "patch": "src/first-person/milestones/M4/M4_MandatoryActionCamera.patch",
+  "stage_build": "src/first-person/milestones/M4/M4_StageBuild.ps1",
+  "base_stage": "C:\\Projects\\NWN_FP_M3_BAKED_STAGE",
+  "output_stage": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE",
+  "expected_input_camera_knobs_sha256": "59881b5270a25f62d75eefef82dce186a262b309d02d24a7563cf793d35250dc",
+  "binary_sha256": "Pending build result",
+  "rollback": "Existing M1 and original five-DLL backups; previous M3-rc1 stage preserved"
+}
