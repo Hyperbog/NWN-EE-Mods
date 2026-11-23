@@ -1,8 +1,8 @@
 {
-  "version": "M4-source",
+  "version": "M4-rc1",
   "predecessor": "M3-rc1",
   "commit_base": "a928bb857a81d6a211d2ac58e52b1c683c54f2e1",
-  "status": "Windows managed compile PASSED (0 errors; 150 warnings); NativeAOT link and package creation completed; final ZIP integrity report and gameplay pending",
+  "status": "NativeAOT release ZIP hashes verified; ready for guarded InstallM4; live runtime and gameplay pending",
   "changes": [
     "Mandatory Action Camera in Driving",
     "Z releases/recaptures cursor without disabling Action Camera",
@@ -15,8 +15,8 @@
   "base_stage": "C:\\Projects\\NWN_FP_M3_BAKED_STAGE",
   "output_stage": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE_R02",
   "expected_input_camera_knobs_sha256": "59881b5270a25f62d75eefef82dce186a262b309d02d24a7563cf793d35250dc",
-  "binary_sha256": "Pending build result",
-  "rollback": "Existing M1 and original five-DLL backups; previous M3-rc1 stage preserved",
+  "binary_sha256": "29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2",
+  "rollback": "RestoreM1 action restores the verified M1 backup; original pre-M1 backup preserved; switch records named displaced DLL",
   "build_evidence": {
     "managed_log": "C:\\Projects\\M4_ManagedBuild_R02.log",
     "managed_result": "Build succeeded; 0 errors; 150 warnings; elapsed 11.61 seconds",
@@ -24,7 +24,34 @@
     "native_stderr": "C:\\Projects\\M4_NativeBuild_R02.stderr.log",
     "native_result": "NativeAOT linked and cx-windows-x64 plus ZIP package listed; stderr includes 2 nonfatal CMake warnings",
     "native_symbol_check": "skipped: nwmain.exe absent from build context",
-    "release_integrity_report": "C:\\Projects\\M4_StageBuildReport_R02.txt (not uploaded yet)",
-    "release_hashes": "pending developer report"
+    "release_integrity_report": "C:\\Projects\\M4_StageBuildReport_R02.txt (received and reviewed; PASS)",
+    "release_hashes": "5 DLLs verified; M4 version.dll differs from M3; four companions unchanged"
+  },
+  "binary_size_bytes": 25258496,
+  "release_zip": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE_R02\\cx-windows-x64.zip",
+  "package_integrity": "PASS: all five DLL SHA-256 equal folder/ZIP entries; report M4_StageBuildReport_R02.txt",
+  "installer": "src/first-person/milestones/M4/M4_RuntimeSwitch.ps1",
+  "installed_runtime": "not yet installed by ChatGPT; user performs local InstallM4",
+  "dlls": {
+    "version.dll": {
+      "size_bytes": 25258496,
+      "sha256": "29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2"
+    },
+    "cx_openal.dll": {
+      "size_bytes": 3834368,
+      "sha256": "3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4"
+    },
+    "phonon.dll": {
+      "size_bytes": 52950168,
+      "sha256": "ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d"
+    },
+    "shaderc_shared.dll": {
+      "size_bytes": 6962688,
+      "sha256": "8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6"
+    },
+    "vma.dll": {
+      "size_bytes": 209920,
+      "sha256": "504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e"
+    }
   }
 }

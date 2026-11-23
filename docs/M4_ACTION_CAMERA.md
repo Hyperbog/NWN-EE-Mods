@@ -28,3 +28,12 @@ Replace the local `M4_StageBuild.ps1` with the Fix1 version and run it again. Th
 ## M4 Windows build checkpoint — logs received (2026-11-23)
 
 Developer-supplied logs for `C:\Projects\NWN_FP_M4_ACTION_STAGE_R02` confirm the managed build succeeded with 0 errors and 150 warnings in 11.61 seconds. The warnings are in non-M4 code paths and match the M3 count. Native stdout shows all compilation stages, NativeAOT link and release output containing five DLLs, README and licenses, with ZIP packaging. Native stderr contains two nonfatal CMake policy/deprecation warnings and notes that the standalone `nwmain.exe` symbol check was skipped. These three logs do **not** include the per-DLL SHA-256 values or the final five-file folder-versus-ZIP verification outcome; that appears in the separate `M4_StageBuildReport_R02.txt` written by the consolidated stage script. Await that report, then pin the exact `version.dll` hash in Git and prepare a version-specific reversible M4 switch. There is no need to rerun compilation from these logs alone.
+
+
+## M4-rc1 release — ready for gameplay (2026-11-23)
+
+The uploaded `M4_StageBuildReport_R02.txt` reports `M4 ACTION CAMERA STAGE + NATIVE BUILD: PASS`. All five DLL files exactly match ZIP SHA-256 values. The new `version.dll` is 25,258,496 bytes with SHA-256 `29a719191b9f781a6c37193ffc7c6b8d23ed236c38f8857dd499145edefc70e2`; four companion DLLs are byte-identical to the verified M3/M1 package. See [M4_VERSION.json](../src/first-person/milestones/M4/M4_VERSION.json).
+
+The [M4_RuntimeSwitch.ps1](../src/first-person/milestones/M4/M4_RuntimeSwitch.ps1) installer accepts installed M1, M3 or M4 `version.dll` hashes, rejects unknown binaries, validates the staged M4 DLL, CX game executable and both original/M1 rollback generations, and replaces **only** `version.dll`. It preserves a GUID-named displaced DLL backup in the game directory. `RestoreM1` returns to the existing verified M1 backup without touching `cx.cfg` or source. This script has not yet been executed on the user's Windows machine.
+
+With NWN:EE closed, download the script and run `-Action InstallM4`. Upload the single installation report `C:\Projects\M4_RuntimeSwitch_InstallM4.txt` and begin immediate gameplay testing, including cursor release/reacquire via Z, mouse turning while walking, menus and chat, helmet changes, wall contact and attacks. If gameplay breaks, close the game and run `-Action RestoreM1`. No further offline rehearsals are required for this already-tested File.Replace mechanism.

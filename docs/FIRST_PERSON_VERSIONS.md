@@ -5,7 +5,7 @@
 | M1 | [M1 settings patch](../src/first-person/milestones/M1/EnhancedFirstPerson_CX_Settings.patch) | Windows DLL verified | Menu displayed; movement jitter/wall and helmet issues | Installed before M3 |
 | M2 | [M2 menu clarity patch](../src/first-person/milestones/M2/M2_MenuClarity.patch) | Source staging passed | Not separately installed | Incorporated into M3 |
 | **M3-rc1** | [M3 baked controls and turn correction](../src/first-person/milestones/M3/M3_BakedControlsAndTurn.patch) | Managed compile passed; NativeAOT and five-DLL ZIP integrity passed; offline M1↔M3 rollback passed; live read-only Status passed | **Pending immediate game test** | Ready for `InstallM3` |
-| **M4-source** | [M4 mandatory Action Camera patch](../src/first-person/milestones/M4/M4_MandatoryActionCamera.patch) | Managed build passed (0 errors, 150 baseline warnings); NativeAOT packaged; final artifact report pending | Not yet tested | New staged build, never touches game directly |
+| **M4-rc1** | [M4 mandatory Action Camera patch](../src/first-person/milestones/M4/M4_MandatoryActionCamera.patch) | Managed build passed (0 errors, 150 baseline warnings); NativeAOT packaged; five-DLL release ZIP integrity PASS | **Pending in-game test** | Ready for guarded `InstallM4`; M1 rollback preserved |
 
 The source patch for each milestone is committed to Git. The exact compiled artifact digests, stage paths, provenance and rollback paths for **M3-rc1** are in [M3_RELEASE_MANIFEST.json](../src/first-person/milestones/M3/M3_RELEASE_MANIFEST.json). The M3 compiled DLL and ZIP are stored in the developer's existing Windows source stage, **not as binary files in Git**.
 
