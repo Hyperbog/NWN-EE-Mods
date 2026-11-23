@@ -131,3 +131,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_OfflineSwitc
 ```
 
 Stop if there is an error. Do not delete a partial scratch directory, run an installer or attempt a manual DLL copy. M3 in-game turning, baked menu and remaining wall/helmet regressions remain untested.
+
+
+## M3 offline installation and M1 rollback rehearsal passed (2026-11-22)
+
+The developer uploaded `M3_OfflineRollbackReport.txt` confirming `M3 OFFLINE INSTALL + M1 RESTORE REHEARSAL: PASS`. In disposable `C:\Projects\M3_OfflineRollbackRehearsal`, all five baseline M1 DLLs matched hashes; named-backup `File.Replace` switched M1 to M3 (`version.dll` SHA-256 `1ec40d2fd60454dc92e8bfd29ca591600fba0db1d3f5e2ccc4232b09868e891d`) while preserving displaced M1 (`a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86`); another named-backup replacement restored M1 and preserved displaced M3. Four companion DLLs, installed game files and both independent rollback backups were reverified as unchanged. Source and `cx.cfg` were not written. **No M3 live installation, startup or animation test has yet occurred.**
+
+### Next gate: M3 live-target read-only Status
+
+New [M3_RuntimeSwitch.ps1](../src/first-person/milestones/M3/M3_RuntimeSwitch.ps1) implements three isolated actions: `Status` (read-only game verification), `InstallM3` (installs only the hash-pinned M3 `version.dll`), and `RestoreM1` (restores the exact saved M1 `version.dll`). Before any action, it verifies `nwmain.exe`, both verified rollback generations, M3 stage source and all five new release DLLs, and the four installed companions. It refuses unknown installed `version.dll` hashes, existing reports or protected report destinations. Switches use a GUID-named temporary file and a **named displaced-DLL backup** inside the game directory; the displaced file is never removed. `cx.cfg`, source checkouts and four companion DLLs are not modified. The script has passed static source checks; it has **not** been executed in the developer's Windows environment yet.
+
+Download the script and run **only Status** first:
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M3/M3_RuntimeSwitch.ps1' -OutFile 'C:\Projects\M3_RuntimeSwitch.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_RuntimeSwitch.ps1" -Action Status
+```
+
+Upload `C:\Projects\M3_RuntimeSwitch_Status.txt`; expected `Result: READ_ONLY`, with installed M1 `version.dll` unchanged. **Do not run `InstallM3` until the report has been reviewed.** Once verified, that action switches only one game DLL to M3 under an exact checksum. If needed, `-Action RestoreM1` is the hash-pinned M1 restoration path, not the retired M1-to-original installer. A gameplay smoke test remains necessary before treating M3 menu, movement and mouse-turn animations as working.
