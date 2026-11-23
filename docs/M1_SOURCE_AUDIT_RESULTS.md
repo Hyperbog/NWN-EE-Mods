@@ -307,3 +307,28 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_ReplaceApiPr
 ```
 
 The probe refuses any existing scratch destination or report. If either script fails, collect the exact error and stop. After both reports are reviewed, correct the installer with an isolated regression test before any actual retry. Do not delete or overwrite the five-DLL backup. The diagnostic probe is statically checked but not yet executed on Windows.
+
+
+## Post-failure diagnostics: File.Replace null backup fails, named backup succeeds (2026-11-22)
+
+The user supplied both `M1_RuntimeSwitch_AfterError.txt` and `M1_ReplaceApiProbe_Result.txt`. The read-only status confirms installed `version.dll` remained SHA-256 `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0`, matching the untouched original and saved five-DLL backup. All four installed companion DLLs and five original backup DLLs matched their pinned hashes.
+
+The same-D-drive scratch probe on Windows PowerShell `5.1.26100.9711` and CLR `4.0.30319.42000` recorded:
+
+- `NullBackup : FAIL` — `ArgumentException`, "The path is not of a legal form".
+- `NamedBackup : PASS` — replacement and displaced-file backup contents verified.
+
+The failure was in the script's three-argument `File.Replace` invocation with a **null backup path**, not in the compiled NativeAOT package. No game DLL was installed. The old `M1_RuntimeSwitch.ps1` is **retired and fail-closed** on GitHub; do not rerun an earlier locally downloaded copy.
+
+### Fix1 isolated self-test (mandatory before retry)
+
+The replacement [M1_RuntimeSwitchFix1.ps1](../src/first-person/milestones/M1/M1_RuntimeSwitchFix1.ps1) passes a uniquely named backup file on the **game's D: drive** to `[IO.File]::Replace` when switching versions. After the operation, it verifies the displaced DLL backup's pre-switch hash and the installed DLL's intended new hash; the extra displaced-file backup is retained in the game folder. The independently verified five-DLL baseline backup remains untouched. `RestoreOriginal` does not depend on the new package remaining available. Every action performs hash checks; the game must be closed for mutation.
+
+Before attempting installation, run **only** the disposable-file `SelfTest`. It creates `D:\SteamLibrary\steamapps\common\M1_RuntimeSwitchFix1_SelfTest`, verifies a named-backup replacement of two small text files, and writes a report `C:\Projects\M1_RuntimeSwitchFix1_SelfTest.txt`. It refuses existing scratch or report destinations and does **not** touch any game file. The script is statically reviewed but has not yet been Windows-executed.
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_RuntimeSwitchFix1.ps1' -OutFile 'C:\Projects\M1_RuntimeSwitchFix1.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitchFix1.ps1" -Action SelfTest
+```
+
+After the report passes, use Fix1 `Status` to check hashes again, and only then consider a user-executed `InstallM1` in a separate step. Do **not** run the old switch script. Source checkout, existing `cx.cfg`, and original backup must remain untouched.
