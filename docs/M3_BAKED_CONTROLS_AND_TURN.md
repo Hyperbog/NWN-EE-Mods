@@ -113,3 +113,21 @@ actual=59881b5270a25f62d75eefef82dce186a262b309d02d24a7563cf793d35250dc
 ```
 
 The two 64-character digests match byte-for-byte when hex letter case is normalized. Fix1 of the **M3 backup helper** changes only the comparison to `$sha -cne $expected.ToLowerInvariant()`. Hash verification remains strict for digest bytes, all expected pins remain the same, and the script still refuses pre-existing destinations or unsafe paths. The old downloaded `C:\Projects\M3_BackupInstalledM1.ps1` must be refreshed from this new commit before another run. Windows verification of the corrected helper is pending. No live M3 installation has occurred.
+
+
+## Verified separate M1 rollback copy; scratch switch/restore gate (2026-11-22)
+
+The developer uploaded `M3_M1_BackupVerification.txt`. It confirms **RESULT: PASS** for the independent five-DLL copy of the **currently installed M1 runtime** at `C:\Projects\M3_PreM3_M1_Runtime_Backup`. Its `version.dll` is SHA-256 `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86` (25,240,064 bytes); four companion DLLs match their pinned hashes. The staged M3 `version.dll` SHA-256 `1ec40d2fd60454dc92e8bfd29ca591600fba0db1d3f5e2ccc4232b09868e891d` was independently verified. The game, pre-M1 original backup, original CX and `cx.cfg` were not modified.
+
+The new **[M3_OfflineSwitchRestore.ps1](../src/first-person/milestones/M3/M3_OfflineSwitchRestore.ps1)** runs only in a fresh scratch directory `C:\Projects\M3_OfflineRollbackRehearsal`. Before writing, it checks the game is closed, asserts source/build and both rollback generations have expected hashes, and refuses an existing scratch/report. It copies M1's five DLLs into scratch, replaces only its scratch `version.dll` with M3 via a **named** `[IO.File]::Replace` backup, verifies the displaced M1 DLL, and reverses the operation with another named backup to restore M1; then re-verifies scratch five DLLs, installed five DLLs, game executable and independent backups.
+
+**No real game replacement is executed by the rehearsal.** It preserves both named displaced scratch backups and writes a single report `C:\Projects\M3_OfflineRollbackReport.txt`. The script has been statically audited but **not executed on Windows**. A successful rehearsal is a prerequisite, not a substitute, for a separate checksum-pinned live M3 switch/restore implementation.
+
+With NWN closed, download and execute this rehearsal, then upload the text report:
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M3/M3_OfflineSwitchRestore.ps1' -OutFile 'C:\Projects\M3_OfflineSwitchRestore.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_OfflineSwitchRestore.ps1"
+```
+
+Stop if there is an error. Do not delete a partial scratch directory, run an installer or attempt a manual DLL copy. M3 in-game turning, baked menu and remaining wall/helmet regressions remain untested.
