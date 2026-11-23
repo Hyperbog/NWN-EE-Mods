@@ -37,3 +37,7 @@ M4-rc1 was installed (report shows SWITCHED_AND_VERIFIED, M3→M4). The user obs
 ## M5-rc1 installed gameplay checkpoint — 2026-11-23
 
 M5 is now installed (guarded switch `SWITCHED_AND_VERIFIED`; exact release SHA-256 `27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d`). The new runtime log has six `[fpdialog]` held/resumed pairs and zero `gate: dialog camera` messages. **User confirmed the dialogue camera issue is fixed.** The original M4 runtime is restorable using the committed M5 guarded switch and M4 stage, and M1/pre-M1 backups are untouched. See [M5 in-game verification](M5_NPC_DIALOGUE_CAMERA.md#m5-in-game-verified--2026-11-23). Other issues remain outside this checkpoint.
+
+## M6 source checkpoint — residual wall release
+
+M5 user reports wall collision largely fixed; intermittent post-release driving and rare close-angle clipping remain. M6 adds a one-shot native abort fallback after sustained refused steps. [Evidence and build details](M6_WALL_RELEASE.md). Build and gameplay pending; M5 remains the installed baseline.

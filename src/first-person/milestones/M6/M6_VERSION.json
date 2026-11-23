@@ -1,0 +1,10 @@
+{
+  "version": "M6-source",
+  "parent": "M5-rc1",
+  "status": "Candidate source patch; exact source replay passed; Windows build and gameplay not yet tested",
+  "base_sha256": "27dfa9eb49dff45b84d4e19c8fb0a67841514d413619f7f03cdcaf76802d9a3d",
+  "stage": "C:\\Projects\\NWN_FP_M6_WALL_RELEASE_STAGE",
+  "patch": "M6_WallRelease.patch",
+  "build": "M6_StageBuild.ps1",
+  "scope": "One-shot abort fallback after key release and persistent StepGuard refusal; rare wall clipping deferred"
+}
