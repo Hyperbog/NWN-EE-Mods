@@ -70,3 +70,22 @@ powershell -NoProfile -Command "Select-String -LiteralPath 'C:\Projects\cx\manag
 ```
 
 Send the command output and preferably the unmodified `C:\Projects\cx\managed\Services\Camera\CameraKnobs.cs` file through the development conversation. Treat the published J4 overlay as **reference evidence**, not as an instruction to replace the local file. Do not share private `cx.cfg`, `cx.log`, or runtime DLLs. Rebuild and in-game verification remain blocked until an exact-source reconciliation.
+
+## Verified uploaded CameraKnobs.cs and full working-tree audit (2026-11-22)
+
+The uploaded working-copy file's Git blob ID is **e5f3ffdca4ac8d13f02b2c6630a65143537b9f11**. This matches **exactly** the current upstream CX file at revision **66fcc820ef746fdf155b81309f63e7da52d5c865**, not the pinned J4 overlay. The file's SHA-256 is **ef6c5794fcbcd2a2e7b6710b6f552149b72dd455dfc0e825edbdede55a65665e**. The earlier suggestion that the file was simply older source was wrong. It is a *newer upstream camera configuration file* without J4's first-person, reticle and hit-crescent declarations.
+
+This does not establish whether other working-copy files still contain J4. The repository's complete J4 overlay was constructed from the original pin plus post-checkpoint fixtures, whereas a newer upstream CX module may have materially different APIs. Never paste or overwrite J4 CameraKnobs.cs into this current upstream file without checking dependency compatibility.
+
+### Read-only source-lineage audit
+
+Use [M1_SourceAudit.ps1](../src/first-person/milestones/M1/M1_SourceAudit.ps1) rather than applying M1. Download this script outside the checkout, and run it from Visual Studio Developer Command Prompt:
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_SourceAudit.ps1' -OutFile 'C:\\Projects\\M1_SourceAudit.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\\Projects\\M1_SourceAudit.ps1"
+```
+
+The audit reads the current `HEAD`, branch, tracked modified-source count and **30 source-file SHA-256 comparisons** against the J4 manifest. It makes **no writes to the CX source or Git repository**. It writes only `C:\\Projects\\M1_SourceAudit.txt` outside the checkout; send that report in the development conversation. The script's PowerShell runtime and local Windows compatibility are not yet independently tested.
+
+**M1 status: blocked pending full source comparison.** The previous M1 patch and reconciler are retained as artifacts with explicit application refusal; do not run `-Apply` against the newer upstream file. Keep existing DLLs, local source edits, configuration and all game assets unchanged.
