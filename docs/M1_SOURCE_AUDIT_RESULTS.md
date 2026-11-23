@@ -104,3 +104,39 @@ echo M1_NATIVE_BUILD_EXIT=%ERRORLEVEL%
 ```
 
 The native build creates local artifacts only. CX's build-win-native.sh is documented in the upstream source and requires VS/MSVC, Git Bash, .NET 10, CMake and Python, along with its fetched native dependencies. A successful native build is still not permission to install: self-checks, five-DLL consistency, install/rollback, and J4 wall/movement/jump/combat regressions remain gates.
+
+
+## M1 managed compilation gate — passed (2026-11-22)
+
+The developer ran the documented isolated-stage command:
+
+```cmd
+cd /d "C:\Projects\NWN_FP_M1_J4_STAGE"
+dotnet build managed\cx_managed.csproj -c Release -r win-x64 -p:PublishAot=false -v:minimal > "C:\Projects\M1_ManagedCompile.log" 2>&1
+echo M1_MANAGED_BUILD_EXIT=%ERRORLEVEL%
+```
+
+**Observed:** `M1_MANAGED_BUILD_EXIT=0`, `Build succeeded.`, **150 Warning(s)** and **0 Error(s)**, as independently checked from the uploaded `M1_ManagedCompile.log`. The build restored the managed project and analyzer project, compiled `cx_analyzers`, and wrote `managed\bin\x64\Release\net10.0\win-x64\cx_managed.dll` in the isolated stage. Because `PublishAot=false` was passed, this is a **non-deployable managed compatibility build**, not the NativeAOT extension.
+
+Warnings were 63 × CS0649, 30 × CS0219, 14 × CS0169, 13 × CS8602, 11 × CA2014, 5 × CS8600, 5 × CS8604, 4 × CS0162, 3 × CS0675, 1 × CS8793, and 1 × CS0414. The preserved `AlloyRenderer.Batches.cs` contributes five warnings; no warnings or errors were reported in `CameraKnobs.cs`. These warnings should be tracked separately from M1 functional verification and do not require broad J4 rewrites to establish menu integration.
+
+### Next gate: isolated NativeAOT Windows build
+
+Run in the **same** Visual Studio Developer Command Prompt that has working MSVC, .NET 10, CMake, Python, and Git Bash:
+
+```cmd
+git -C "C:\Projects\NWN_FP_M1_J4_STAGE" submodule update --init --recursive
+cd /d "C:\Projects\NWN_FP_M1_J4_STAGE"
+"C:\Program Files\Git\bin\bash.exe" ./build-win-native.sh > "C:\Projects\M1_NativeBuild.log" 2>&1
+echo M1_NATIVE_BUILD_EXIT=%ERRORLEVEL%
+```
+
+Verify submodule initialization succeeded before proceeding. The upstream `build-win-native.sh` builds Windows NativeAOT and packages `cx-windows-x64\` within the **stage**, including `version.dll`, `cx_openal.dll`, `phonon.dll`, `shaderc_shared.dll`, and `vma.dll`. The build can fetch dependencies and modify generated/build files within staging; it is not an installer.
+
+For a failed build, collect errors without uploading private game configurations:
+
+```cmd
+powershell -NoProfile -Command "Get-Content -LiteralPath 'C:\Projects\M1_NativeBuild.log' -Tail 80"
+```
+
+**Do not copy the new five DLLs into the game.** Native build success is not CX self-check success and does not verify runtime behavior, settings persistence, or the J4 wall/helmet movement regression.
