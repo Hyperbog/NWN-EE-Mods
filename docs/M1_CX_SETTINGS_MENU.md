@@ -1,6 +1,6 @@
 # M1 — Enhanced First Person in CX settings
 
-**Status (2026-11-22): patch committed; local source reconciliation blocked by missing J4 declarations; Windows build and in-game testing pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
+**Status (2026-11-22): isolated 30-file J4 source staging and M1 patch application verified on Windows; compilation and in-game testing pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
 
 ## What it changes
 
@@ -91,3 +91,5 @@ The audit reads the current `HEAD`, branch, tracked modified-source count and **
 **M1 status: blocked pending full source comparison.** The previous M1 patch and reconciler are retained as artifacts with explicit application refusal; do not run `-Apply` against the newer upstream file. Keep existing DLLs, local source edits, configuration and all game assets unchanged.
 
 See [M1 audit results](M1_SOURCE_AUDIT_RESULTS.md) for the verified 16/14/0 split, the exact 14-file upstream comparison, and the separate-stage source reconstruction instructions. The live CX checkout is not to be modified until a reproducible build is verified.
+
+The stage is ready for the [managed compile-only gate](M1_SOURCE_AUDIT_RESULTS.md#next-gate-managed-compile-only-test). The original live CX checkout has not been overwritten.

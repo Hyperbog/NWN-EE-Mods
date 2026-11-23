@@ -74,3 +74,33 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_StageJ4.ps1"
 ```
 
 If Git clone or download fails, leave the partial staging directory alone for inspection rather than rerunning over it. Never reset, clean, overwrite, or replace the existing working checkout. Do not install any new DLLs until separate-stage build and full gameplay regression pass.
+
+## Staged reconstruction completed on Windows (2026-11-22)
+
+The developer executed M1_StageJ4.ps1 in the Visual Studio 2026 Developer Command Prompt. The run succeeded: a local clone at C:\Projects\NWN_FP_M1_J4_STAGE was created from pinned HEAD 2470f0d27be0a29c152456aa60222f1f4fc25c34, all 30 published J4 source files printed VERIFIED J4, and the M1 settings patch passed git apply check and application. The script reported STAGING READY and explicitly made no changes to the original C:\Projects\cx source, game DLLs, or cx.cfg.
+
+A separate git status --short in the stage showed **29 tracked modified C# files plus one untracked UniversalEyeClearance.cs**, matching the expected 30-file overlay. This is a valid staging state, not a failed or incomplete apply. The source tree is **not yet compiled, self-checked, or game-tested**.
+
+### Next gate: managed compile-only test
+
+From a Windows Visual Studio Developer Command Prompt:
+
+```cmd
+cd /d "C:\Projects\NWN_FP_M1_J4_STAGE"
+dotnet --version
+dotnet build managed\cx_managed.csproj -c Release -r win-x64 -p:PublishAot=false -v:minimal > "C:\Projects\M1_ManagedCompile.log" 2>&1
+echo M1_MANAGED_BUILD_EXIT=%ERRORLEVEL%
+```
+
+The test uses the staged project and writes build artifacts only under its own project/build cache. This is a C# compile and dependency-compatibility gate; it is **not NativeAOT compilation**, native DLL packaging, CX self-check, or in-game validation. Return the exit code and compiler errors from M1_ManagedCompile.log. Do not copy or install any game files.
+
+If managed compile succeeds, run the native Windows build later from the same isolated stage, after initializing the funchook submodule:
+
+```cmd
+git -C "C:\Projects\NWN_FP_M1_J4_STAGE" submodule update --init --recursive
+cd /d "C:\Projects\NWN_FP_M1_J4_STAGE"
+"C:\Program Files\Git\bin\bash.exe" ./build-win-native.sh > "C:\Projects\M1_NativeBuild.log" 2>&1
+echo M1_NATIVE_BUILD_EXIT=%ERRORLEVEL%
+```
+
+The native build creates local artifacts only. CX's build-win-native.sh is documented in the upstream source and requires VS/MSVC, Git Bash, .NET 10, CMake and Python, along with its fetched native dependencies. A successful native build is still not permission to install: self-checks, five-DLL consistency, install/rollback, and J4 wall/movement/jump/combat regressions remain gates.
