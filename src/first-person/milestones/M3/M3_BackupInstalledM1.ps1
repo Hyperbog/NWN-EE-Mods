@@ -43,7 +43,7 @@ $companions=[ordered]@{
 function Assert-Hash([string]$path,[string]$expected){
  if(-not(Test-Path -LiteralPath $path -PathType Leaf)){throw "File missing: $path"}
  $sha=(Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
- if($sha -cne $expected){throw "SHA256 mismatch: $path expected=$expected actual=$sha"}
+ if($sha -cne $expected.ToLowerInvariant()){throw "SHA256 mismatch: $path expected=$expected actual=$sha"}
 }
 # Preflight every dependency before writing.
 Assert-Hash (Join-Path $GameBin 'nwmain.exe') $exe

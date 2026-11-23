@@ -102,3 +102,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M3_BackupInstal
 ~~~
 
 Upload only the verification text report. Stop for mismatched hashes or an existing backup, and preserve the original baseline backup. The next step is a scratch-only restore rehearsal before any new hash-pinned live M3 installer. The old M1 RuntimeSwitchFix1 tool is not suitable for installing M3.
+
+## M3 backup preflight case-comparison fix (2026-11-22)
+
+First Windows run of `M3_BackupInstalledM1.ps1` **failed safely before copying or creating its backup**, because `Assert-Hash` converted the computed SHA-256 to lowercase but used case-sensitive `-cne` against the uppercase pinned `CameraKnobs.cs` hash. The developer reported:
+
+```text
+expected=59881B5270A25F62D75EEFEF82DCE186A262B309D02D24A7563CF793D35250DC
+actual=59881b5270a25f62d75eefef82dce186a262b309d02d24a7563cf793d35250dc
+```
+
+The two 64-character digests match byte-for-byte when hex letter case is normalized. Fix1 of the **M3 backup helper** changes only the comparison to `$sha -cne $expected.ToLowerInvariant()`. Hash verification remains strict for digest bytes, all expected pins remain the same, and the script still refuses pre-existing destinations or unsafe paths. The old downloaded `C:\Projects\M3_BackupInstalledM1.ps1` must be refreshed from this new commit before another run. Windows verification of the corrected helper is pending. No live M3 installation has occurred.
