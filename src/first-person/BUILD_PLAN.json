@@ -1,0 +1,13 @@
+{
+  "version": "M6",
+  "base": "2470f0d27be0a29c152456aa60222f1f4fc25c34",
+  "base_branch": "cx-build-base",
+  "patches": [
+    "M1/EnhancedFirstPerson_CX_Settings.patch",
+    "M2/M2_MenuClarity.patch",
+    "M3/M3_BakedControlsAndTurn.patch",
+    "M4/M4_MandatoryActionCamera.patch",
+    "M5/M5_NpcDialogueCamera.patch",
+    "M6/M6_WallRelease.patch"
+  ]
+}
