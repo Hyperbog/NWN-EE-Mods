@@ -24,8 +24,38 @@ foreach($p in @($M3,'C:\Projects\cx','C:\Projects\NWN_FP_M1_J4_STAGE',
  if(Under $Report $p){throw "Report overlaps protected path: $p"}
 }
 if(Under $Report $M4){throw 'Report cannot be in M4 directory.'}
-if(Test-Path -LiteralPath $M4){throw "Refusing existing M4 directory: $M4"}
-if(Test-Path -LiteralPath $Report){throw "Refusing existing M4 report: $Report"}
+# A previous attempt may have left an M4 directory or log. Never delete it:
+# choose a fresh numbered M4 stage and separate output files automatically.
+$baseStage=$M4
+$baseReport=$Report
+$reportParent=Split-Path -Parent $baseReport
+$reportStem=[IO.Path]::GetFileNameWithoutExtension($baseReport)
+$reportExt=[IO.Path]::GetExtension($baseReport)
+$chosen=$false
+for($runNumber=1;$runNumber -le 99;$runNumber++){
+ $suffix=if($runNumber -eq 1){''}else{'_R{0:D2}' -f $runNumber}
+ $nextStage=$baseStage+$suffix
+ $nextReport=Join-Path $reportParent ($reportStem+$suffix+$reportExt)
+ $nextManaged=Join-Path $reportParent ('M4_ManagedBuild'+$suffix+'.log')
+ $nextNative=Join-Path $reportParent ('M4_NativeBuild'+$suffix+'.log')
+ $nextNativeErr=Join-Path $reportParent ('M4_NativeBuild'+$suffix+'.stderr.log')
+ if((Test-Path -LiteralPath $nextStage) -or (Test-Path -LiteralPath $nextReport) -or
+    (Test-Path -LiteralPath $nextManaged) -or (Test-Path -LiteralPath $nextNative) -or
+    (Test-Path -LiteralPath $nextNativeErr)){continue}
+ $M4=$nextStage
+ $Report=$nextReport
+ $managedLog=$nextManaged
+ $nativeLog=$nextNative
+ $nativeErr=$nextNativeErr
+ $chosen=$true
+ break
+}
+if(-not $chosen){throw 'No unused M4 stage/log slot from base through _R99; refusing overwrite.'}
+if(-not(Test-Path -LiteralPath $reportParent -PathType Container)){
+ throw "M4 report parent does not exist: $reportParent"
+}
+Write-Host "M4 stage selected: $M4"
+Write-Host "M4 report selected: $Report"
 if(-not(Test-Path -LiteralPath $Patch -PathType Leaf)){throw "Patch not found: $Patch"}
 $M3Knobs=Join-Path $M3 'managed\Services\Camera\CameraKnobs.cs'
 if((Get-FileHash -LiteralPath $M3Knobs -Algorithm SHA256).Hash -cne
@@ -45,19 +75,12 @@ if(-not $knobs.Contains('internal static bool ActionEnabled => CameraService.Mod
  -not $knobs.Contains('internal static bool LookEnabled => CameraService.Mode == 2 || M.Look.V;')){
  throw 'M4 mandatory Action Camera source markers absent.'
 }
-$managedLog='C:\Projects\M4_ManagedBuild.log'
-$nativeLog='C:\Projects\M4_NativeBuild.log'
-if((Test-Path -LiteralPath $managedLog) -or (Test-Path -LiteralPath $nativeLog)){
- throw 'Refusing to overwrite earlier M4 build logs.'
-}
 Push-Location $M4
 try {
  & dotnet.exe build 'managed\cx_managed.csproj' -c Release -r win-x64 -p:PublishAot=false -v:minimal *> $managedLog
  if($LASTEXITCODE -ne 0){throw "M4 managed compile failed. Log: $managedLog"}
  $bash='C:\Program Files\Git\bin\bash.exe'
  if(-not(Test-Path -LiteralPath $bash -PathType Leaf)){throw "Git Bash missing: $bash"}
- $nativeErr='C:\Projects\M4_NativeBuild.stderr.log'
- if(Test-Path -LiteralPath $nativeErr){throw "Refusing to overwrite: $nativeErr"}
  $run=Start-Process -FilePath $bash -ArgumentList @('./build-win-native.sh') -WorkingDirectory $M4 -Wait -PassThru -NoNewWindow -RedirectStandardOutput $nativeLog -RedirectStandardError $nativeErr
  if($run.ExitCode -ne 0){throw "M4 NativeAOT failed (exit $($run.ExitCode)). Logs: $nativeLog and $nativeErr"}
 } finally { Pop-Location }
@@ -71,6 +94,9 @@ try {
  $lines=[Collections.Generic.List[string]]::new()
  $lines.Add('M4 ACTION CAMERA STAGE + NATIVE BUILD: PASS')
  $lines.Add("M4 source: $M4")
+ $lines.Add("Managed log: $managedLog")
+ $lines.Add("Native stdout: $nativeLog")
+ $lines.Add("Native stderr: $nativeErr")
  foreach($name in @('version.dll','cx_openal.dll','phonon.dll','shaderc_shared.dll','vma.dll')){
   $path=Join-Path $dir $name
   if(-not(Test-Path -LiteralPath $path -PathType Leaf)){throw "Missing M4 DLL: $name"}

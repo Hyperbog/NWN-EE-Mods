@@ -15,3 +15,11 @@ First-person movement treats Action Camera as enabled even while Z temporarily r
 Use `M4_StageBuild.ps1` to copy the verified M3 source to a fresh M4 directory, apply the M4 patch, compile managed code, build NativeAOT, and verify five ZIP-to-folder DLL hashes **in one command**. The script refuses existing output destinations. It writes `C:\Projects\M4_StageBuildReport.txt` containing the new version.dll SHA-256. Do not install a new DLL before the new hash is recorded in Git and a single guarded switch is pinned to it.
 
 Compiled DLLs/ZIP are produced locally in `C:\Projects\NWN_FP_M4_ACTION_STAGE` rather than committed into Git; the repository commits the source patch, build recipe and version record. The previous M3 build, M1 backup and original backup are unchanged. In-game validation of mandatory aiming and cursor behavior remains pending.
+
+## M4 Build Fix1 — automatically select an unused stage
+
+The first Windows invocation of M4_StageBuild.ps1 stopped safely at `Refusing existing M4 directory: C:\Projects\NWN_FP_M4_ACTION_STAGE`. No compilation was attempted in that invocation. A prior or partial M4 stage already occupies the default path.
+
+Fix1 retains all existing stages and logs. Before copying anything, the script finds an unused group of five paths: stage, report, managed log, native stdout log and native stderr log. If the original names exist, the script selects `_R02`, then `_R03`, etc. through `_R99`. It displays the selected stage and report and writes the four build output paths into the final report. All original source, pre-M1 and pre-M3 backups, and installed game remain protected. It never deletes or overwrites a previous stage/report/log. The patch itself is unchanged, so this is a build-workflow fix, not a new gameplay version.
+
+Replace the local `M4_StageBuild.ps1` with the Fix1 version and run it again. The existing M4 directory must **not** be manually removed. Windows execution of Fix1 remains unverified until the developer provides its report.
