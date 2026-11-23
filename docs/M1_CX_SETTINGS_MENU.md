@@ -1,6 +1,6 @@
 # M1 — Enhanced First Person in CX settings
 
-**Status (2026-11-22): patch committed; Windows build and in-game testing pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
+**Status (2026-11-22): patch committed; local source reconciliation blocked by missing J4 declarations; Windows build and in-game testing pending.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.
 
 ## What it changes
 
@@ -45,3 +45,28 @@ A local `git apply --check` reported **hunk failure at CameraKnobs.cs:142**. Thi
 Use the [M1 source reconciler](../src/first-person/milestones/M1/M1_Reconcile.ps1) for a declaration-only alternative. Download it into `C:\Projects\M1_Reconcile.ps1`. First run with **no arguments** to preview and validate all 11 expected declarations. It refuses mismatched or partially applied declarations; only after a successful preview, use `-Apply`. Application saves the previous source bytes in `C:\Projects\NWN_FP_M1_BACKUPS` before writing. Unrelated local edits are preserved, and the originally published archive and its manifest are not changed.
 
 The reconciler has been checked against the published J4 source, **not** the inaccessible Windows working tree. Build/runtime verification remains pending. If validation reports missing or ambiguous declarations, stop and collect the local matching source lines; do not force a patch.
+
+## M1 local reconciler refusal — source audit required (2026-11-22)
+
+The actual read-only PowerShell preview returned:
+
+```text
+M1 refused. Source differs in required declarations; no files changed.
+  firstperson: old=0 new=0
+  clean reticle: old=0 new=0
+  hit crescents: old=0 new=0
+  reticle: old=0 new=0
+  reticle style: old=0 new=0
+```
+
+These five camera and reticle declaration fragments do **not** appear in upstream CX's pinned `b4b43a54` `CameraKnobs.cs`, but do appear in the published J4 overlay. The local working checkout may therefore be from an older or divergent source stage; this is a *hypothesis*, not yet a full source comparison. An installed J4 runtime does not establish that today's on-disk C# matches that build.
+
+**Do not use `M1_Reconcile.ps1 -Apply`, the original M1 patch, or relaxed / forced patching.** Instead, inspect the actual local file and Git status. In Visual Studio Developer Command Prompt run:
+
+```cmd
+git -C "C:\Projects\cx" status --short -- managed/Services/Camera/CameraKnobs.cs
+git -C "C:\Projects\cx" rev-parse --short HEAD
+powershell -NoProfile -Command "Select-String -LiteralPath 'C:\Projects\cx\managed\Services\Camera\CameraKnobs.cs' -Pattern 'FirstPerson','Reticle','HitMarker','CleanReticle','HeadTrack','KnobGroup.Declare','Action = G.Toggle','CameraModeKnobs' | Select-Object LineNumber,Line | Format-Table -Wrap -AutoSize"
+```
+
+Send the command output and preferably the unmodified `C:\Projects\cx\managed\Services\Camera\CameraKnobs.cs` file through the development conversation. Treat the published J4 overlay as **reference evidence**, not as an instruction to replace the local file. Do not share private `cx.cfg`, `cx.log`, or runtime DLLs. Rebuild and in-game verification remain blocked until an exact-source reconciliation.
