@@ -15,7 +15,7 @@ if ([string]::IsNullOrWhiteSpace($ReportPath)) {
     $ReportPath = Join-Path (Split-Path -Parent $CxRoot) 'M1_SourceAudit.txt'
 }
 $ReportPath = [IO.Path]::GetFullPath($ReportPath)
-$inside = $CxRoot.TrimEnd([char]'\', [char]'/') + [IO.Path]::DirectorySeparatorChar
+$inside = $CxRoot.TrimEnd([char[]]@([char]'\', [char]'/')) + [IO.Path]::DirectorySeparatorChar
 if ($ReportPath.StartsWith($inside, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'The report must be outside the CX checkout.'
 }
@@ -104,7 +104,7 @@ $matched = 0
 $differ = 0
 $missing = 0
 foreach ($relative in @($Expected.Keys | Sort-Object)) {
-    $target = Join-Path $CxRoot ($relative.Replace('/', [IO.Path]::DirectorySeparatorChar))
+    $target = Join-Path $CxRoot ($relative.Replace('/', [string][IO.Path]::DirectorySeparatorChar))
     if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
         $lines.Add("MISSING   $relative")
         $missing++
