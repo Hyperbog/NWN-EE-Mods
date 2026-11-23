@@ -357,3 +357,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitc
 ```
 
 Expected report: `C:\Projects\M1_RuntimeSwitchFix1_Status.txt`. Verify `Result: READ_ONLY` and the original installed `version.dll` hash `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0` before allowing `InstallM1` on another turn. Do not run the retired original installer. A successful Fix1 status does not prove that M1 works in-game.
+
+
+## Fix1 live status verification passed — controlled installation gate (2026-11-22)
+
+The user uploaded `M1_RuntimeSwitchFix1_Status.txt`, showing `Action: Status` and `Result: READ_ONLY`. The pre/post checksums of installed `version.dll` are both `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0` (original), and the script verified the four installed companion DLLs and all five original backup DLLs. The original CX checkout and `cx.cfg` were not modified. The empty named displaced-DLL backup line is expected for Status.
+
+All prerequisites to a **user-executed controlled test installation** are now passed: managed compile, native build and five-DLL integrity, read-only game preflight, original backup, offline rollback rehearsal, scratch API probe, Fix1 scratch self-test and Fix1 read-only status. These gates do not prove runtime startup, CX self-checks or gameplay.
+
+With NWN completely closed, run ONLY this command:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitchFix1.ps1" -Action InstallM1
+```
+
+A successful switch should write `C:\Projects\M1_RuntimeSwitchFix1_InstallM1.txt` with `Result: SWITCHED_AND_VERIFIED`, installed `version.dll` SHA-256 `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86`, and an additional named displaced-DLL backup path on the game volume. **Do not launch NWN until the InstallM1 report has been reviewed.** On failure, capture the exact exception and stop; do not use the retired old installer or manually copy DLLs.
+
+With the game closed, `-Action RestoreOriginal` from the **same Fix1 script** can restore the original `version.dll` from the independently verified backup, while retaining a named displaced-file backup. Do not run install and restore together or remove the five-DLL baseline backup.
