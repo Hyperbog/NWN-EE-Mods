@@ -374,3 +374,34 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitc
 A successful switch should write `C:\Projects\M1_RuntimeSwitchFix1_InstallM1.txt` with `Result: SWITCHED_AND_VERIFIED`, installed `version.dll` SHA-256 `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86`, and an additional named displaced-DLL backup path on the game volume. **Do not launch NWN until the InstallM1 report has been reviewed.** On failure, capture the exact exception and stop; do not use the retired old installer or manually copy DLLs.
 
 With the game closed, `-Action RestoreOriginal` from the **same Fix1 script** can restore the original `version.dll` from the independently verified backup, while retaining a named displaced-file backup. Do not run install and restore together or remove the five-DLL baseline backup.
+
+
+## Fix1 controlled M1 installation verified — game runtime smoke test next (2026-11-22)
+
+The developer uploaded `M1_RuntimeSwitchFix1_InstallM1.txt`. It reports `Action: InstallM1` and **`Result: SWITCHED_AND_VERIFIED`** for game binary folder `D:\SteamLibrary\steamapps\common\Neverwinter Nights\bin\win32`:
+
+- **Before:** `version.dll` SHA-256 `b7d67f9cc95fdda93790f4e231d1f0f0066849c8a0645deef16ec5c0d5d7a3b0` (original)
+- **After:** `version.dll` SHA-256 `a3d65b433191ef652d5d03fc1ae3c6fa407f044c518c47d92111652d0079ac86` (new J4+M1 NativeAOT build)
+- Four companion DLLs and all five original backup DLLs were independently verified.
+- An additional named backup of the displaced original was left at `D:\SteamLibrary\steamapps\common\Neverwinter Nights\bin\win32\.m1fix1-571ae02d170a4013b21ac36bf13a8ef9.previous-version.dll.bak`.
+- Original source checkout and `cx.cfg` were not modified.
+
+**Installation integrity passed.** Runtime CX initialization, loaded module functionality, settings rendering, controls persistence and in-game behavior were **not** tested by the installer.
+
+### Smoke test in NWN:EE (M1 only)
+
+1. Launch NWN:EE normally; verify that the client reaches its main menu and loads a test offline character/module. If CX fails to load or the game crashes, stop and preserve the log.
+2. Open chat and enter `/settings`. Navigate to **Controls → Enhanced First Person**; check whether the submenu exists, renders legibly, and shows normal and Advanced controls. Confirm Chase/Top-down remain independently accessible.
+3. Inspect the master `driving.enabled`, `driving.firstperson`, and `driving.action` switches without changing existing defaults unnecessarily; these are separate prerequisites for the expected first-person path. Verify the visible sensitivity, head-tracking, reticle and hit-marker controls, and reticle-style / clean-reticle Advanced settings.
+4. Change one harmless setting (e.g. sensitivity), document its starting value, close/reopen the panel and optionally restart to verify persistence. Restore the original value afterward.
+5. Only after startup/menu verification, make a separate movement and combat regression pass: head camera, mouse-look, locomotion, wall contacts, helmet unequip/re-equip at a wall, jumping, combat animations and reticle feedback. The known blocked-wall and helmet movement regressions have **not** been fixed as part of M1.
+
+If game startup, menu or stability fails, close the game before restoring the original build, using:
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitchFix1.ps1" -Action RestoreOriginal
+```
+
+Save `C:\Projects\M1_RuntimeSwitchFix1_RestoreOriginal.txt` if restoration is necessary. The script verifies exact original and new checksums and preserves another displaced DLL copy. Never use the retired original `M1_RuntimeSwitch.ps1`. Do not modify or remove the baseline backup at `C:\Projects\M1_PreM1_Runtime_Backup`.
+
+Request from the developer: observed CX game startup result, screenshot or short description of **Controls → Enhanced First Person**, and the CX log for review if a self-check fails. Gameplay validation has not yet been observed.
