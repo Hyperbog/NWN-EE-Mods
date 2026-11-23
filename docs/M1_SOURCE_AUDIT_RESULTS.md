@@ -228,3 +228,37 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_OfflineRollb
 ```
 
 This helper is statically checked but **not yet Windows-executed**. After the report passes, prepare a separate guarded installer/restore pair with explicit verification. Until then, do not replace the working `version.dll` or any of the four companion DLLs.
+
+
+## Offline rollback rehearsal verified — preparing guarded M1 switch (2026-11-22)
+
+The developer uploaded `M1_OfflineRollbackTest.txt`, reporting `RESULT: PASS`: all five M1 DLLs copied into isolated scratch and hashed, all five original backed-up DLLs restored into scratch and rehashed, and the installed game binary/DLLs rechecked without modification. This is an **offline test only**; there has still been no game-directory installation or actual game launch of M1.
+
+### Guarded switch procedure
+
+[M1_RuntimeSwitch.ps1](../src/first-person/milestones/M1/M1_RuntimeSwitch.ps1) accepts three **explicit** actions: `Status` (read-only), `InstallM1` (installs M1's pinned `version.dll`), or `RestoreOriginal` (restores the pinned original `version.dll`). It verifies the exact game executable and all five original-backup checksums before any replacement; checks installed companion DLLs; refuses unknown installed `version.dll` hashes or a running NWN process; and installs/restores a hash-verified temporary file via a same-volume `System.IO.File.Replace` call. **Only `version.dll` is switched.** The other four installed DLLs, `cx.cfg`, and both CX source trees remain untouched. Restore does **not** require the staged M1 package to remain present. Reports are written under `C:\Projects\M1_RuntimeSwitch_<Action>.txt`, never silently overwritten.
+
+Do not execute an install and a restore together. Run Status first and review its report:
+
+```cmd
+powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/main/src/first-person/milestones/M1/M1_RuntimeSwitch.ps1' -OutFile 'C:\Projects\M1_RuntimeSwitch.ps1'"
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitch.ps1" -Action Status
+```
+
+**Optional controlled M1 install, only after deciding to accept a reversible runtime change:**
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitch.ps1" -Action InstallM1
+```
+
+**Restore the original tested baseline after exiting the game:**
+
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Projects\M1_RuntimeSwitch.ps1" -Action RestoreOriginal
+```
+
+The script does not launch the game or run CX self-checks. File replacement is an **actual game change**, unlike the preceding audit and scratch tests. A changed DLL may have runtime regressions even if it compiled and all hashes match. The script has been statically reviewed but has **not yet been executed on Windows**. If any action fails, do not bypass hash refusals or manually overwrite files; report the exact error and the installed `version.dll` SHA-256.
+
+### Initial gameplay smoke test after a successful install
+
+Start NWN:EE normally with the test DLL. Check that the game reaches the main menu without a CX initialization failure, open `/settings` in-game, verify Controls → Enhanced First Person and the regular/Advanced controls, then use a disposable offline save for the reticle, action camera, turning, walking against a wall, jumping, combat animations, and helmet unequip/re-equip. In particular, the previously observed blocked-wall walking-in-place and helmet-triggered running-in-place are **not known resolved** by M1. Exit the game before restoring the original baseline. Do not interpret a clean DLL hash as proof of gameplay correctness.
