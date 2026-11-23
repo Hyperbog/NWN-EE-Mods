@@ -2,7 +2,7 @@
   "version": "M4-source",
   "predecessor": "M3-rc1",
   "commit_base": "a928bb857a81d6a211d2ac58e52b1c683c54f2e1",
-  "status": "source patch committed; Windows M4 build and runtime not yet tested",
+  "status": "Windows managed compile PASSED (0 errors; 150 warnings); NativeAOT link and package creation completed; final ZIP integrity report and gameplay pending",
   "changes": [
     "Mandatory Action Camera in Driving",
     "Z releases/recaptures cursor without disabling Action Camera",
@@ -13,8 +13,18 @@
   "patch": "src/first-person/milestones/M4/M4_MandatoryActionCamera.patch",
   "stage_build": "src/first-person/milestones/M4/M4_StageBuild.ps1",
   "base_stage": "C:\\Projects\\NWN_FP_M3_BAKED_STAGE",
-  "output_stage": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE",
+  "output_stage": "C:\\Projects\\NWN_FP_M4_ACTION_STAGE_R02",
   "expected_input_camera_knobs_sha256": "59881b5270a25f62d75eefef82dce186a262b309d02d24a7563cf793d35250dc",
   "binary_sha256": "Pending build result",
-  "rollback": "Existing M1 and original five-DLL backups; previous M3-rc1 stage preserved"
+  "rollback": "Existing M1 and original five-DLL backups; previous M3-rc1 stage preserved",
+  "build_evidence": {
+    "managed_log": "C:\\Projects\\M4_ManagedBuild_R02.log",
+    "managed_result": "Build succeeded; 0 errors; 150 warnings; elapsed 11.61 seconds",
+    "native_stdout": "C:\\Projects\\M4_NativeBuild_R02.log",
+    "native_stderr": "C:\\Projects\\M4_NativeBuild_R02.stderr.log",
+    "native_result": "NativeAOT linked and cx-windows-x64 plus ZIP package listed; stderr includes 2 nonfatal CMake warnings",
+    "native_symbol_check": "skipped: nwmain.exe absent from build context",
+    "release_integrity_report": "C:\\Projects\\M4_StageBuildReport_R02.txt (not uploaded yet)",
+    "release_hashes": "pending developer report"
+  }
 }
