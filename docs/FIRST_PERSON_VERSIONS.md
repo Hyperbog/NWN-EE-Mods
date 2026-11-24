@@ -41,3 +41,7 @@ M5 is now installed (guarded switch `SWITCHED_AND_VERIFIED`; exact release SHA-2
 ## M6 source checkpoint — residual wall release
 
 M5 user reports wall collision largely fixed; intermittent post-release driving and rare close-angle clipping remain. M6 adds a one-shot native abort fallback after sustained refused steps. [Evidence and build details](M6_WALL_RELEASE.md). Build and gameplay pending; M5 remains the installed baseline.
+
+## M7 source checkpoint — wall-edge clipping
+
+[M7](M7_WALL_NEAR_PLANE.md) preserves M6 and adds bounded perspective-aware near-plane sampling. Cloud build plan now targets M7; source replay passed, compilation and gameplay pending. Through-wall targeting deferred.

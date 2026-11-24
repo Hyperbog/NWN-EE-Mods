@@ -1,0 +1,7 @@
+# M7 — Perspective edge clearance
+
+User screenshot shows the left view edge passing through a wall at an oblique angle, and a barrel label beyond the wall. Intermittent movement against walls remains reported. The exact installed build was not supplied with the screenshot, so M6 effectiveness is not yet established.
+
+The existing 13-ray guard uses a fixed fan width. M7 retains it and adds eight perspective near-plane boundary rays from the solved eye, based on the measured Alloy world-view near distance/aspect and the configured FOV (default near/aspect fallback before a measured view). At most two correction passes, total 0.24 m extra camera retreat, with each proposed retreat itself ray-tested. Creature and player attachment filtering is reused. The combined correction is published through the existing visual-only path. No character movement, camera rotation, projection changes, targeting changes, or native offsets. This is a sampled approximation, not a swept hull; it cannot guarantee complete clearance, particularly at complex corners or if the eye begins inside geometry. Potential camera shift/jitter and additional ray costs need gameplay testing.
+
+The build plan includes M1–M7 and preserves M6's candidate release recovery. The cloud build requires the missing cx-build-base branch holding exact checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34. Source replay verified; compilation/package/runtime unverified. Through-wall targeting is a separate line-of-sight issue, deferred.

@@ -1,0 +1,10 @@
+{
+  "version": "M7-source",
+  "parent": "M6-source",
+  "status": "Source candidate committed; cloud compilation blocked until base checkpoint is available",
+  "scope": "Bounded perspective near-plane wall edge mitigation; no targeting change",
+  "patch": "M7_WallNearPlane.patch",
+  "max_extra_retreat_m": 0.24,
+  "windows_build": "pending",
+  "gameplay": "pending"
+}

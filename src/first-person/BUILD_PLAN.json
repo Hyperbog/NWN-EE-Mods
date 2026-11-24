@@ -1,5 +1,5 @@
 {
-  "version": "M6",
+  "version": "M7",
   "base": "2470f0d27be0a29c152456aa60222f1f4fc25c34",
   "base_branch": "cx-build-base",
   "patches": [
@@ -8,6 +8,7 @@
     "M3/M3_BakedControlsAndTurn.patch",
     "M4/M4_MandatoryActionCamera.patch",
     "M5/M5_NpcDialogueCamera.patch",
-    "M6/M6_WallRelease.patch"
+    "M6/M6_WallRelease.patch",
+    "M7/M7_WallNearPlane.patch"
   ]
 }

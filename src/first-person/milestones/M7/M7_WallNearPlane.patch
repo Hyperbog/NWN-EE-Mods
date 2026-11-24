@@ -1,0 +1,148 @@
+diff --git a/managed/Services/Camera/FirstPersonWorldGuard.cs b/managed/Services/Camera/FirstPersonWorldGuard.cs
+--- a/managed/Services/Camera/FirstPersonWorldGuard.cs
++++ b/managed/Services/Camera/FirstPersonWorldGuard.cs
+@@ -19,6 +19,7 @@
+ using System;
+ using System.Diagnostics;
+ using System.Numerics;
++using CX.Alloy;
+ using CX.Alloy.Db;
+ using CX.Alloy.Seam;
+ using CX.Engine;
+@@ -52,7 +53,95 @@
+     private const float ReleasePerSecond = 6f;
+     private const float MaxStableMoveSq = 0.25f * 0.25f;
+     private const float SameHeadingDot = 0.90f;
++    // M7: bounded visual-only near-plane correction; no native movement writes.
++    private const float EdgeBudget = 0.24f;
++    private static long _edgeContacts, _edgeCasts;
++    private static float _lastEdgeShift;
+ 
++    private static bool EdgeHit(IntPtr scene, Vector3 from, Vector3 to, IntPtr playerGob,
++                                out float distance)
++    {
++        distance = 0f;
++        Vector3 delta = to - from;
++        float length = delta.Length();
++        if (!float.IsFinite(length) || length < 0.001f) return false;
++        Vector3 dir = delta / length;
++        Vector3 start = from;
++        for (int hop = 0; hop < 3; hop++)
++        {
++            _edgeCasts++;
++            if (!SceneRay.Cast(scene, start, to, playerGob, out Vector3 hit,
++                               out IntPtr gob, statics: true) || !Finite(hit)) return false;
++            if (SceneRay.IsCreature(gob) || OwnedAttachment(gob, playerGob))
++            {
++                start = hit + dir * SceneRay.Nudge;
++                if (Vector3.Dot(to - start, dir) <= 0f) return false;
++                continue;
++            }
++            distance = Math.Clamp(Vector3.Dot(hit - from, dir), 0f, length);
++            return true;
++        }
++        return false;
++    }
++
++    // Use the actual perspective near distance and aspect when the renderer has
++    // measured its world view. FOV is the value about to be written this frame.
++    // Before the first measured frame, use the engine's default near distance
++    // and a conservative widescreen aspect. No projection changes.
++    private static Vector3 GuardNearEdges(IntPtr scene, Vector3 eye, Quaternion rotation,
++                                           Vector3 forward, IntPtr playerGob)
++    {
++        ref readonly AlloyView view = ref AlloyCamera.WorldView;
++        float near = view.Valid && view.Perspective && float.IsFinite(view.Near)
++            && view.Near > 0f ? Math.Clamp(view.Near, 0.01f, 1f) : 0.10f;
++        float aspect = view.Valid && view.Perspective && float.IsFinite(view.Aspect)
++            && view.Aspect > 0f ? Math.Clamp(view.Aspect, 0.5f, 8f) : 2.0f;
++        float fov = CameraModes.Driving.Fov.V;
++        if (!float.IsFinite(fov)) return eye;
++        float halfHeight = near * MathF.Tan(Math.Clamp(fov, 10f, 150f) * MathF.PI / 360f);
++        float halfWidth = halfHeight * aspect;
++        Vector3 right = Vector3.Transform(Vector3.UnitX, rotation);
++        Vector3 up = Vector3.Transform(Vector3.UnitY, rotation);
++        if (!Finite(right) || !Finite(up)) return eye;
++        Vector3 original = eye;
++        float budget = EdgeBudget;
++        // Eight boundary samples (corners and edge centres), with at most
++        // two bounded corrective passes. A proposed retreat is itself tested.
++        for (int pass = 0; pass < 2 && budget > 0.001f; pass++)
++        {
++            Vector3 correction = Vector3.Zero;
++            float worst = 0f;
++            for (int sample = 0; sample < 9; sample++)
++            {
++                int x = sample % 3 - 1, y = sample / 3 - 1;
++                if (x == 0 && y == 0) continue;
++                Vector3 ray = forward * near + right * (x * halfWidth) + up * (y * halfHeight);
++                float length = ray.Length();
++                if (!float.IsFinite(length) || length < 0.001f) continue;
++                Vector3 direction = ray / length;
++                if (!EdgeHit(scene, eye, eye + ray + direction * Margin.V, playerGob, out float hit)) continue;
++                float need = Math.Clamp(length + Margin.V - hit, 0f, budget);
++                if (need > worst)
++                {
++                    worst = need;
++                    correction = -direction * need;
++                }
++            }
++            if (worst <= 0.001f) break;
++            if (EdgeHit(scene, eye, eye + correction, playerGob, out float retreatHit))
++            {
++                float safe = Math.Clamp(retreatHit - Margin.V, 0f, worst);
++                if (safe <= 0.001f) break;
++                correction *= safe / worst;
++            }
++            eye += correction;
++            budget -= correction.Length();
++        }
++        _lastEdgeShift = Vector3.Distance(original, eye);
++        if (_lastEdgeShift > 0.001f) _edgeContacts++;
++        return eye;
++    }
++
+     private static void ForgetContact()
+     {
+         LastEyeCorrection = Vector3.Zero;
+@@ -156,6 +245,7 @@
+     {
+         LastEyeCorrection = Vector3.Zero;
+         ContactConstrained = false;
++        _lastEdgeShift = 0f;
+         if (!Enabled.V || !FirstPersonActive || player == IntPtr.Zero) { ForgetContact(); return; }
+         if (!Finite(eye) || !float.IsFinite(rotation.X) || !float.IsFinite(rotation.Y)
+             || !float.IsFinite(rotation.Z) || !float.IsFinite(rotation.W))
+@@ -216,16 +306,16 @@
+         // fraction when a new wall is closer; we NEVER ease into a collision.
+         fraction = ContactFraction(fraction, feet, forward);
+         _lastFraction = fraction;
+-        if (fraction >= 0.999f) return;
+-        // s=1: unmodified eye. s=0: retreat to behind the creature centre.
+-        // This is the final eye constraint. The rig cannot independently advance
+-        // after this solve; Fix14D-C2 will handle the accompanying visual pose.
++        // First preserve the existing swept eye constraint, then protect the
++        // actual view boundary, even when the original parallel fan missed a wall.
+         Vector3 wantedEye = eye;
+-        eye = Vector3.Lerp(fromBase - forward * Near.V, eye, fraction);
++        if (fraction < 0.999f)
++            eye = Vector3.Lerp(fromBase - forward * Near.V, eye, fraction);
++        try { eye = GuardNearEdges(scene, eye, rotation, forward, playerGob); }
++        finally { SceneRay.Release(); }
+         LastEyeCorrection = eye - wantedEye;
+-        ContactConstrained = true;
+-        _blocked++;
+-        _wallContacts++;
++        ContactConstrained = fraction < 0.999f || _lastEdgeShift > 0.001f;
++        if (ContactConstrained) { _blocked++; _wallContacts++; }
+     }
+ 
+     internal static string Diagnostics() =>
+@@ -235,5 +325,6 @@
+         $"badPose={_badPose} lastFraction={_lastFraction:0.000} " +
+         $"contact={(ContactConstrained ? 1 : 0)} backoff={LastEyeCorrection.Length():0.000}m " +
+         $"releaseFrames={_releaseFrames} contacts={_wallContacts} " +
+-        "(13-ray bounded hull approximation; world guard last; no visual-pose writes yet)";
++        $"edgeContacts={_edgeContacts} edgeCasts={_edgeCasts} edgeShift={_lastEdgeShift:0.000}m " +
++        "(13-ray sweep + bounded perspective edge samples; camera-only correction)";
+ }
