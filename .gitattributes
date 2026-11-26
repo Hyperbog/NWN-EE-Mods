@@ -1,0 +1,19 @@
+# Consistent repository text; never renormalize historical patches without review.
+* text=auto
+*.cs text eol=lf
+*.py text eol=lf
+*.ps1 text eol=lf
+*.sh text eol=lf
+*.cmd text eol=lf
+*.bat text eol=lf
+*.patch text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.txt text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.editorconfig text eol=lf
+LICENSE text eol=lf
