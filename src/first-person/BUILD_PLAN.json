@@ -10,5 +10,6 @@
     "M5/M5_NpcDialogueCamera.patch",
     "M6/M6_WallRelease.patch",
     "M7/M7_WallNearPlane.patch"
-  ]
+  ],
+  "packaging_revision": 1
 }
