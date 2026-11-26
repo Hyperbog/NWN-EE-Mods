@@ -1,18 +1,77 @@
-# Install a published EFP release, not a locally compiled DLL. Windows PowerShell 5.1+.
+# Install an exact published EFP release. Windows PowerShell 5.1+.
 [CmdletBinding(DefaultParameterSetName='Install')]
 param(
  [Parameter(Mandatory=$true,ParameterSetName='Install')]
  [ValidatePattern('^[0-9a-f]{40}$')][string]$SourceCommit,
  [Parameter(ParameterSetName='Install')]
- [ValidatePattern('^M[0-9]+(-[A-Za-z0-9]+)?$')][string]$Version='M7',
- [Parameter(Mandatory=$true,ParameterSetName='Restore')]
- [string]$RestoreBackup
+ [ValidatePattern('^M[0-9]+(-[A-Za-z0-9]+)?$')][string]$Version,
+ [Parameter(Mandatory=$true,ParameterSetName='Restore')][string]$RestoreBackup,
+ [string]$GamePath,
+ [string]$WorkDir=(Join-Path $env:LOCALAPPDATA 'NWN_EFP_Packages'),
+ [ValidateNotNullOrEmpty()][ValidatePattern('^[0-9a-fA-F]{64}$')]
+ [string[]]$ExpectedExeSha256=@('3b7cb1252e0edb2ce22d7971f333aade027039ae30a45b4bc64732c3e6bec73a')
 )
 $ErrorActionPreference='Stop'
-$game='D:\SteamLibrary\steamapps\common\Neverwinter Nights\bin\win32'
-$root='C:\Projects\NWN_EFP_Packages'
-$exeSha='3b7cb1252e0edb2ce22d7971f333aade027039ae30a45b4bc64732c3e6bec73a'
 $names=@('version.dll','cx_openal.dll','phonon.dll','shaderc_shared.dll','vma.dll')
+function FullPath([string]$path){
+ if($path -notmatch '^[A-Za-z]:[\\/]'){throw 'Use an absolute local Windows drive path.'}
+ $full=[IO.Path]::GetFullPath($path).TrimEnd('\')
+ if($full -match '^[A-Za-z]:$'){throw 'Choose a directory rather than an entire drive.'}
+ return $full
+}
+function SafeFolder([string]$path){
+ $dir=[IO.DirectoryInfo]::new($path)
+ while($null -ne $dir){
+  if($dir.Exists -and ($dir.Attributes -band [IO.FileAttributes]::ReparsePoint)){throw "Refusing reparse directory: $($dir.FullName)"}
+  $dir=$dir.Parent
+ }
+}
+function FindGame([string]$override){
+ $candidates=@()
+ if($override){$candidates+=FullPath $override}
+ else{
+  $steam=@()
+  foreach($key in @('HKCU:\Software\Valve\Steam','HKLM:\SOFTWARE\Valve\Steam','HKLM:\SOFTWARE\WOW6432Node\Valve\Steam')){
+   $reg=Get-ItemProperty -LiteralPath $key -ErrorAction SilentlyContinue
+   if($reg.SteamPath){$steam+=$reg.SteamPath}
+   if($reg.InstallPath){$steam+=$reg.InstallPath}
+  }
+  if($env:ProgramFiles){$steam+=Join-Path $env:ProgramFiles 'Steam'}
+  if([Environment]::GetEnvironmentVariable('ProgramFiles(x86)')){$steam+=Join-Path ([Environment]::GetEnvironmentVariable('ProgramFiles(x86)')) 'Steam'}
+  foreach($s in ($steam|Select-Object -Unique)){
+   $libs=@($s)
+   $vdf=Join-Path $s 'steamapps\libraryfolders.vdf'
+   if(Test-Path -LiteralPath $vdf -PathType Leaf){
+    foreach($m in [regex]::Matches((Get-Content -LiteralPath $vdf -Raw),'(?im)^\s*"(?:path|\d+)"\s*"([^"\r\n]+)"')){
+     $lib=$m.Groups[1].Value.Replace('\\','\')
+     if($lib -match '^[A-Za-z]:[\\/]'){$libs+=$lib}
+    }
+   }
+   foreach($lib in $libs){$candidates+=Join-Path $lib 'steamapps\common\Neverwinter Nights'}
+  }
+  foreach($key in @('HKLM:\SOFTWARE\GOG.com\Games','HKLM:\SOFTWARE\WOW6432Node\GOG.com\Games','HKCU:\SOFTWARE\GOG.com\Games','HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall','HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall','HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall')){
+   foreach($sub in (Get-ChildItem -LiteralPath $key -ErrorAction SilentlyContinue)){
+    $reg=Get-ItemProperty -LiteralPath $sub.PSPath -ErrorAction SilentlyContinue
+    if(($reg.gameName -match 'Neverwinter Nights.*Enhanced' -or $reg.DisplayName -match 'Neverwinter Nights.*Enhanced')){
+     if($reg.path){$candidates+=$reg.path}
+     if($reg.InstallLocation){$candidates+=$reg.InstallLocation}
+    }
+   }
+  }
+  if($env:SystemDrive){$candidates+=Join-Path ($env:SystemDrive+'\') 'GOG Games\Neverwinter Nights Enhanced Edition'}
+ }
+ $found=@()
+ foreach($candidate in $candidates){
+  if($candidate -notmatch '^[A-Za-z]:[\\/]'){continue}
+  foreach($folder in @($candidate,(Join-Path $candidate 'bin\win32'))){
+   if(Test-Path -LiteralPath (Join-Path $folder 'nwmain.exe') -PathType Leaf){$found+=FullPath $folder}
+  }
+ }
+ $found=@($found|Select-Object -Unique)
+ if($found.Count -ne 1){throw "Found $($found.Count) NWN installations. Specify -GamePath with the game root or bin\win32 directory."}
+ SafeFolder $found[0]
+ return $found[0]
+}
 function Hash([string]$path){
  if(-not(Test-Path -LiteralPath $path -PathType Leaf)){throw "Missing file: $path"}
  if((Get-Item -LiteralPath $path -Force).Attributes -band [IO.FileAttributes]::ReparsePoint){throw "Refusing reparse point: $path"}
@@ -74,7 +133,24 @@ function ReplaceSet([string]$from,$wanted,$before,[string]$snapshot){
  }
 }
 Closed
-AssertHash (Join-Path $game 'nwmain.exe') $exeSha
+$root=FullPath $WorkDir
+SafeFolder $root
+if($PSCmdlet.ParameterSetName -eq 'Restore'){
+ $from=FullPath $RestoreBackup
+ $prefix=$root+'\'
+ if(-not $from.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase)){throw 'Use the printed backup directory and its original -WorkDir.'}
+ SafeFolder $from
+ $recordPath=Join-Path $from 'backup.json'
+ [void](Hash $recordPath)
+ $record=Get-Content -LiteralPath $recordPath -Raw|ConvertFrom-Json
+ if(-not $GamePath){$GamePath=[string]$record.game}
+ if(-not $GamePath){throw 'Backup has no game directory.'}
+}
+$game=FindGame $GamePath
+if($root -eq $game -or $root.StartsWith($game+'\',[StringComparison]::OrdinalIgnoreCase)){throw 'Work directory must not be inside the game executable directory.'}
+$exeSha=Hash (Join-Path $game 'nwmain.exe')
+if($ExpectedExeSha256 -notcontains $exeSha){throw "Unsupported nwmain.exe SHA256: $exeSha. No game files changed."}
+if($PSCmdlet.ParameterSetName -eq 'Restore' -and ($record.game -ne $game -or $record.exe_sha256 -ne $exeSha)){throw 'Backup belongs to a different game installation.'}
 $before=[ordered]@{}
 foreach($name in $names){$before[$name]=Hash (Join-Path $game $name)}
 [void][IO.Directory]::CreateDirectory($root)
@@ -82,11 +158,6 @@ $work=Join-Path $root ([DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss')+'-'+[Guid]
 [void][IO.Directory]::CreateDirectory($work)
 $wanted=[ordered]@{}
 if($PSCmdlet.ParameterSetName -eq 'Restore'){
- $from=[IO.Path]::GetFullPath($RestoreBackup)
- $prefix=$root.TrimEnd('\')+'\'
- if(-not $from.StartsWith($prefix,[StringComparison]::OrdinalIgnoreCase)){throw 'Use the backup directory printed by this installer.'}
- $record=Get-Content -LiteralPath (Join-Path $from 'backup.json') -Raw|ConvertFrom-Json
- if($record.game -ne $game -or $record.exe_sha256 -ne $exeSha){throw 'Backup belongs to a different game installation.'}
  foreach($name in $names){
   $wanted[$name]=[string]$record.before.PSObject.Properties[$name].Value
   $installed=[string]$record.after.PSObject.Properties[$name].Value
@@ -94,6 +165,14 @@ if($PSCmdlet.ParameterSetName -eq 'Restore'){
  }
  VerifySet $from $wanted
 }else{
+ # The immutable source plan locates the release; the release manifest supplies the version.
+ if(-not $Version){
+  $planFile=Join-Path $work 'BUILD_PLAN.json'
+  Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/$SourceCommit/src/first-person/BUILD_PLAN.json" -OutFile $planFile
+  $plan=Get-Content -LiteralPath $planFile -Raw|ConvertFrom-Json
+  $Version=[string]$plan.version
+  if($Version -cnotmatch '^M[0-9]+(-[A-Za-z0-9]+)?$'){throw 'Invalid version in pinned build plan.'}
+ }
  $tag="efp-$Version-$SourceCommit"
  $base="https://github.com/Hyperbog/NWN-EE-Mods/releases/download/$tag"
  $package="NWN-EFP-$Version-win-x64.zip"
@@ -106,6 +185,7 @@ if($PSCmdlet.ParameterSetName -eq 'Restore'){
     $manifest.cx_checkpoint -cne '2470f0d27be0a29c152456aa60222f1f4fc25c34' -or $manifest.package -cne $package){
   throw 'Release manifest does not identify the requested source commit and package.'
  }
+ $Version=[string]$manifest.version
  Invoke-WebRequest -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile
  AssertHash $zipFile ([string]$manifest.package_sha256)
  $from=Join-Path $work 'package'

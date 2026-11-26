@@ -6,6 +6,6 @@ COMPILED: [run 45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs
 
 The pinned `cx-build-base` branch is a build input, not an active development branch. Do not delete it while the current workflow depends on it. Direct-main development is the current policy. No local Visual Studio build is required for the product owner.
 
-Install only an exact-commit package explicitly chosen for testing; see [README](../README.md) and [STATUS.md](../STATUS.md). Do not select the latest package automatically. Preserve all five DLLs, cx.cfg, saves and rollback snapshot. Installer portability is Phase 1.3.
+Install only an exact-commit package explicitly chosen for testing; see [README](../README.md) and [STATUS.md](../STATUS.md). Do not select the latest package automatically. Preserve all five DLLs, cx.cfg, saves and rollback snapshot. The portable installer implementation is in main (READ); its synthetic Windows test is a build gate. See [installer guide](INSTALLER.md).
 
 [Historical cloud workflow](history/CLOUD_RELEASES.md) preserves the earlier bootstrap procedure; do not repeat it.

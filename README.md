@@ -8,7 +8,7 @@ Experimental first-person camera, movement, jumping and combat-reticle modificat
 
 ## Installation and rollback
 
-Use the [M11 exact-commit preview release](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-7a26ce3a909f13f7c5dee2afbc022febc2616f4e). The existing installer currently assumes the original tester's game/work directories and a pinned nwmain.exe checksum; it is not yet portable. Do not install into another game build or mix runtime versions. Close NWN before changing runtime files. For the original tester only, in ordinary CMD:
+Use the [M11 exact-commit preview release](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-7a26ce3a909f13f7c5dee2afbc022febc2616f4e). The original pinned M11 installer below is the known historical deployment procedure. Phase 1.3 portable installer is in main with CI pending; see [portable installer guide](docs/INSTALLER.md). Do not install into another game build or mix runtime versions. Close NWN before changing runtime files. For the original tester only, in ordinary CMD:
 
 ```cmd
 powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $p=Join-Path $env:TEMP 'Install-EFP-M11.ps1'; Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/7a26ce3a909f13f7c5dee2afbc022febc2616f4e/tools/Install-EFP.ps1' -OutFile $p; & $p -Version M11 -SourceCommit 7a26ce3a909f13f7c5dee2afbc022febc2616f4e"
@@ -35,6 +35,6 @@ Replace the placeholder with the recorded backup path. If the backup or installe
 - [M11 test record](docs/testing/RESULTS/2026-11-26-M11.md)
 - [Changelog](CHANGELOG.md) and [open issues](https://github.com/Hyperbog/NWN-EE-Mods/issues)
 
-READ: current source uses a pinned NWNCX base, 30 overlays and the active patch chain in [BUILD_PLAN.json](src/first-person/BUILD_PLAN.json). This is not a standalone C# plugin. The five matching runtime DLLs are distributed through Releases, not committed to Git. EFP contributions are under the [MIT license](LICENSE); the original NWNCX copyright and license are retained in [third-party notices](THIRD_PARTY_NOTICES.md). Broader installer portability remains Phase 1 work. See [repository standards](docs/REPOSITORY_STANDARDS.md).
+READ: current source uses a pinned NWNCX base, 30 overlays and the active patch chain in [BUILD_PLAN.json](src/first-person/BUILD_PLAN.json). This is not a standalone C# plugin. The five matching runtime DLLs are distributed through Releases, not committed to Git. EFP contributions are under the [MIT license](LICENSE); the original NWNCX copyright and license are retained in [third-party notices](THIRD_PARTY_NOTICES.md). Portable installer CI is pending. See [repository standards](docs/REPOSITORY_STANDARDS.md).
 
 Development policy: active work is committed directly to `main`; see [repository standards](docs/REPOSITORY_STANDARDS.md). Optional PR CI remains available. Preserve the pinned base branch until the build architecture migration is complete.

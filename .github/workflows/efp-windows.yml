@@ -12,6 +12,7 @@ on:
       - 'src/first-person/SOURCE_MANIFEST.json'
       - 'tools/cloud_build.py'
       - 'tools/Install-EFP.ps1'
+      - 'tools/tests/Test-Install-EFP.ps1'
       - '.github/workflows/efp-windows.yml'
 permissions:
   contents: read
@@ -27,6 +28,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Test portable installer against disposable runtime
+        shell: powershell
+        run: ./tools/tests/Test-Install-EFP.ps1
       - name: Reconstruct exact source
         shell: bash
         run: |
