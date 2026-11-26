@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M2_SETTINGS_AUDIT.md) for links in their original context.
+
 # M2 — Enhanced First Person menu and toggle audit (source review)
 
 **Scope:** preserved J4 + the verified M1 settings UI, no movement or renderer changes. **Observed in game:** M1 menu opens. **Not yet observed:** whether the head-aim animation changes when the setting is toggled, whether each effect works at runtime, or whether M2 builds.

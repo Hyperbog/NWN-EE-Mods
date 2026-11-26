@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/PUBLICATION_PROVENANCE.md) for links in their original context.
+
 # Enhanced First Person — source provenance
 
 This repository directory stores the **tested J4 local modification overlay**, not a copy of all upstream NWNCX:EE source code.

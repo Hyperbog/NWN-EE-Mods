@@ -1,17 +1,11 @@
-# Cloud package workflow
+# Cloud builds and release process
 
-M6 is the final intended local NativeAOT build. M7 and later are intended to use GitHub Actions and the published Windows release ZIP instead of requiring local Visual Studio compilation.
+READ: [the workflow](../.github/workflows/efp-windows.yml) runs on source/build-related main pushes, manual dispatch and optional pull requests targeting main. The build checks out the pinned CX checkpoint and submodules, reconstructs overlays and patches according to [BUILD_PLAN.json](../src/first-person/BUILD_PLAN.json), compiles NativeAOT on Windows and runs the five-DLL integrity checks in [cloud_build.py](../tools/cloud_build.py). Pull request jobs do not publish. Main builds publish commit-specific prereleases with a package, manifest and SHA256SUMS.
 
-**One-time prerequisite:** the local source checkpoint 2470f0d27be0a29c152456aa60222f1f4fc25c34 was not found in the public upstream repository. From ordinary CMD, publish that committed checkpoint (not the uncommitted working tree, game files, config or logs):
+COMPILED: [run 45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45895431828), integrated main at `bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763`, completed build and publish successfully. This does not mean its package has been installed or tested in game.
 
-    git -C "C:\Projects\NWN_FP_M5_NPC_DIALOG_STAGE" push https://github.com/Hyperbog/NWN-EE-Mods.git 2470f0d27be0a29c152456aa60222f1f4fc25c34:refs/heads/cx-build-base
+The pinned `cx-build-base` branch is a build input, not an active development branch. Do not delete it while the current workflow depends on it. Direct-main development is the current policy. No local Visual Studio build is required for the product owner.
 
-No force push. Authenticate using Git Credential Manager if requested. This transfers committed Git source and its history; review the checkpoint history first if it contains private material. The build checks out the exact pinned commit.
+Install only an exact-commit package explicitly chosen for testing; see [README](../README.md) and [STATUS.md](../STATUS.md). Do not select the latest package automatically. Preserve all five DLLs, cx.cfg, saves and rollback snapshot. Installer portability is Phase 1.3.
 
-The Actions workflow uses the upstream pinned Windows runner, .NET SDK and action revisions, initializes submodules, verifies the published source overlays, applies the explicit milestone sequence, builds NativeAOT, and verifies all five DLLs against the ZIP and their x64 PE headers. Success creates a prerelease and checksum manifest tied to the exact mod source commit. The cloud run and installer are not yet verified; no compiled release is claimed to exist.
-
-The workflow can be manually run after the checkpoint is uploaded. Future milestone patch changes on main trigger it automatically. Update BUILD_PLAN.json's version and ordered patches with each milestone. Preserve previous releases. The next phase is a checksum-pinned one-command installer with a retained rollback backup, using the release asset rather than local compilation.
-
-## M7 cloud deployment
-
-The cx-build-base branch is now present at the exact pinned checkpoint. The workflow triggers on source, plan, installer and workflow changes. It publishes an explicitly commit-tagged prerelease after successful compilation and package checks. The new tools/Install-EFP.ps1 downloads only that exact release, validates the manifest, package and all five DLL hashes, checks the pinned game executable, snapshots the five currently installed DLLs into a unique previous-runtime directory and replaces only changed DLLs using named displaced backups. It can restore from its printed backup path. It does not change cx.cfg or compile anything locally. The installer is statically reviewed, not Windows-executed. No package is available until Actions successfully publishes the release.
+[Historical cloud workflow](history/CLOUD_RELEASES.md) preserves the earlier bootstrap procedure; do not repeat it.

@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M1_SOURCE_AUDIT_RESULTS.md) for links in their original context.
+
 # M1 — J4 source-lineage audit results (2026-11-22)
 
 **Scope:** user-run read-only audit of `C:\Projects\cx` against the 30 published J4 original implementation hashes in [SOURCE_MANIFEST.json](../src/first-person/SOURCE_MANIFEST.json).

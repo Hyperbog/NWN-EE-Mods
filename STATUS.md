@@ -1,6 +1,6 @@
-# EFP status — Phase 0 evidence checkpoint
+# EFP status — Phase 1.2 historical documentation checkpoint
 
-Phase 0 evidence exit criteria met on 2026-11-26. Phase 1.1 documentation and CI configuration consolidated into main under the product owner's revised main-only development policy (2026-11-26). Integrated-tree CI is pending. Gameplay release acceptance is NOT met.
+Phase 0 evidence exit criteria met on 2026-11-26. Phase 1.1 documentation and CI configuration consolidated into main under the product owner's revised main-only development policy (2026-11-26). COMPILED: integrated main CI run [45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45895431828) completed build and publication successfully; original installed candidate unchanged. Gameplay release acceptance is NOT met.
 
 Candidate: M11, source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`. Historical baseline: M5-rc1, OBSERVED for NPC dialogue only. M11 is the installed diagnostic candidate, not a globally accepted baseline.
 
@@ -28,7 +28,7 @@ Issues #2–#6 now carry bug and P1 labels; priorities #5–#6 remain provisiona
 
 ## Next
 
-Phase 1: repository hygiene only. The [project brief](docs/PROJECT_BRIEF.md), [ADR-001](docs/decisions/ADR-001-fixed-actor-root-eye.md), README, feature reference, version register and changelog have been prepared in the draft PR. The MIT contribution license, preserved NWNCX notice, .gitattributes, .editorconfig, issue/PR templates, Dependabot config and [repository standards](docs/REPOSITORY_STANDARDS.md) are consolidated into main (READ). PR CI run 45892845104 succeeded before integration (COMPILED); the publish job was skipped. Next: historical documentation organization, installer portability and diagnostic organization; confirm integrated main CI. No runtime changes in the documentation foundation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
+Phase 1: repository hygiene only. The [project brief](docs/PROJECT_BRIEF.md), [ADR-001](docs/decisions/ADR-001-fixed-actor-root-eye.md), README, feature reference, version register and changelog are integrated into main. The MIT contribution license, preserved NWNCX notice, .gitattributes, .editorconfig, issue/PR templates, Dependabot config and [repository standards](docs/REPOSITORY_STANDARDS.md) are consolidated into main (READ). PR CI run 45892845104 succeeded before integration (COMPILED); the publish job was skipped. Phase 1.2: 19 historical records moved to [docs/history](docs/history/README.md) with archival banners; live version register and cloud guide reconciled with the unchanged M11 build plan. Next: Phase 1.3 installer portability, then diagnostic organization. No runtime changes in the documentation foundation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
 
 ## Known compatible build (tested configuration only)
 

@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M9_BLOCKED_DRIVE_RECOVERY.md) for links in their original context.
+
 # M9 — Blocked drive recovery
 
 Log (2026-11-25): key mask zero, native drive stays 1, guard repeatedly reverses displacement. M6 abort at 156.85 ms, drive finally 1->0 at 908.23 ms. Send result is not acknowledgement. M8 exact binary hash unavailable in log.

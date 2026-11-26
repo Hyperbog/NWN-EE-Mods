@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M4_ACTION_CAMERA.md) for links in their original context.
+
 # M4 — Mandatory Action Camera
 
 **Source milestone:** Derived from the verified M3 source without altering M3, M2, M1, the original CX checkout, the game, or any rollback backups.

@@ -8,7 +8,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 - Phase 0 evidence checkpoint, gameplay checklist, test results and issues #2–#6.
 - Project brief and ADR-001; current documentation reconciliation (READ, no runtime changes).
 - MIT license for EFP contributions, NWNCX third-party notice, formatting rules, contribution templates, weekly Actions dependency update configuration and label registry (READ). Applied bug/P1 labels to issues #2–#6.
-- READ: consolidate documentation and PR CI into main; product owner adopts main-only direct commits with branch protection disabled. COMPILED: PR #7 run 45892845104 succeeded; integrated main CI pending.
+- READ: consolidate documentation and PR CI into main; product owner adopts main-only direct commits with branch protection disabled. COMPILED: PR #7 run 45892845104 succeeded; integrated main CI run 45895431828 completed successfully (COMPILED).
+- READ: archive 19 historical documents with original bodies retained; reconcile current version and cloud-build guides with STATUS.md and BUILD_PLAN.json. No runtime or installer changes.
 
 ## M11 development candidate — 2026-11-26
 

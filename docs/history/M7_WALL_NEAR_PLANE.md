@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M7_WALL_NEAR_PLANE.md) for links in their original context.
+
 # M7 — Perspective edge clearance
 
 User screenshot shows the left view edge passing through a wall at an oblique angle, and a barrel label beyond the wall. Intermittent movement against walls remains reported. The exact installed build was not supplied with the screenshot, so M6 effectiveness is not yet established.

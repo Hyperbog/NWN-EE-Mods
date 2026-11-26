@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M10_STATIONARY_EYE_AND_LOCAL_PATH.md) for links in their original context.
+
 # M10 — Stationary eye and local path completion
 
 M9 runtime failed. Log 2026-11-25: native abort attempts at age 0/203/406 ms; 231 blocked guard samples in 1.5 s; at 21:32:12 native drive=1 animation=2 input=0 actual unchanged (more than 36 s after release). Camera contact backoff 0.328 m sampled, hard edge fallback counter zero. NPC jitter reported. No inference that packet send result is server acknowledgement.

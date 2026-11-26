@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M1_CX_SETTINGS_MENU.md) for links in their original context.
+
 # M1 — Enhanced First Person in CX settings
 
 **Status (2026-11-22): M1 DLL installed and its Enhanced First Person menu observed in-game. Head-aim toggle behavior and multiple descriptions require validation. M2 source-only clarity patch is prepared in a separate milestone; no M2 build or gameplay test yet.** This is a settings-panel-only integration for the preserved J4 custom CX lineage. It is not a new DLL or a motion-blur implementation.

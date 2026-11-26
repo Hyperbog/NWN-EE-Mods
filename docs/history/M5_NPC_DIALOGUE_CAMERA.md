@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M5_NPC_DIALOGUE_CAMERA.md) for links in their original context.
+
 # M5 — Keep first-person camera during NPC dialogue
 
 **Observed M4 regression.** The NPC screenshots show an external view and an extremely close-up player model during conversation, then restoration to normal FPS when dialogue ends. The uploaded log reports `[camera] ... gate: dialog camera, mode 2` repeatedly during Linu La'neral and Militia Soldier dialogue. M4 was installed successfully; the evidence implicates a camera gate rather than an unsuccessful build.

@@ -1,3 +1,5 @@
+> **Historical record — not current instructions.** See [STATUS.md](../../STATUS.md) for current evidence and the [original snapshot](https://github.com/Hyperbog/NWN-EE-Mods/blob/bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763/docs/M8_STABLE_WALL_CONTACT.md) for links in their original context.
+
 # M8 — Stabilized wall contact
 
 M7 cloud release is published. User reports no clipping during the test, but the camera jumps position to avoid clips. The supplied 2026-11-25 cx.log shows M6 fallback abort after 266 ms and active Driving mode 2; it does not contain per-frame M7 edge-correction values or a release hash. The M7 source independently reveals an immediate per-frame worst-ray displacement, up to 0.24 m; this is a plausible source of discontinuity, not a measured attribution of every jump.
