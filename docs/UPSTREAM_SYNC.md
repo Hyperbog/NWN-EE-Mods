@@ -26,7 +26,7 @@ git fetch --no-tags upstream main
 git rev-parse FETCH_HEAD
 ```
 
-Stop on any error or dirty checkout. Record the full starting EFP commit as OLD_CX and select the full reviewed upstream SHA as UPSTREAM_SHA. If a particular release tag is desired, fetch its exact tag ref without importing unrelated tags and resolve its commit with git rev-parse FETCH_HEAD^{commit}. Do not assume a tag or latest main is compatible. The following placeholders must be replaced by those recorded hashes:
+Stop on any error or dirty checkout. Record the full starting EFP commit as OLD_CX and select the full reviewed upstream SHA as UPSTREAM_SHA. If a particular release tag is desired, fetch its exact tag ref without importing unrelated tags and resolve its commit with git rev-parse "FETCH_HEAD^{commit}". Do not assume a tag or latest main is compatible. The following placeholders must be replaced by those recorded hashes:
 
 ```cmd
 git merge-base OLD_CX UPSTREAM_SHA
@@ -64,7 +64,7 @@ git diff --cached --submodule=log
 
 Stop for conflicts; inspect each resolution, especially native hooks, offsets and EFP movement/camera changes. Use git merge --abort to discard an incomplete merge. Do not auto-select all upstream or EFP versions. If already integrated, stop rather than manufacture a merge. After review, stage only approved resolutions, check for unresolved and unstaged changes, and commit with a Conventional Commit message identifying the upstream SHA and issue.
 
-Initialize exact submodules with git submodule update --init --recursive; inspect git submodule status --recursive and require a clean tracked checkout. Record git rev-parse HEAD and git rev-parse HEAD^{tree}. Check remote main still equals OLD_CX. With explicit authorization, push main normally (no force); a non-fast-forward rejection requires a fresh audit. Keep inherited fork Actions disabled.
+Initialize exact submodules with git submodule update --init --recursive; inspect git submodule status --recursive and require a clean tracked checkout. Record git rev-parse HEAD and git rev-parse "HEAD^{tree}". Check remote main still equals OLD_CX. With explicit authorization, push main normally (no force); a non-fast-forward rejection requires a fresh audit. Keep inherited fork Actions disabled.
 
 ## 4. Build and accept
 
