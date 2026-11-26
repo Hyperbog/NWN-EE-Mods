@@ -45,3 +45,7 @@ M5 user reports wall collision largely fixed; intermittent post-release driving 
 ## M7 source checkpoint — wall-edge clipping
 
 [M7](M7_WALL_NEAR_PLANE.md) preserves M6 and adds bounded perspective-aware near-plane sampling. Cloud build plan now targets M7; source replay passed, compilation and gameplay pending. Through-wall targeting deferred.
+
+## M8 — stabilized wall contact
+
+M7 cloud package published; user reports clipping gone during test but camera-position jumps remain. M8 adds collision-validated temporal edge offset; previous thirteen-ray sweep remains unchanged. [M8 details](M8_STABLE_WALL_CONTACT.md). Cloud build/gameplay pending.

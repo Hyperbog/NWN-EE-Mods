@@ -1,0 +1,11 @@
+{
+  "version": "M8-source",
+  "parent": "M7",
+  "status": "Source replay passed; cloud build and gameplay pending",
+  "patch": "M8_StableWallContact.patch",
+  "approach_mps": 1.8,
+  "release_mps": 0.8,
+  "skin_m": 0.005,
+  "edge_budget_m": 0.24,
+  "scope": "Validated temporal edge displacement; previous sweep and aiming unchanged"
+}
