@@ -1,6 +1,6 @@
-# EFP status — Phase 0 draft
+# EFP status — Phase 0 evidence checkpoint
 
-Not yet merged; Phase 1 reconciliation is pending.
+Phase 0 evidence exit criteria met on 2026-11-26. This status is on the documentation branch in draft PR #1; main reconciliation and CI/merge remain pending in Phase 1. Gameplay release acceptance is NOT met.
 
 Candidate: M11, source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`. Historical baseline: M5-rc1, OBSERVED for NPC dialogue only. M11 is the installed diagnostic candidate, not a globally accepted baseline.
 
@@ -12,8 +12,20 @@ Candidate: M11, source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`. Histor
 | INSTALLED | User's Get-FileHash output matched version.dll SHA-256 `fe81fb1b6cf5b58d920cb477000da8f4b0147cc062961af634c12be42a2cdcec` |
 | OBSERVED | [2026-11-26 M11 results](docs/testing/RESULTS/2026-11-26-M11.md): 14 reported pass, two reported fail; combat and vertical-contact concerns require further review. Release acceptance withheld. |
 
-Known defects: angled-wall/corner trapping, diagonal movement along obstacles, dead NPC/remains collision, reported loss of combat animation, vertical-contact/height clipping and trapping after landing on NPC. No fresh log excerpts or repetition counts supplied for these observations.
+Known defects: angled-wall/corner trapping, diagonal movement along obstacles, dead NPC/remains collision, reported loss of combat animation, vertical-contact/height clipping and trapping after landing on NPC. The uploaded M11 log has been reviewed; exact asset identities, incident timestamps and repetition counts remain unknown.
 
 Standing decision: camera tracks character position and mouse orientation; no collision-driven eye displacement. Minor wall-edge clipping accepted. Do not treat every visual defect as a camera problem. Do not resume M6–M10 camera retreat experiments.
 
-Next: collect current M11 cx.log, prioritize angled-wall escape, diagnose one concern at a time. Phase 0 evidence recording in progress; no behavior fixes authorized by this results update.
+## Open defects
+
+- [#2 angled-wall/corner trapping](https://github.com/Hyperbog/NWN-EE-Mods/issues/2)
+- [#3 diagonal movement](https://github.com/Hyperbog/NWN-EE-Mods/issues/3)
+- [#4 dead NPC/remains collision](https://github.com/Hyperbog/NWN-EE-Mods/issues/4)
+- [#5 combat animation](https://github.com/Hyperbog/NWN-EE-Mods/issues/5)
+- [#6 vertical clipping/NPC landing](https://github.com/Hyperbog/NWN-EE-Mods/issues/6)
+
+All proposed P1; priorities not yet applied as labels. No confirmed root cause. The user confirms complete turn-away and forward movement does not escape angled contact. See results for log evidence.
+
+## Next
+
+Phase 1: repository hygiene only, beginning with PROJECT_BRIEF.md and reconciliation of documentation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
