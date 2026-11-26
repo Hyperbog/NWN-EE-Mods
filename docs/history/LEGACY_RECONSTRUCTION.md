@@ -1,6 +1,6 @@
 # Legacy reconstruction — historical recovery only
 
-READ: Phase 2.6 removes obsolete reconstruction inputs from active main after independent M11 source equivalence and successful direct-source CI [45909430241](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45909430241). No runtime source changes.
+READ: Phase 2.6 removes obsolete reconstruction inputs from active main after independent M11 source equivalence and successful direct-source CI [45909430241](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45909430241). COMPILED: final retirement CI [45910684322](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45910684322) passed on `c3312aa` without retries. No runtime source changes.
 
 ## Immutable recovery references
 
