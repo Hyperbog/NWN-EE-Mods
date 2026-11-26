@@ -1,16 +1,16 @@
 diff --git a/managed/Services/Camera/CameraDriveService.cs b/managed/Services/Camera/CameraDriveService.cs
 --- a/managed/Services/Camera/CameraDriveService.cs
 +++ b/managed/Services/Camera/CameraDriveService.cs
-@@ -89,5 +89,22 @@
+@@ -88,17 +88,34 @@
+     private static long _m6ReleasedAt;
+     private static bool _m6RecoverySent;
      private static long _m9LastAbort;
      private static int _m9Attempts;
--    private const int M9RetryIntervalMs = 200;
--    private const int M9MaxAttempts = 3;
--    private const int M9RecoveryWindowMs = 1000;
 +    private static bool _m10PathAttempted;
-+    private const int M9RetryIntervalMs = 200;
+     private const int M9RetryIntervalMs = 200;
+-    private const int M9MaxAttempts = 3;
 +    private const int M9MaxAttempts = 1;
-+    private const int M9RecoveryWindowMs = 1000;
+     private const int M9RecoveryWindowMs = 1000;
 +
 +    // A one-shot local predicted-path completion, only after a real release
 +    // and fresh refusals. Do not change native flags or server paths.
@@ -27,26 +27,46 @@ diff --git a/managed/Services/Camera/CameraDriveService.cs b/managed/Services/Ca
 +        _m10PathAttempted = true;
 +        return true;
 +    }
-@@ -101,2 +118,2 @@
+     private static IntPtr _m6ReleasedCreature, _m6ReleasedArea;
+ 
+     private static void M6ResetRelease()
+     {
+         _m6ReleasedAt = 0; _m6RecoverySent = false;
 -        _m9LastAbort = 0; _m9Attempts = 0;
 +        _m9LastAbort = 0; _m9Attempts = 0; _m10PathAttempted = false;
          _m6ReleasedCreature = _m6ReleasedArea = IntPtr.Zero;
+     }
+ 
+     private static void M6RecoverReleasedDrive(IntPtr app, CClientExoAppInternal a)
 diff --git a/managed/Services/Camera/StepGuardService.cs b/managed/Services/Camera/StepGuardService.cs
 --- a/managed/Services/Camera/StepGuardService.cs
 +++ b/managed/Services/Camera/StepGuardService.cs
-@@ -110,3 +110,6 @@
+@@ -108,15 +108,20 @@
+         if (!_probeOk || area.IsNull || pathfind.IsNull) return (*_next)(cre);
+ 
          ref Vector3 desired = ref creature.DesiredPos;
          Vector3 before = desired;
 +        bool m10Shortened = false;
 +        if (CameraDriveService.M10TakeBlockedRelease(cre, area.Ptr))
 +            m10Shortened = M10ShortenLocalPath(creature, before);
          // Fix14D-D5 OBSERVER BEGIN: pre-native position capture; no engine writes.
-@@ -118,2 +121,4 @@
+         long d5Start = System.Diagnostics.Stopwatch.GetTimestamp();
+         bool d5Watch = CameraDriveService.D4TraceWindow(d5Start, out int d5ReleaseId, out long d5ReleaseAt);
+         Vector3 d5PlayerBefore = d5Watch ? new CNWCObject(cre).Position : default;
+         int d5DrivingBefore = d5Watch ? creature.Driving : 0;
+         // Fix14D-D5 OBSERVER END.
          int r = (*_next)(cre);
 +        if (m10Shortened)
 +            _log?.Info($"[m10path] native completion drive={creature.Driving} anim={new CNWCObject(cre).Animation} count={creature.WaypointCount}");
          // Fix14D-D5 OBSERVER BEGIN: sample the existing original call.
-@@ -145,2 +150,28 @@
+         if (d5Watch)
+             D5Trace("native", d5Start, d5ReleaseAt, d5ReleaseId, d5PlayerBefore,
+                 new CNWCObject(cre).Position, before, desired, d5DrivingBefore, creature.Driving, r);
+@@ -141,8 +146,34 @@
+         if (creature.Driving != 0) _driveRefusals++; else _walkRefusals++;
+         return r;
+     }
+ 
 +    // The native remaining-path loop uses Vector* (12-byte stride), the cursor,
 +    // count and DesiredPos. Shorten only a one-point, client-predicted drive to
 +    // its already verified stationary position; let WalkUpdateLocation finish it.
@@ -75,27 +95,52 @@ diff --git a/managed/Services/Camera/StepGuardService.cs b/managed/Services/Came
 +
      /// <summary>The engine's own <c>Vector</c> shape, which the by-value call arguments need.</summary>
      private static Vec3 Vec(in Vector3 v) => new() { X = v.X, Y = v.Y, Z = v.Z };
+ 
+     // Fix14D-D5 OBSERVER BEGIN: bounded logging in D4's existing post-release window.
 diff --git a/managed/Services/Camera/FirstPersonWorldGuard.cs b/managed/Services/Camera/FirstPersonWorldGuard.cs
 --- a/managed/Services/Camera/FirstPersonWorldGuard.cs
 +++ b/managed/Services/Camera/FirstPersonWorldGuard.cs
-@@ -53,3 +53,3 @@
+@@ -49,9 +49,9 @@
+     // Fix 14D-C2 can consume it for the local player's colour-pass visual pose,
+     // but C1 deliberately does NOT write any world/model, physics or animation state.
+     internal static Vector3 LastEyeCorrection { get; private set; }
+     internal static bool ContactConstrained { get; private set; }
 -    private const float ReleasePerSecond = 10f;
 +    private const float ReleasePerSecond = 6f;
      private const float MaxStableMoveSq = 0.25f * 0.25f;
      private const float SameHeadingDot = 0.90f;
-@@ -64,3 +64,3 @@
+     // M7: bounded visual-only near-plane correction; no native movement writes.
+     private const float EdgeBudget = 0.24f;
+@@ -61,9 +61,9 @@
+     private static Vector3 _edgeHeld, _edgeAnchor;
+     private static IntPtr _edgeScene, _edgePlayer;
+     private static long _edgeTick, _edgeHardFallbacks, _edgeSmoothed;
      private const float EdgeApproachSpeed = 1.8f; // metres per second
 -    private const float EdgeReleaseSpeed = 1.8f;
 +    private const float EdgeReleaseSpeed = 0.8f;
      private const float EdgeSafetySkin = 0.005f;
+ 
+     private static void ResetEdgeHistory()
+     {
 diff --git a/managed/Services/Camera/CameraService.cs b/managed/Services/Camera/CameraService.cs
 --- a/managed/Services/Camera/CameraService.cs
 +++ b/managed/Services/Camera/CameraService.cs
-@@ -139,2 +139,2 @@
+@@ -139,9 +139,9 @@
+         FirstPersonModelProbe.Attach(log);
+         UniversalEyeClearance.Configure(log);
+         KnobSurface.Note(AttackCameraFollow.Diagnostics);
+         KnobSurface.Note(FirstPersonWorldGuard.Diagnostics);
 -        log.Info("EFP M9: blocked-drive recovery and wall-contact diagnostics");
 +        log.Info("EFP M10: stationary locomotion eye and bounded local-path completion");
          KnobSurface.Note(HeadBoneCamera.Diagnostics);
-@@ -288,2 +288,44 @@
+         KnobSurface.Note(JumpPositionService.Diagnostics);
+         SceneRay.Init();
+     }
+@@ -285,8 +285,50 @@
+             SettleCollision(module);
+         }
+     }
+ 
 +    private static IntPtr _m10Player, _m10Area;
 +    private static Vector3 _m10ProgressOrigin;
 +    private static long _m10LastSample, _m10ProgressAt;
@@ -140,7 +185,12 @@ diff --git a/managed/Services/Camera/CameraService.cs b/managed/Services/Camera/
 +
      private static Vector3 PlayerModelAnchor(IntPtr player)
      {
-@@ -420,3 +462,11 @@
+         Vector3 actor = new CNWCObject(player).Position;
+         IntPtr body = new CNWCCreature(player).GetModel(0xff, 1);
+@@ -418,8 +460,16 @@
+         AnimationCameraMotion.Apply(true, player, dt, ref eye, ref q);
+         AttackCameraFollow.Apply(player, dt, ref eye, ref q);
+         HeadBoneCamera.MaintainHeadClearance(player, ref eye, q);
          HeadBoneCamera.KeepMovementModelBehindEye(player, dt, ref eye, q);
 +        float stallWeight = M10StallWeight(player, dt, out Vector3 actor);
 +        if (stallWeight > 0f)
@@ -152,3 +202,5 @@ diff --git a/managed/Services/Camera/CameraService.cs b/managed/Services/Camera/
 +        }
          FirstPersonWorldGuard.Resolve(player, ref eye, q);
          Vector3 localVisualCorrection = UniversalEyeClearance.Apply(player, eye, q, FirstPersonWorldGuard.LastEyeCorrection, out bool validatedCore);
+         FirstPersonVisibility.PublishEyeCollision(player, localVisualCorrection, validatedCore);
+                 c.Place(eye, q);
