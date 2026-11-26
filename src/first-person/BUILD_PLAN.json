@@ -1,5 +1,5 @@
 {
-  "version": "M9",
+  "version": "M10",
   "base": "2470f0d27be0a29c152456aa60222f1f4fc25c34",
   "base_branch": "cx-build-base",
   "patches": [
@@ -11,7 +11,8 @@
     "M6/M6_WallRelease.patch",
     "M7/M7_WallNearPlane.patch",
     "M8/M8_StableWallContact.patch",
-    "M9/M9_BlockedDriveRecovery.patch"
+    "M9/M9_BlockedDriveRecovery.patch",
+    "M10/M10_StationaryEyeAndLocalPath.patch"
   ],
   "packaging_revision": 1
 }

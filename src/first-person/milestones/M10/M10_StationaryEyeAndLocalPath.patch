@@ -1,0 +1,154 @@
+diff --git a/managed/Services/Camera/CameraDriveService.cs b/managed/Services/Camera/CameraDriveService.cs
+--- a/managed/Services/Camera/CameraDriveService.cs
++++ b/managed/Services/Camera/CameraDriveService.cs
+@@ -89,5 +89,22 @@
+     private static long _m9LastAbort;
+     private static int _m9Attempts;
+-    private const int M9RetryIntervalMs = 200;
+-    private const int M9MaxAttempts = 3;
+-    private const int M9RecoveryWindowMs = 1000;
++    private static bool _m10PathAttempted;
++    private const int M9RetryIntervalMs = 200;
++    private const int M9MaxAttempts = 1;
++    private const int M9RecoveryWindowMs = 1000;
++
++    // A one-shot local predicted-path completion, only after a real release
++    // and fresh refusals. Do not change native flags or server paths.
++    internal static bool M10TakeBlockedRelease(IntPtr creature, IntPtr area)
++    {
++        long now = Environment.TickCount64;
++        if (_m10PathAttempted || _m6ReleasedAt == 0 || Held || !_probeOk ||
++            CameraService.Mode != 2 || !CameraModes.Driving.FirstPersonActive ||
++            CameraService.GateUp || CameraService.NpcDialogActive || FreeCameraService.Active ||
++            creature != _m6ReleasedCreature || area != _m6ReleasedArea ||
++            now - _m6ReleasedAt < 150 || now - _m6ReleasedAt > 1000 ||
++            !StepGuardService.M6PersistentRefusal(creature, area, _m6ReleasedAt, now))
++            return false;
++        _m10PathAttempted = true;
++        return true;
++    }
+@@ -101,2 +118,2 @@
+-        _m9LastAbort = 0; _m9Attempts = 0;
++        _m9LastAbort = 0; _m9Attempts = 0; _m10PathAttempted = false;
+         _m6ReleasedCreature = _m6ReleasedArea = IntPtr.Zero;
+diff --git a/managed/Services/Camera/StepGuardService.cs b/managed/Services/Camera/StepGuardService.cs
+--- a/managed/Services/Camera/StepGuardService.cs
++++ b/managed/Services/Camera/StepGuardService.cs
+@@ -110,3 +110,6 @@
+         ref Vector3 desired = ref creature.DesiredPos;
+         Vector3 before = desired;
++        bool m10Shortened = false;
++        if (CameraDriveService.M10TakeBlockedRelease(cre, area.Ptr))
++            m10Shortened = M10ShortenLocalPath(creature, before);
+         // Fix14D-D5 OBSERVER BEGIN: pre-native position capture; no engine writes.
+@@ -118,2 +121,4 @@
+         int r = (*_next)(cre);
++        if (m10Shortened)
++            _log?.Info($"[m10path] native completion drive={creature.Driving} anim={new CNWCObject(cre).Animation} count={creature.WaypointCount}");
+         // Fix14D-D5 OBSERVER BEGIN: sample the existing original call.
+@@ -145,2 +150,28 @@
++    // The native remaining-path loop uses Vector* (12-byte stride), the cursor,
++    // count and DesiredPos. Shorten only a one-point, client-predicted drive to
++    // its already verified stationary position; let WalkUpdateLocation finish it.
++    // Never mutate array metadata, free memory, set animation IDs or server paths.
++    private static bool M10ShortenLocalPath(CNWCCreature c, Vector3 safe)
++    {
++        Vector3 actual = new CNWCObject(c.Ptr).Position;
++        IntPtr path = c.Waypoints, cursor = c.WaypointCursor;
++        ushort count = c.WaypointCount;
++        int source = c.PathFromServer;
++        _log?.Info($"[m10path] release source={source} count={count} cursorAtStart={(path == cursor ? 1 : 0)} drive={c.Driving} correctionMs={c.CorrectionMs}");
++        if (source != 0 || count != 1 || path == IntPtr.Zero || cursor != path ||
++            c.Driving != 1 || c.CorrectionMs != 0 || JumpPositionService.AirborneFor(c.Ptr) ||
++            !M10Finite(safe) || !M10Finite(actual) || Vector3.DistanceSquared(safe, actual) > 0.0004f)
++            return false;
++        Vector3 endpoint = *(Vector3*)path;
++        float distance = Vector3.DistanceSquared(endpoint, safe);
++        if (!M10Finite(endpoint) || distance < 0.000001f || distance > 16f) return false;
++        *(Vector3*)path = safe;
++        _log?.Info("[m10path] shortened one local predicted waypoint to the stationary safe position");
++        return true;
++    }
++
++    private static bool M10Finite(Vector3 v) =>
++        float.IsFinite(v.X) && float.IsFinite(v.Y) && float.IsFinite(v.Z);
++
+     /// <summary>The engine's own <c>Vector</c> shape, which the by-value call arguments need.</summary>
+     private static Vec3 Vec(in Vector3 v) => new() { X = v.X, Y = v.Y, Z = v.Z };
+diff --git a/managed/Services/Camera/FirstPersonWorldGuard.cs b/managed/Services/Camera/FirstPersonWorldGuard.cs
+--- a/managed/Services/Camera/FirstPersonWorldGuard.cs
++++ b/managed/Services/Camera/FirstPersonWorldGuard.cs
+@@ -53,3 +53,3 @@
+-    private const float ReleasePerSecond = 10f;
++    private const float ReleasePerSecond = 6f;
+     private const float MaxStableMoveSq = 0.25f * 0.25f;
+     private const float SameHeadingDot = 0.90f;
+@@ -64,3 +64,3 @@
+     private const float EdgeApproachSpeed = 1.8f; // metres per second
+-    private const float EdgeReleaseSpeed = 1.8f;
++    private const float EdgeReleaseSpeed = 0.8f;
+     private const float EdgeSafetySkin = 0.005f;
+diff --git a/managed/Services/Camera/CameraService.cs b/managed/Services/Camera/CameraService.cs
+--- a/managed/Services/Camera/CameraService.cs
++++ b/managed/Services/Camera/CameraService.cs
+@@ -139,2 +139,2 @@
+-        log.Info("EFP M9: blocked-drive recovery and wall-contact diagnostics");
++        log.Info("EFP M10: stationary locomotion eye and bounded local-path completion");
+         KnobSurface.Note(HeadBoneCamera.Diagnostics);
+@@ -288,2 +288,44 @@
++    private static IntPtr _m10Player, _m10Area;
++    private static Vector3 _m10ProgressOrigin;
++    private static long _m10LastSample, _m10ProgressAt;
++    private static float _m10Weight;
++    private static bool _m10Stalled;
++
++    private static float M10StallWeight(IntPtr player, float dt, out Vector3 actor)
++    {
++        actor = new CNWCObject(player).Position;
++        var creature = new CNWCCreature(player);
++        IntPtr mod = Module();
++        IntPtr area = mod == IntPtr.Zero ? IntPtr.Zero : new CNWCModule(mod).CurrentArea.Ptr;
++        int anim = new CNWCObject(player).Animation;
++        long now = Environment.TickCount64;
++        bool loco = anim is 2 or 3 or 4 or 0x4e or 0x4f or >= 0x54 and <= 0x57;
++        bool valid = Mode == 2 && !GateUp && !NpcDialogActive && !FreeCameraService.Active &&
++            area != IntPtr.Zero && loco && (creature.Driving == 1 || CameraDriveService.Held) &&
++            !JumpPositionService.AirborneFor(player) &&
++            float.IsFinite(actor.X) && float.IsFinite(actor.Y) && float.IsFinite(actor.Z);
++        if (!valid || player != _m10Player || area != _m10Area ||
++            now - _m10LastSample > 250 || now < _m10LastSample)
++        {
++            _m10Player = player; _m10Area = area;
++            _m10ProgressOrigin = actor; _m10ProgressAt = _m10LastSample = now;
++            _m10Weight = 0f; _m10Stalled = false;
++            return 0f;
++        }
++        _m10LastSample = now;
++        Vector3 delta = actor - _m10ProgressOrigin;
++        if (delta.X * delta.X + delta.Y * delta.Y >= 0.0004f || MathF.Abs(delta.Z) > 0.05f)
++        { _m10ProgressOrigin = actor; _m10ProgressAt = now; }
++        bool stalled = now - _m10ProgressAt >= 120;
++        if (stalled != _m10Stalled)
++        {
++            _m10Stalled = stalled;
++            _log?.Info($"[m10camera] stationary locomotion={(stalled ? 1 : 0)} anim={anim} drive={creature.Driving} held={(CameraDriveService.Held ? 1 : 0)}");
++        }
++        float step = Math.Clamp(dt, 0f, 0.05f) * 10f;
++        _m10Weight = Math.Clamp(_m10Weight + (stalled ? step : -step), 0f, 1f);
++        return _m10Weight;
++    }
++
+     private static Vector3 PlayerModelAnchor(IntPtr player)
+     {
+@@ -420,3 +462,11 @@
+         HeadBoneCamera.KeepMovementModelBehindEye(player, dt, ref eye, q);
++        float stallWeight = M10StallWeight(player, dt, out Vector3 actor);
++        if (stallWeight > 0f)
++        {
++            // While locomotion is requested but the actor cannot advance, stop
++            // tracking animated head/torso translation. Keep mouse yaw/pitch.
++            eye = Vector3.Lerp(eye, actor + Vector3.UnitZ * m.EyeHeight.V, stallWeight);
++            q = Quaternion.Slerp(q, Pose(_sYaw, pitch), stallWeight);
++        }
+         FirstPersonWorldGuard.Resolve(player, ref eye, q);
+         Vector3 localVisualCorrection = UniversalEyeClearance.Apply(player, eye, q, FirstPersonWorldGuard.LastEyeCorrection, out bool validatedCore);
