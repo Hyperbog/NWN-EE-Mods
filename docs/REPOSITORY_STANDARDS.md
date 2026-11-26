@@ -17,7 +17,7 @@
 | P1 | Significant release-blocking gameplay concern | d93f0b |
 | P2 | Lower-priority concern | 0e8a16 |
 
-Use the existing GitHub enhancement label as a temporary alias for feature until the requested labels exist; then switch the feature template. Apply bug and P1 to issues #2–#6 (priorities provisional for #5–#6). Do not infer regression solely from a reported symptom.
+Use the existing GitHub enhancement label as a temporary alias for feature until the requested labels exist; then switch the feature template. READ: GitHub returned bug and P1 labels for each issue #2–#6 (priorities provisional for #5–#6). P1 was created with GitHub's default color rather than the proposed color. Do not infer regression solely from a reported symptom.
 
 ## Repository owner settings (pending)
 
@@ -29,4 +29,4 @@ Use the existing GitHub enhancement label as a temporary alias for feature until
 - Never use mass normalization (git add --renormalize .) on the existing overlay/patch history before confirming unchanged manifest hashes and reconstruction.
 - License and notice files cover EFP and NWNCX; review third-party dependency notices before a broadly distributed release.
 
-These settings are a checklist, not a claim that branch protection, topics, labels or the project board are already configured. The available connector supports issue label application but may not support repository-wide administration. CI protection must be enabled only when a PR check exists.
+These settings are a checklist, not a claim that branch protection, topics, labels or the project board are already configured. The available connector supports issue label application; repository-wide label creation/editing, description/topics, board and branch protection actions are not exposed. CI protection must be enabled only when a PR check exists.

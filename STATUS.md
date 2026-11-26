@@ -24,11 +24,11 @@ Standing decision: camera tracks character position and mouse orientation; no co
 - [#5 combat animation](https://github.com/Hyperbog/NWN-EE-Mods/issues/5)
 - [#6 vertical clipping/NPC landing](https://github.com/Hyperbog/NWN-EE-Mods/issues/6)
 
-All proposed P1; priorities not yet applied as labels. No confirmed root cause. The user confirms complete turn-away and forward movement does not escape angled contact. See results for log evidence.
+Issues #2–#6 now carry bug and P1 labels; priorities #5–#6 remain provisional pending diagnosis. No confirmed root cause. The user confirms complete turn-away and forward movement does not escape angled contact. See results for log evidence.
 
 ## Next
 
-Phase 1: repository hygiene only. The [project brief](docs/PROJECT_BRIEF.md), [ADR-001](docs/decisions/ADR-001-fixed-actor-root-eye.md), README, feature reference, version register and changelog have been prepared in the draft PR. Next: licensing/notice, repository configuration and issue/PR templates; then historical documentation organization and installer portability. No runtime changes in the documentation foundation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
+Phase 1: repository hygiene only. The [project brief](docs/PROJECT_BRIEF.md), [ADR-001](docs/decisions/ADR-001-fixed-actor-root-eye.md), README, feature reference, version register and changelog have been prepared in the draft PR. The MIT contribution license, preserved NWNCX notice, .gitattributes, .editorconfig, issue/PR templates, Dependabot config and [repository standards](docs/REPOSITORY_STANDARDS.md) are committed in the draft PR (READ). Next: finish repository administration and PR CI; then historical documentation organization and installer portability. No runtime changes in the documentation foundation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
 
 ## Known compatible build (tested configuration only)
 

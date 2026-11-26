@@ -7,6 +7,7 @@ All notable changes to Enhanced First Person will be documented here using the [
 ### Added
 - Phase 0 evidence checkpoint, gameplay checklist, test results and issues #2–#6.
 - Project brief and ADR-001; current documentation reconciliation (READ, no runtime changes).
+- MIT license for EFP contributions, NWNCX third-party notice, formatting rules, contribution templates, weekly Actions dependency update configuration and label registry (READ). Applied bug/P1 labels to issues #2–#6.
 
 ## M11 development candidate — 2026-11-26
 
