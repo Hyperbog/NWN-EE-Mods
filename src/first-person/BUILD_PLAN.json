@@ -10,5 +10,10 @@
     "M5/M5_NpcDialogueCamera.patch",
     "M11/M11_FixedEyeNativeMovement.patch"
   ],
-  "packaging_revision": 1
+  "packaging_revision": 2,
+  "direct_source": {
+    "repository": "Hyperbog/cx",
+    "commit": "b7895eda58cb1124e98a27109a1acc79e8544c6b",
+    "tree": "13e2a83859a4e711e90931df5c9a21ec5e2eeae1"
+  }
 }
