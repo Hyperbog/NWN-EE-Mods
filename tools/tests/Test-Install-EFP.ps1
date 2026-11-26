@@ -17,14 +17,19 @@ function Refuse([scriptblock]$action,[string]$reason){
  try{& $action}catch{if($_.Exception.Message -notlike "*$reason*"){throw};return}
  throw "Expected refusal: $reason"
 }
+# A called script has its own script scope. Use a unique fixture state in this CI process.
+if(Get-Variable -Name EfpInstallerFixtureState -Scope Global -ErrorAction SilentlyContinue){throw 'Fixture state already exists'}
+$global:EfpInstallerFixtureState=@{downloads=@{};running=$false;processChecks=0;downloadCalls=0}
 function Invoke-WebRequest {
  param([switch]$UseBasicParsing,[string]$Uri,[string]$OutFile)
- if(-not $script:downloads.ContainsKey($Uri)){throw "Unexpected network request: $Uri"}
- [IO.File]::Copy($script:downloads[$Uri],$OutFile,$false)
+ $global:EfpInstallerFixtureState.downloadCalls++
+ if(-not $global:EfpInstallerFixtureState.downloads.ContainsKey($Uri)){throw "Unexpected network request: $Uri"}
+ [IO.File]::Copy($global:EfpInstallerFixtureState.downloads[$Uri],$OutFile,$false)
 }
 function Get-Process {
  param([string]$Name,[string]$ErrorAction)
- if($script:running){[pscustomobject]@{Name='nwmain'}}
+ $global:EfpInstallerFixtureState.processChecks++
+ if($global:EfpInstallerFixtureState.running){[pscustomobject]@{Name='nwmain'}}
 }
 try{
  foreach($dir in @($game,$payload)){[void][IO.Directory]::CreateDirectory($dir)}
@@ -50,14 +55,16 @@ try{
  Put $planPath '{"version":"M11"}'
  Put $manifestPath ($manifest|ConvertTo-Json -Depth 8)
  $base="https://github.com/Hyperbog/NWN-EE-Mods/releases/download/efp-M11-$commit"
- $script:downloads=@{}
- $script:downloads["https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/$commit/src/first-person/BUILD_PLAN.json"]=$planPath
- $script:downloads["$base/release-manifest.json"]=$manifestPath
- $script:downloads["$base/$package"]=$zip
+ $global:EfpInstallerFixtureState.downloads=@{}
+ $global:EfpInstallerFixtureState.downloads["https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/$commit/src/first-person/BUILD_PLAN.json"]=$planPath
+ $global:EfpInstallerFixtureState.downloads["$base/release-manifest.json"]=$manifestPath
+ $global:EfpInstallerFixtureState.downloads["$base/$package"]=$zip
  $common=@{SourceCommit=$commit;GamePath=$gameRoot;WorkDir=$work;ExpectedExeSha256=@($exe)}
- $script:running=$true
+ $global:EfpInstallerFixtureState.running=$true
  Refuse {& $installer @common} 'Close NWN'
- $script:running=$false
+ Assert ($global:EfpInstallerFixtureState.processChecks -gt 0) 'Process mock not invoked'
+ Assert ($global:EfpInstallerFixtureState.downloadCalls -eq 0) 'Running-process refusal attempted a download'
+ $global:EfpInstallerFixtureState.running=$false
  Refuse {& $installer -SourceCommit $commit -GamePath $gameRoot -WorkDir $work} 'Unsupported nwmain.exe'
  $correct=$manifest.package_sha256
  $manifest.package_sha256='0'*64
@@ -81,5 +88,6 @@ try{
  Assert ((Get-Content (Join-Path $game 'test.sav') -Raw) -eq 'keep save') 'Save changed'
  Write-Host 'PASS: portable installer fixture, pinned version, process/hash refusal, backup and rollback.'
 }finally{
+ Remove-Variable -Name EfpInstallerFixtureState -Scope Global -ErrorAction SilentlyContinue
  Remove-Item -LiteralPath $root -Recurse -Force -ErrorAction SilentlyContinue
 }
