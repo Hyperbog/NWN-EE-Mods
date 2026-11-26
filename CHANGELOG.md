@@ -22,6 +22,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 2.6 retire 71 obsolete reconstruction inputs from active main; preserve immutable history and original base ref, simplify the direct-source plan and packaging CLI without changing installer, fixtures or pinned CX source. COMPILED: run [45910684322](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45910684322) passed on `c3312aa` without retries. PACKAGED: release ZIP digest matches CI manifest and GitHub asset metadata. Phase 2 architecture complete; original installed M11 and gameplay acceptance unchanged.
 
+- READ: Phase 3.1 formalize repeatable gameplay checklist revision 2, preserving IDs 01–16 and adding remains/NPC landing as 17–18. Clarify combat subresults, wall escape, repetition counts and evidence rules; original M11 results preserved, no runtime changes or new test session.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
