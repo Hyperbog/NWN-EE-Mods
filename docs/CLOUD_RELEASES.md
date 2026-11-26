@@ -4,7 +4,7 @@ READ: [the workflow](../.github/workflows/efp-windows.yml) runs on source/build-
 
 COMPILED: [run 45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45895431828), integrated main at `bc3b0b4a6c1a0624602344b0636ebdc4cc3e9763`, completed build and publish successfully. This does not mean its package has been installed or tested in game.
 
-The pinned `cx-build-base` branch and legacy reconstruction inputs are retained for rollback until Phase 2.6. The source fork's inherited Actions stay disabled; only the distribution repository builds and publishes. To roll back the migration, revert its distribution commit; do not force-push. Direct-main development is the current policy. No local Visual Studio build is required for the product owner.
+Phase 2.6 (READ; CI pending): legacy reconstruction inputs and commands are removed from active main. The original `cx-build-base` branch remains a historical recovery reference, not a CI input. See [legacy recovery](history/LEGACY_RECONSTRUCTION.md) for exact checkpoint and rollback. The source fork's inherited Actions stay disabled; only the distribution repository builds and publishes. Do not force-push. Direct-main development is the current policy. No local Visual Studio build is required for the product owner.
 
 Install only an exact-commit package explicitly chosen for testing; see [README](../README.md) and [STATUS.md](../STATUS.md). Do not select the latest package automatically. Preserve all five DLLs, cx.cfg, saves and rollback snapshot. The portable installer implementation is in main (READ); its synthetic Windows test is a build gate. See [installer guide](INSTALLER.md).
 

@@ -20,6 +20,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 2.5 document the upstream synchronization procedure, native ABI/offset review, dependency pins, exact-source CI, gameplay gates and rollback. Documentation only; no upstream integration or runtime changes.
 
+- READ: Phase 2.6 retire 71 obsolete reconstruction inputs from active main; preserve immutable history and original base ref, simplify the direct-source plan and packaging CLI without changing installer, fixtures or pinned CX source. Final Windows CI pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

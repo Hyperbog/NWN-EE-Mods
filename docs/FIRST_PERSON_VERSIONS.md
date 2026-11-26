@@ -19,7 +19,7 @@
 
 ## Current build and installed candidate
 
-READ: [BUILD_PLAN.json](../src/first-person/BUILD_PLAN.json) targets M11 using the pinned base and ordered M1–M5, M11 patches. M6–M10 are excluded from the active reconstruction. No source or build-plan change in Phase 1.2.
+READ: [BUILD_PLAN.json](../src/first-person/BUILD_PLAN.json) pins [CX M11](https://github.com/Hyperbog/cx/commit/b7895eda58cb1124e98a27109a1acc79e8544c6b) directly. M1–M5 and M11 are preserved as Git commits and annotated tags; M6–M10 are retired historical experiments. See [legacy recovery](history/LEGACY_RECONSTRUCTION.md). COMPILED: direct-source CI [45909430241](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45909430241) passed; its preview has not been installed or gameplay-tested.
 
 COMPILED: original M11 run [45849781085](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45849781085); integrated main run [45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45895431828) succeeded, including publication.
 

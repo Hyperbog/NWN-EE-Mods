@@ -4,6 +4,10 @@ These records preserve earlier milestone designs, development procedures, source
 
 The original document bodies are retained with only an archival banner. Some old relative links were written for the former directory; use each banner's immutable original-snapshot link to navigate them. Do not run archived installer or build commands as current guidance.
 
+## Retired reconstruction
+
+- [Legacy recovery and immutable source archive](LEGACY_RECONSTRUCTION.md)
+
 ## Milestones
 
 - [FIRST PERSON J4](FIRST_PERSON_J4.md)

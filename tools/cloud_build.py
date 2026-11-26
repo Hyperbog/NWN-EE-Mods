@@ -1,4 +1,4 @@
-"""Check out pinned EFP source, retain legacy reconstruction, and verify native packages."""
+"""Check out pinned EFP source and verify native packages."""
 import hashlib
 import json
 import pathlib
@@ -68,28 +68,8 @@ def checkout_direct():
     print("\n".join(statuses))
 
 
-def reconstruct():
-    assert git("rev-parse", "HEAD") == PLAN["base"], "Wrong CX checkpoint"
-    manifest = json.loads((SRC / "SOURCE_MANIFEST.json").read_text(encoding="utf-8"))
-    assert manifest["local_checkpoint"] == PLAN["base"], "Manifest base differs"
-    for name, entry in manifest["modules"].items():
-        assert re.fullmatch(r"managed/[A-Za-z0-9_./-]+\.cs", name)
-        assert ".." not in pathlib.PurePosixPath(name).parts
-        data = (SRC / name).read_bytes().decode("utf-8-sig").replace("\r\n", "\n").encode("utf-8")
-        assert sha(data) == entry["published_sha256_lf"], f"Overlay hash mismatch: {name}"
-        dest = CX / name
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(data)
-    for rel in PLAN["patches"]:
-        assert re.fullmatch(r"M[0-9]+/[A-Za-z0-9_.-]+\.patch", rel)
-        patch = SRC / "milestones" / rel
-        git("apply", "--check", str(patch))
-        git("apply", str(patch))
-    print("Verified overlay and applied", PLAN["patches"])
-
-
-def verify(direct=False):
-    pin = check_direct_pin() if direct else None
+def verify():
+    pin = check_direct_pin()
     source_zip = CX / "cx-windows-x64.zip"
     dist = ROOT / "dist"
     dist.mkdir(exist_ok=False)
@@ -115,20 +95,18 @@ def verify(direct=False):
             ["git", "-C", str(ROOT), "rev-parse", "HEAD"], text=True
         ).strip(),
         "cx_checkpoint": PLAN["base"],
-        "patches": PLAN["patches"],
+        "patches": [],
         "package": package.name,
         "package_sha256": sha(package.read_bytes()),
         "dlls": hashes,
         "status": "NativeAOT package integrity verified; in-game testing pending"
     }
-    if pin is not None:
-        result.update({
-            "build_mode": "direct",
-            "cx_source_repository": pin["repository"],
-            "cx_source_commit": pin["commit"],
-            "cx_source_tree": pin["tree"],
-            "patches": [],
-        })
+    result.update({
+        "build_mode": "direct",
+        "cx_source_repository": pin["repository"],
+        "cx_source_commit": pin["commit"],
+        "cx_source_tree": pin["tree"],
+    })
     (dist / "release-manifest.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     (dist / "SHA256SUMS").write_text(
         f'{result["package_sha256"]}  {package.name}\n', encoding="ascii"
@@ -137,13 +115,9 @@ def verify(direct=False):
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] == ["stage"]:
-        reconstruct()
-    elif sys.argv[1:] == ["checkout"]:
+    if sys.argv[1:] == ["checkout"]:
         checkout_direct()
     elif sys.argv[1:] == ["package-direct"]:
-        verify(direct=True)
-    elif sys.argv[1:] == ["package"]:
         verify()
     else:
-        raise SystemExit("Usage: cloud_build.py checkout|package-direct|stage|package")
+        raise SystemExit("Usage: cloud_build.py checkout|package-direct")
