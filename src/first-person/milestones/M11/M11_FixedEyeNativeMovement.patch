@@ -1,0 +1,347 @@
+diff --git a/managed/Services/Camera/CameraService.cs b/managed/Services/Camera/CameraService.cs
+--- a/managed/Services/Camera/CameraService.cs
++++ b/managed/Services/Camera/CameraService.cs
+@@ -139,8 +139,9 @@
+         FirstPersonModelProbe.Attach(log);
+         UniversalEyeClearance.Configure(log);
+         KnobSurface.Note(AttackCameraFollow.Diagnostics);
+         KnobSurface.Note(FirstPersonWorldGuard.Diagnostics);
++        log.Info("EFP M11: fixed actor-root eye; collision handled at keyboard/native walking boundary");
+         KnobSurface.Note(HeadBoneCamera.Diagnostics);
+         KnobSurface.Note(JumpPositionService.Diagnostics);
+         SceneRay.Init();
+     }
+@@ -387,9 +388,10 @@
+         // The curve stays inside the behavior's own pitch range (settings.tml [camera.limits] lands there), not a
+         // range of ours: a max past 90 is the player's to have.
+         float lo = PitchFloor, hi = PitchCeil;
+         if (b.PitchClamp != 0f) { lo = b.PitchMin[0]; hi = b.PitchMin[1]; }
+-        float pitch = Math.Clamp(_sPitch + m.PitchCurve.V * (_sDist - m.PitchRef.V), lo, hi);
++        float pitch = Math.Clamp(mode == 2 && m.FirstPersonActive ? _sPitch :
++            _sPitch + m.PitchCurve.V * (_sDist - m.PitchRef.V), lo, hi);
+         _outPitch = pitch;
+         Quaternion q = Pose(_sYaw, pitch);
+         if (mode != 2 || !m.FirstPersonActive) JumpPreview.Reset();
+         // Use the player actor's *world position*, not the orbit's follow focus:
+@@ -412,15 +414,29 @@
+                               - back * m.EyeForward.V;
+                 // Fix8: camera-only first-person attack motion. Never touches
+                 // the player, jump motor, reticle, or input controls.
+                 FirstPersonVisibility.Publish(player);
+-        HeadBoneCamera.Apply(player, dt, ref eye, q);
+-        AnimationCameraMotion.Apply(true, player, dt, ref eye, ref q);
+-        AttackCameraFollow.Apply(player, dt, ref eye, ref q);
+-        HeadBoneCamera.MaintainHeadClearance(player, ref eye, q);
+-        HeadBoneCamera.KeepMovementModelBehindEye(player, dt, ref eye, q);
+-        FirstPersonWorldGuard.Resolve(player, ref eye, q);
+-        Vector3 localVisualCorrection = UniversalEyeClearance.Apply(player, eye, q, FirstPersonWorldGuard.LastEyeCorrection, out bool validatedCore);
++        if (mode == 2)
++        {
++            // Single stable eye anchor. No head/attack/tether translation, no
++            // yaw-dependent orbit, no wall ray retreat, no collision smoothing.
++            // Native world movement alone moves the camera.
++            eye = new CNWCObject(player).Position + Vector3.UnitZ * m.EyeHeight.V;
++            if (!NpcDialogActive) HeadBoneCamera.TurnCharacter(player, q);
++            FirstPersonWorldGuard.ClearCameraContact();
++        }
++        else
++        {
++            HeadBoneCamera.Apply(player, dt, ref eye, q);
++            AnimationCameraMotion.Apply(true, player, dt, ref eye, ref q);
++            AttackCameraFollow.Apply(player, dt, ref eye, ref q);
++            HeadBoneCamera.MaintainHeadClearance(player, ref eye, q);
++            HeadBoneCamera.KeepMovementModelBehindEye(player, dt, ref eye, q);
++            FirstPersonWorldGuard.Resolve(player, ref eye, q);
++        }
++        // Only the local render model may move to clear its own head/torso.
++        Vector3 localVisualCorrection = UniversalEyeClearance.Apply(player, eye, q,
++            mode == 2 ? Vector3.Zero : FirstPersonWorldGuard.LastEyeCorrection, out bool validatedCore);
+         FirstPersonVisibility.PublishEyeCollision(player, localVisualCorrection, validatedCore);
+                 c.Place(eye, q);
+                 _pos = eye;
+                 _offsetOn = false;
+diff --git a/managed/Services/Camera/CameraDriveService.cs b/managed/Services/Camera/CameraDriveService.cs
+--- a/managed/Services/Camera/CameraDriveService.cs
++++ b/managed/Services/Camera/CameraDriveService.cs
+@@ -83,8 +83,77 @@
+     private static float _lastF, _lastS;
+     private static long _lastSendTick, _lastTick;
+     private static int _sends, _latches, _aborts;
+ 
++    // A keyboard-owned local drive, distinct from raw held keys and from
++    // server/click-to-move paths. A stop request is scoped to player and area.
++    private static IntPtr _m11Player, _m11Area;
++    private static bool _m11Stopped;
++    private static long _m11StopAt;
++    private static int _m11Blocks, _m11Slides;
++
++    private static bool M11Scope => _probeOk && CameraService.Mode == 2 &&
++        CameraModes.Driving.Enabled.V && CameraModes.Driving.FirstPersonActive &&
++        !CameraService.GateUp && !CameraService.NpcDialogActive && !FreeCameraService.Active;
++
++    private static void M11Reset()
++    {
++        _m11Player = _m11Area = IntPtr.Zero;
++        _m11Stopped = false; _m11StopAt = 0;
++    }
++
++    private static IntPtr M11Area()
++    {
++        IntPtr module = CameraService.Module();
++        return module == IntPtr.Zero ? IntPtr.Zero : new CNWCModule(module).CurrentArea.Ptr;
++    }
++
++    private static void M11Stop()
++    {
++        if (_m11Player == IntPtr.Zero || _m11Stopped) return;
++        _m11Stopped = true; _m11StopAt = Environment.TickCount64;
++        _log?.Info("[m11drive] keyboard drive stopped; native local path may finish");
++    }
++
++    internal static bool M11KeyboardPath(IntPtr creature, IntPtr area, out bool stop)
++    {
++        stop = _m11Stopped;
++        return M11Scope && creature != IntPtr.Zero && area != IntPtr.Zero &&
++            creature == _m11Player && area == _m11Area &&
++            (!stop || (!Held && Environment.TickCount64 - _m11StopAt <= 1500));
++    }
++
++    private static bool M11Travel(IntPtr creature, Vector3 right, float f, float s)
++    {
++        Vector2 wish = new(right.X * s - right.Y * f, right.Y * s + right.X * f);
++        if (wish.LengthSquared() < 0.000001f) return true;
++        return StepGuardService.M11CanTravel(creature, Vector2.Normalize(wish));
++    }
++
++    private static void M11Filter(IntPtr creature, Vector3 right, ref float f, ref float s)
++    {
++        if (M11Travel(creature, right, f, s)) return;
++        // Preserve a requested clear axis on diagonal contact, rather than
++        // inventing sideways input on a straight head-on collision.
++        if (f != 0f && s != 0f)
++        {
++            if (M11Travel(creature, right, f, 0f)) { s = 0f; _m11Slides++; return; }
++            if (M11Travel(creature, right, 0f, s)) { f = 0f; _m11Slides++; return; }
++        }
++        f = s = 0f;
++    }
++
++    private static void M11ZeroStep(IntPtr app, CClientExoAppInternal a)
++    {
++        Span<int> keys = a.DriveKeys;
++        Span<int> saved = stackalloc int[KeyCount];
++        keys.CopyTo(saved);
++        int walk = a.DriveWalk;
++        a.DriveWalk = 0; keys.Clear();
++        try { Step(app, a); }
++        finally { a.DriveWalk = walk; saved.CopyTo(keys); }
++    }
++
+     public void Initialize(ExtenderLog log, HookService hooks)
+     {
+         _log = log;
+         CameraKnobs.Declare();
+@@ -109,8 +178,11 @@
+         }
+         var a = new CClientExoAppInternal(app);
+         Span<int> keys = a.DriveKeys;
+         D2ObserveInput(a); // observer only, before the existing manual/native abort paths
++        if (!M11Scope || (_m11Player != IntPtr.Zero && M11Area() != _m11Area))
++            M11Reset();
++        else if (DriveTraceMask(a) == 0) M11Stop();
+         if (FreeCameraService.Active)
+         {
+             // The keys fly the camera; the engine sees none held (a drive under way is aborted, once).
+             _why = Why.Free; NoForward = false;
+@@ -160,8 +232,37 @@
+                 s = (keys[TurnR] | keys[StrafeR]) != 0 ? 1f : 0f; s -= (keys[TurnL] | keys[StrafeL]) != 0 ? 1f : 0f;
+             }
+             if (f == 0f && s == 0f) why = TurnAxis != 0 ? Why.TurnOnly : Why.Cancelled;
+         }
++        if (M11Scope && why == Why.Active && firstPersonStrafe)
++        {
++            IntPtr area = M11Area();
++            if (area != IntPtr.Zero && (_m11Player != cre || _m11Area != area))
++            { M11Reset(); _m11Player = cre; _m11Area = area; }
++            if (area != IntPtr.Zero && !JumpPositionService.AirborneFor(cre))
++            {
++                Vector3 right = CameraService.Right(new CX.Engine.Camera(cam).Rot);
++                M11Filter(cre, right, ref f, ref s);
++                if (f == 0f && s == 0f)
++                {
++                    if (!_m11Stopped)
++                    {
++                        _m11Blocks++;
++                        _log?.Info($"[m11drive] blocked input #{_m11Blocks}; slides={_m11Slides}");
++                        if (_active && ClientApi.Message() != IntPtr.Zero)
++                        { ClientApi.Send(MajorInput, MinorAbortDrive, null, 0); _aborts++; }
++                    }
++                    M11Stop();
++                    _active = false; NoForward = false; TurnAxis = 0;
++                    _why = Why.Idle; AirWish = Vector2.Zero;
++                    M11ZeroStep(app, a);
++                    return;
++                }
++            }
++            if (_m11Stopped) a.DriveChanged = 1; // clear direction resumes immediately
++            _m11Stopped = false; _m11StopAt = 0;
++        }
++        else if (M11Scope && why == Why.Cancelled) M11Stop();
+         _why = why;
+         AirWish = Vector2.Zero;
+         if (why == Why.Active && firstPersonStrafe && (f != 0f || s != 0f))
+         {
+diff --git a/managed/Services/Camera/StepGuardService.cs b/managed/Services/Camera/StepGuardService.cs
+--- a/managed/Services/Camera/StepGuardService.cs
++++ b/managed/Services/Camera/StepGuardService.cs
+@@ -43,9 +43,67 @@
+     private const int NoCreatures = 0;
+ 
+     private static bool _live, _probeOk;
+     private static int _steps, _walkRefusals, _driveRefusals;
++    private const int M11CheckCreatures = 1;
++    private const float M11ProbeDistance = 0.10f;
++    private static int _m11Completions;
+ 
++    private static bool M11Finite(Vector3 v) =>
++        float.IsFinite(v.X) && float.IsFinite(v.Y) && float.IsFinite(v.Z);
++
++    private static bool M11Line(IntPtr creature, CNWCArea area, CPathfindInformation path,
++                                Vector3 from, Vector3 to)
++    {
++        Span<float> space = path.SpaceArgs;
++        if (!M11Finite(from) || !M11Finite(to) || !float.IsFinite(space[0]) ||
++            !float.IsFinite(space[1]) || space[0] < 0f || space[1] < 0f) return true;
++        Vec3 a = Vec(from), b = Vec(to);
++        return _testLine(area.Ptr, creature, VectorArg.Of(&a), VectorArg.Of(&b),
++            space[0], space[1], M11CheckCreatures) == 1;
++    }
++
++    // Preflight the requested native movement, not the camera. Fail open
++    // when the native walk hook/layout has not established its prerequisites.
++    internal static bool M11CanTravel(IntPtr creature, Vector2 direction)
++    {
++        if (!_probeOk || creature == IntPtr.Zero || !float.IsFinite(direction.X) ||
++            !float.IsFinite(direction.Y)) return true;
++        IntPtr module = CameraService.Module();
++        CNWCArea area = module == IntPtr.Zero ? default : new CNWCModule(module).CurrentArea;
++        CPathfindInformation path = new CNWCCreature(creature).Pathfind;
++        if (area.IsNull || path.IsNull) return true;
++        Vector3 from = new CNWCObject(creature).Position;
++        return M11Line(creature, area, path, from,
++            from + new Vector3(direction.X, direction.Y, 0f) * M11ProbeDistance);
++    }
++
++    // Finish only a known keyboard-owned, single-point client prediction.
++    // Shorten its destination BEFORE native advancement, letting the engine
++    // perform arrival/animation cleanup. Never set a drive flag, animation,
++    // server path, array pointer/count, or position here.
++    private static void M11PrepareLocalStep(CNWCCreature c, CNWCArea area,
++                                             CPathfindInformation path, Vector3 from)
++    {
++        if (!CameraDriveService.M11KeyboardPath(c.Ptr, area.Ptr, out bool stop) ||
++            c.Driving != 1 || c.PathFromServer != 0 || c.CorrectionMs != 0 ||
++            c.WaypointCount != 1 || c.Waypoints == IntPtr.Zero ||
++            c.WaypointCursor != c.Waypoints || JumpPositionService.AirborneFor(c.Ptr)) return;
++        Vector3 actual = new CNWCObject(c.Ptr).Position;
++        if (!M11Finite(from) || !M11Finite(actual) ||
++            Vector3.DistanceSquared(from, actual) > 0.0004f) return;
++        Vector3 endpoint = *(Vector3*)c.Waypoints;
++        if (!M11Finite(endpoint) || Vector3.DistanceSquared(from, endpoint) > 16f) return;
++        Vector3 delta = endpoint - from;
++        float xy = MathF.Sqrt(delta.X * delta.X + delta.Y * delta.Y);
++        if (xy < 0.001f) return; // already at arrival; native owns cleanup
++        float fraction = MathF.Min(1f, M11ProbeDistance / xy);
++        if (!stop && M11Line(c.Ptr, area, path, from, from + delta * fraction)) return;
++        *(Vector3*)c.Waypoints = from;
++        if (++_m11Completions <= 120)
++            _log?.Info($"[m11path] shortened local prediction #{_m11Completions}; stop={(stop ? 1 : 0)}");
++    }
++
+     public void Initialize(ExtenderLog log, HookService hooks)
+     {
+         _log = log;
+         Fix14CProbe.Configure(log);
+@@ -81,8 +139,9 @@
+         if (!_probeOk || area.IsNull || pathfind.IsNull) return (*_next)(cre);
+ 
+         ref Vector3 desired = ref creature.DesiredPos;
+         Vector3 before = desired;
++        M11PrepareLocalStep(creature, area, pathfind, before);
+         // Fix14D-D5 OBSERVER BEGIN: pre-native position capture; no engine writes.
+         long d5Start = System.Diagnostics.Stopwatch.GetTimestamp();
+         bool d5Watch = CameraDriveService.D4TraceWindow(d5Start, out int d5ReleaseId, out long d5ReleaseAt);
+         Vector3 d5PlayerBefore = d5Watch ? new CNWCObject(cre).Position : default;
+@@ -99,9 +158,10 @@
+         if (!IsStep(before, after) || new CNWCModule(module).CurrentArea.Ptr != area.Ptr) return r;
+         Span<float> space = pathfind.SpaceArgs;
+         // TestDirectLine takes both Vectors BY VALUE: the copies are what VectorArg points Win64 at.
+         Vec3 from = Vec(before), to = Vec(after);
+-        int clear = _testLine(area.Ptr, cre, VectorArg.Of(&from), VectorArg.Of(&to), space[0], space[1], NoCreatures);
++        int checkCreatures = CameraDriveService.M11KeyboardPath(cre, area.Ptr, out _) ? M11CheckCreatures : NoCreatures;
++        int clear = _testLine(area.Ptr, cre, VectorArg.Of(&from), VectorArg.Of(&to), space[0], space[1], checkCreatures);
+         Fix14CProbe.Guard(clear, creature.Driving, before, after);
+         if (clear == 1) { _steps++; return r; }
+         desired = before;
+         creature.SetPosition(VectorArg.Of(&from));
+diff --git a/managed/Services/Camera/HeadBoneCamera.cs b/managed/Services/Camera/HeadBoneCamera.cs
+--- a/managed/Services/Camera/HeadBoneCamera.cs
++++ b/managed/Services/Camera/HeadBoneCamera.cs
+@@ -193,9 +193,9 @@
+     /// First-person-only call from the gated camera branch. Matches the drive system's
+     /// existing facing-vector writes, but allows stationary mouse turns too.
+     /// No head rotations, pitch, camera yaw rewrites, or movement packets are synthesized.
+     /// </summary>
+-    private static void TurnCharacter(IntPtr player, Quaternion rotation)
++    internal static void TurnCharacter(IntPtr player, Quaternion rotation)
+     {
+         if (!CameraModes.Driving.FacingActive) return;
+         // The native drive step owns facing during movement; avoid a later
+         // second write with a different camera timestamp.
+diff --git a/managed/Services/Camera/FirstPersonWorldGuard.cs b/managed/Services/Camera/FirstPersonWorldGuard.cs
+--- a/managed/Services/Camera/FirstPersonWorldGuard.cs
++++ b/managed/Services/Camera/FirstPersonWorldGuard.cs
+@@ -52,8 +52,10 @@
+     private const float ReleasePerSecond = 6f;
+     private const float MaxStableMoveSq = 0.25f * 0.25f;
+     private const float SameHeadingDot = 0.90f;
+ 
++    internal static void ClearCameraContact() => ForgetContact();
++
+     private static void ForgetContact()
+     {
+         LastEyeCorrection = Vector3.Zero;
+         ContactConstrained = false;
+@@ -111,17 +113,17 @@
+     static FirstPersonWorldGuard()
+     {
+         G = KnobGroup.Declare("fpsurface", "Controls", "Camera", order: 519,
+                               title: "First-person surface guard");
+-        Enabled = G.Toggle("enabled", "Keep first-person eye out of walls", true,
+-            help: "Restricts the visual eye against world geometry after attack camera tracking; no character movement changes.");
++        Enabled = G.Toggle("enabled", "Legacy camera wall guard (unused in Driving)", false,
++            tier: Tier.ChatOnly, help: "Compatibility only. Driving no longer displaces the eye for world collision.");
+         KeyholeOff = G.Toggle("keyholeoff", "Disable keyhole in first-person", true,
+             help: "Closes NWN's roof/wall keyhole only for the active first-person world camera in Alloy mode.");
+-        Near = G.Slider("near", "Forward clearance", 0.05f, 0.35f, 0.01f, 0.16f, "m", Tier.Advanced,
++        Near = G.Slider("near", "Forward clearance", 0.05f, 0.35f, 0.01f, 0.16f, "m", Tier.ChatOnly,
+             help: "Extra space reserved ahead of the visual eye to reduce near-plane wall penetration.");
+-        Margin = G.Slider("margin", "Wall clearance", 0.01f, 0.20f, 0.01f, 0.06f, "m", Tier.Advanced,
++        Margin = G.Slider("margin", "Wall clearance", 0.01f, 0.20f, 0.01f, 0.06f, "m", Tier.ChatOnly,
+             help: "Keep the collision eye this far before an obstacle intersection.");
+-        Fan = G.Slider("fan", "Collision ray half-width", 0f, 0.18f, 0.01f, 0.08f, "m", Tier.Advanced,
++        Fan = G.Slider("fan", "Collision ray half-width", 0f, 0.18f, 0.01f, 0.08f, "m", Tier.ChatOnly,
+             help: "13 rays approximate eye clearance; not a real swept sphere or complete near-plane hull.");
+     }
+ 
+     // Same first-person predicate as Fix10's scoped color-only visibility mode.
+@@ -155,8 +157,9 @@
+     internal static void Resolve(IntPtr player, ref Vector3 eye, Quaternion rotation)
+     {
+         LastEyeCorrection = Vector3.Zero;
+         ContactConstrained = false;
++        if (CameraService.Mode == 2) { ForgetContact(); return; }
+         if (!Enabled.V || !FirstPersonActive || player == IntPtr.Zero) { ForgetContact(); return; }
+         if (!Finite(eye) || !float.IsFinite(rotation.X) || !float.IsFinite(rotation.Y)
+             || !float.IsFinite(rotation.Z) || !float.IsFinite(rotation.W))
+         { _badPose++; ForgetContact(); return; }

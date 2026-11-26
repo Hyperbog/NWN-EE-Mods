@@ -1,0 +1,31 @@
+{
+  "version": "M11-source",
+  "baseline": "M5-rc1",
+  "status": "source replay passed; cloud build and gameplay pending",
+  "active_patches": [
+    "M1/EnhancedFirstPerson_CX_Settings.patch",
+    "M2/M2_MenuClarity.patch",
+    "M3/M3_BakedControlsAndTurn.patch",
+    "M4/M4_MandatoryActionCamera.patch",
+    "M5/M5_NpcDialogueCamera.patch",
+    "M11/M11_FixedEyeNativeMovement.patch"
+  ],
+  "retired_from_active_chain": [
+    "M6/M6_WallRelease.patch",
+    "M7/M7_WallNearPlane.patch",
+    "M8/M8_StableWallContact.patch",
+    "M9/M9_BlockedDriveRecovery.patch",
+    "M10/M10_StationaryEyeAndLocalPath.patch"
+  ],
+  "camera": "actor world position + eye height; no collision-driven offset, no animation-driven camera motion; mouse yaw/pitch",
+  "movement": "native directional walkability preflight, requested clear-axis fallback, zero native input when blocked, scoped local predicted-waypoint completion",
+  "known_limits": [
+    "Minor visual clipping accepted",
+    "No general continuous wall-slide solver",
+    "Server paths and unsupported local predictions may remain stuck",
+    "Native position rollback safety net remains",
+    "Windows compile and gameplay unverified"
+  ],
+  "build": "GitHub Actions",
+  "rollback": "Previous published packages and installer snapshots retained"
+}

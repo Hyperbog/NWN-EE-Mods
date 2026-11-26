@@ -49,3 +49,7 @@ M5 user reports wall collision largely fixed; intermittent post-release driving 
 ## M8 — stabilized wall contact
 
 M7 cloud package published; user reports clipping gone during test but camera-position jumps remain. M8 adds collision-validated temporal edge offset; previous thirteen-ray sweep remains unchanged. [M8 details](M8_STABLE_WALL_CONTACT.md). Cloud build/gameplay pending.
+
+## M11 — Stable first-person eye / native movement boundary
+
+M6–M10 collision-retreat experiments are retired from the active build chain after user reports of severe jitter and persistent walking. M11 rebuilds on M5: fixed actor-root eye, native movement preflight, clear-axis fallback for diagonal input, bounded local-path completion. Prior source/release versions remain preserved. [M11 design and limitations](M11_FIXED_EYE_NATIVE_MOVEMENT.md). Cloud/gameplay verification pending.
