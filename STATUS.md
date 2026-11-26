@@ -1,6 +1,6 @@
 # EFP status — Phase 0 evidence checkpoint
 
-Phase 0 evidence exit criteria met on 2026-11-26. This status is on the documentation branch in draft PR #1; main reconciliation and CI/merge remain pending in Phase 1. Gameplay release acceptance is NOT met.
+Phase 0 evidence exit criteria met on 2026-11-26. Phase 1.1 documentation foundation is in progress on the documentation branch in draft PR #1; main reconciliation and CI/merge remain pending. Gameplay release acceptance is NOT met.
 
 Candidate: M11, source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`. Historical baseline: M5-rc1, OBSERVED for NPC dialogue only. M11 is the installed diagnostic candidate, not a globally accepted baseline.
 
@@ -28,4 +28,8 @@ All proposed P1; priorities not yet applied as labels. No confirmed root cause. 
 
 ## Next
 
-Phase 1: repository hygiene only, beginning with PROJECT_BRIEF.md and reconciliation of documentation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
+Phase 1: repository hygiene only. The [project brief](docs/PROJECT_BRIEF.md), [ADR-001](docs/decisions/ADR-001-fixed-actor-root-eye.md), README, feature reference, version register and changelog have been prepared in the draft PR. Next: licensing/notice, repository configuration and issue/PR templates; then historical documentation organization and installer portability. No runtime changes in the documentation foundation. Do not start runtime repairs until required intervening phases are complete. Keep M11 as installed diagnostic candidate. No additional gameplay build or test requested for the Phase 0 checkpoint.
+
+## Known compatible build (tested configuration only)
+
+OBSERVED: NWN:EE 8193.37-17 (M11 session log). READ: installer pins the game executable SHA-256 `3b7cb1252e0edb2ce22d7971f333aade027039ae30a45b4bc64732c3e6bec73a`; compatibility with other game builds is not established. The NWNCX source checkpoint is `2470f0d27be0a29c152456aa60222f1f4fc25c34` (cx-build-base). The M11 exact-commit package is unchanged. Historical claims in the supplied brief are preserved verbatim, not maintained as live status.
