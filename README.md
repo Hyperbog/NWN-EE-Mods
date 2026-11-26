@@ -29,6 +29,7 @@ Replace the placeholder with the recorded backup path. If the backup or installe
 - [Cloud build guide](docs/CLOUD_RELEASES.md)
 - [Historical records](docs/history/README.md)
 - [Technical references](docs/REFERENCES.md)
+- [Inactive diagnostic probes](tools/diagnostics/README.md)
 - [Project brief and working agreement](docs/PROJECT_BRIEF.md)
 - [Camera architecture decision](docs/decisions/ADR-001-fixed-actor-root-eye.md)
 - [Gameplay acceptance checklist](docs/testing/CHECKLIST.md)
