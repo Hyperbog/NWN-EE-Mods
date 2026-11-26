@@ -1,5 +1,7 @@
 # Enhanced First Person version register
 
+**Current state: [STATUS.md](../STATUS.md).** M11 is the installed development candidate, not an accepted stable release. The entries below are historical records as originally written; their commands, pending states and local build instructions are not current guidance. See the root README for current installation.
+
 | Version | Source milestone | Build verification | Gameplay verification | Runtime |
 | --- | --- | --- | --- | --- |
 | M1 | [M1 settings patch](../src/first-person/milestones/M1/EnhancedFirstPerson_CX_Settings.patch) | Windows DLL verified | Menu displayed; movement jitter/wall and helmet issues | Installed before M3 |
@@ -52,4 +54,4 @@ M7 cloud package published; user reports clipping gone during test but camera-po
 
 ## M11 — Stable first-person eye / native movement boundary
 
-M6–M10 collision-retreat experiments are retired from the active build chain after user reports of severe jitter and persistent walking. M11 rebuilds on M5: fixed actor-root eye, native movement preflight, clear-axis fallback for diagonal input, bounded local-path completion. Prior source/release versions remain preserved. [M11 design and limitations](M11_FIXED_EYE_NATIVE_MOVEMENT.md). Cloud/gameplay verification pending.
+M6–M10 collision-retreat experiments are retired from the active build chain after user reports of severe jitter and persistent walking. M11 rebuilds on M5: fixed actor-root eye, native movement preflight, clear-axis fallback for diagonal input, bounded local-path completion. Prior source/release versions remain preserved. [M11 design and limitations](M11_FIXED_EYE_NATIVE_MOVEMENT.md). COMPILED: Actions run 45849781085 succeeded. PACKAGED: exact-commit M11 preview published. INSTALLED: version.dll checksum matched. OBSERVED: [2026-11-26 gameplay results](testing/RESULTS/2026-11-26-M11.md); release acceptance not met.
