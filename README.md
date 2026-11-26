@@ -1,53 +1,35 @@
-# NWN:EE Mods — Enhanced First Person
+# Enhanced First Person (EFP) — Neverwinter Nights: Enhanced Edition
 
-**Enhanced First Person** is an experimental, body-aware first-person camera and movement modification for **Neverwinter Nights: Enhanced Edition (NWN:EE)**, built on [NWNCX:EE](https://github.com/nwncxee/cx). It aims to make exploration and combat feel more natural in first person **without changing NWN's native character speeds, equipment, animation system, or server authority**.
+Experimental first-person camera, movement, jumping and combat-reticle modification integrated into [NWNCX:EE](https://github.com/nwncxee/cx). The target is responsive Oblivion/Skyrim-style first-person control: the eye follows the actor's position and mouse orientation, never retreats to avoid wall clipping. Minor wall clipping is acceptable.
 
-**Current preserved milestone:** Fix 14D / **J4 World-Space Jump** with C3C camera clearance and R3 combat reticle. Windows gameplay-tested in a limited set of scenarios. **Development preview, not a broadly verified stable release.**
+## Current development state
 
-## What Enhanced First Person does
+**M11 development candidate — not an approved stable release.** See [STATUS.md](STATUS.md) for the authoritative evidence, exact candidate, compatible game build and known defects. The last observed dialogue baseline is M5-rc1; M11 was built, packaged, installed and gameplay-tested, but release acceptance was not met.
 
-| Feature | Description |
-| --- | --- |
-| **First-person camera** | Mouse-look from the character's animated head/eye viewpoint, with camera-relative navigation and careful positioning near walls. |
-| **Reticle** | Small central dot; stays **red in combat**. Two small **red side crescents** flash for approximately 160 ms when the selected target's damage event is reported. The small pending-action square beneath the dot is removed. |
-| **Synchronized combat movement and animations** | Camera and player facing respond to combat and attack animation. The mod attempts to keep visible hands, arms, legs, shields, and weapons while keeping the head/torso from crossing the eye position. |
-| **Running, walking, and strafing** | Camera-relative WASD input with native game walk/run rates and existing speed modifiers, including gameplay effects. No artificial slippery momentum or speed boost is added to ordinary ground movement. |
-| **Jumping** | J4 world-space jump trajectory with airborne steering; landing responds to **walkable uphill and downhill terrain** instead of forcing the takeoff elevation. |
-| **Clipping safeguards** | Adaptive first-person local-model clearance and world/wall safety logic. Body adjustments are **render-only**, not authoritative character repositioning. |
-| **Combat feedback and diagnostics** | Existing action/hit feedback plus bounded camera, movement, position, and jump diagnostics used during development. |
+## Installation and rollback
 
-See the [full feature reference and update history](docs/ENHANCED_FIRST_PERSON_FEATURES.md) for behavior, implementation boundaries, and what is *not* supported.
+Use the [M11 exact-commit preview release](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-7a26ce3a909f13f7c5dee2afbc022febc2616f4e). The existing installer currently assumes the original tester's game/work directories and a pinned nwmain.exe checksum; it is not yet portable. Do not install into another game build or mix runtime versions. Close NWN before changing runtime files. For the original tester only, in ordinary CMD:
 
-## Known limits
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $p=Join-Path $env:TEMP 'Install-EFP-M11.ps1'; Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/7a26ce3a909f13f7c5dee2afbc022febc2616f4e/tools/Install-EFP.ps1' -OutFile $p; & $p -Version M11 -SourceCommit 7a26ce3a909f13f7c5dee2afbc022febc2616f4e"
+```
 
-- **Requires NWNCX:EE.** Enhanced First Person is currently integrated into a **matching custom CX build**, not an independent plugin. Installing/updating stock CX may replace the modified `version.dll` and disable the mod. Do not mix DLLs from different CX builds.
-- Landing on **arbitrary crates, furniture, and non-walkable placeables is not implemented**. Visually elevated objects are not necessarily valid supporting surfaces.
-- The hit crescents use selected-target damage feedback, **not verified attacker attribution**; party-member damage may also trigger them.
-- Tested behavior does **not** establish compatibility with every race, custom model, tileset, multiplayer server, or future NWNCX/game build. Native collision and server authority still apply.
+Expected: installer checks the exact release and game hashes, snapshots all five DLLs, prints ROLLBACK BACKUP and SWITCHED_AND_VERIFIED. Confirm the installed version.dll checksum against STATUS.md. Preserve cx.cfg and saves. To undo, close NWN and use the exact rollback directory printed by that installation:
 
-## Source code
+```cmd
+powershell -NoProfile -ExecutionPolicy Bypass -File "%TEMP%\Install-EFP-M11.ps1" -RestoreBackup "PATH_PRINTED_BY_INSTALLER"
+```
 
-The [30-file annotated J4 source overlay](src/first-person/managed) is preserved here, with a [source integrity manifest](src/first-person/SOURCE_MANIFEST.json) and a [reconstruction/provenance report](docs/PUBLICATION_PROVENANCE.md). These files are **modifications to NWNCX:EE**, not an independently buildable C# project.
+Replace the placeholder with the recorded backup path. If the backup or installer is unavailable or refuses, do not bypass checks. No local compilation required.
 
-- [Feature reference and ongoing change history](docs/ENHANCED_FIRST_PERSON_FEATURES.md)
-- [J4 technical behavior and test results](docs/FIRST_PERSON_J4.md)
-- [Source code map](docs/FIRST_PERSON_CODEMAP.md)
-- [Source integration, build and safety notes](docs/FIRST_PERSON_SOURCE.md)
-- [M1 Enhanced First Person CX settings patch — unbuilt / untested](docs/M1_CX_SETTINGS_MENU.md)
-- [Historical development and diagnostics](docs/DEVELOPMENT.md)
-- [Technical references](docs/REFERENCES.md)
+## Development and known limits
 
-## Downloads and installation
+- [Current feature reference](docs/ENHANCED_FIRST_PERSON_FEATURES.md)
+- [Version register](docs/FIRST_PERSON_VERSIONS.md)
+- [Project brief and working agreement](docs/PROJECT_BRIEF.md)
+- [Camera architecture decision](docs/decisions/ADR-001-fixed-actor-root-eye.md)
+- [Gameplay acceptance checklist](docs/testing/CHECKLIST.md)
+- [M11 test record](docs/testing/RESULTS/2026-11-26-M11.md)
+- [Changelog](CHANGELOG.md) and [open issues](https://github.com/Hyperbog/NWN-EE-Mods/issues)
 
-There is **no stable public binary release yet**. Once a matching runtime has been packaged and verified for distribution, downloads and install instructions will appear under [GitHub Releases](https://github.com/Hyperbog/NWN-EE-Mods/releases).
-
-**Never replace an existing CX installation without backing up all five runtime DLLs**: `version.dll`, `cx_openal.dll`, `phonon.dll`, `shaderc_shared.dll`, and `vma.dll`. Local configuration is normally in `Documents\Neverwinter Nights\cx.cfg`. Preserve saved games and existing configuration.
-
-## Development policy
-
-- Maintain **one documented feature reference**; update it whenever a feature is added, removed, or changed. Include the milestone and whether it has been tested.
-- Preserve a last-known-working source and runtime before changes. Keep debugging patches and temporary installation archives out of the main source tree.
-- Separate NWNCX upstream changes from Enhanced First Person's mod code. Revalidate hooks, build-specific offsets and the complete DLL set after upstream updates.
-- Preserve source attribution and third-party license notices; do not publish local saves, user configuration, logs, or backup state.
-
-This project depends on the [NWNCX:EE upstream project](https://github.com/nwncxee/cx) and community engine research. It is not affiliated with Beamdog or BioWare.
+READ: current source uses a pinned NWNCX base, 30 overlays and the active patch chain in [BUILD_PLAN.json](src/first-person/BUILD_PLAN.json). This is not a standalone C# plugin. The five matching runtime DLLs are distributed through Releases, not committed to Git. The original NWNCX license notice is [preserved here](src/first-person/LICENSE-NWNCX.txt). The project license and broader installer portability are Phase 1 work.
