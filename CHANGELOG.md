@@ -13,7 +13,7 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: portable installer resolves Steam/GOG or explicit game path, configurable work directory and executable hash allowlist, and pinned manifest version. Existing replacement/rollback core retained; Windows fixture CI run 45901803873 failed before compilation; READ: corrected test-only mock scope and added assertions for the running-process refusal; COMPILED: retry 45903157287 passed the installer fixture, source reconstruction, native build, package verification and publication. Phase 1.3 CI acceptance met; no new installation or gameplay evidence.
 
-- READ: relocate two inactive diagnostic probe sources to `tools/diagnostics/` with unchanged blobs and document their limitations; include diagnostic path changes in Windows CI. Active source, build plan and overlay manifest unchanged; CI pending.
+- READ: relocate two inactive diagnostic probe sources to `tools/diagnostics/` with unchanged blobs and document their limitations; include diagnostic path changes in Windows CI. Active source, build plan and overlay manifest unchanged. COMPILED: run 45904914275 passed on `1e0582f` without retries, including build and publish. READ: entire active source tree matches original M11 candidate. Phase 1 hygiene exit criteria met; gameplay acceptance still withheld.
 
 ## M11 development candidate — 2026-11-26
 
