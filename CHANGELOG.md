@@ -11,7 +11,7 @@ All notable changes to Enhanced First Person will be documented here using the [
 - READ: consolidate documentation and PR CI into main; product owner adopts main-only direct commits with branch protection disabled. COMPILED: PR #7 run 45892845104 succeeded; integrated main CI run 45895431828 completed successfully (COMPILED).
 - READ: archive 19 historical documents with original bodies retained; reconcile current version and cloud-build guides with STATUS.md and BUILD_PLAN.json. No runtime or installer changes.
 
-- READ: portable installer resolves Steam/GOG or explicit game path, configurable work directory and executable hash allowlist, and pinned manifest version. Existing replacement/rollback core retained; Windows fixture CI run 45901803873 failed before compilation; READ: corrected test-only mock scope and added assertions for the running-process refusal; retry pending.
+- READ: portable installer resolves Steam/GOG or explicit game path, configurable work directory and executable hash allowlist, and pinned manifest version. Existing replacement/rollback core retained; Windows fixture CI run 45901803873 failed before compilation; READ: corrected test-only mock scope and added assertions for the running-process refusal; COMPILED: retry 45903157287 passed the installer fixture, source reconstruction, native build, package verification and publication. Phase 1.3 CI acceptance met; no new installation or gameplay evidence.
 
 ## M11 development candidate — 2026-11-26
 

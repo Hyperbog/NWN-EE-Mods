@@ -6,7 +6,7 @@ Steam: registry installation roots and libraryfolders.vdf, plus standard Program
 
 The existing five-DLL hash checks, backup, File.Replace and recovery code remain in place. Existing CX DLLs must all be present. Close the game first. Never enroll an unknown executable hash merely to bypass a refusal; compatibility must be established separately.
 
-After Windows CI passes, run a reviewed, commit-pinned copy of the script from ordinary CMD, for example:
+COMPILED: Windows fixture CI [45903157287](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45903157287) passed on correction `e967f1f`. For a future installation, run a reviewed, commit-pinned copy of the script from ordinary CMD, for example:
 
     powershell -NoProfile -ExecutionPolicy Bypass -File "PATH_TO_REVIEWED_INSTALLER.ps1" -SourceCommit 7a26ce3a909f13f7c5dee2afbc022febc2616f4e
 
