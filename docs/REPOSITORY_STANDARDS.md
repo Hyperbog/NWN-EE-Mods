@@ -26,6 +26,7 @@ Use the existing GitHub enhancement label as a temporary alias for feature until
 - Main is intentionally unprotected at the owner's direction. Do not enable mandatory PR rules. Review each diff, check the main head before a non-force update, and do not overwrite a baseline or publish a gameplay-approved release without evidence. Optional PR CI remains available.
 - Project board columns: Backlog, Ready, In progress, In test (user), Done. Milestones are release targets, not evidence of success.
 - GitHub Actions dependencies are proposed weekly by Dependabot; review SHA pins and CI before merging.
+- Follow [upstream synchronization](UPSTREAM_SYNC.md) for reviewed integrations into source main; keep fork Actions disabled and preserve exact distribution pins and historical tags.
 - Never use mass normalization (git add --renormalize .) on the existing overlay/patch history before confirming unchanged manifest hashes and reconstruction.
 - License and notice files cover EFP and NWNCX; review third-party dependency notices before a broadly distributed release.
 

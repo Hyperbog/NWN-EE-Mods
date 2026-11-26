@@ -18,6 +18,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 - READ: Phase 2.1–2.3 source fork initialized and seven commits/six tags published; independent reconstruction equals CX tree `13e2a83859a4e711e90931df5c9a21ec5e2eeae1` (1,877 entries, zero differences).
 - READ: Phase 2.4 direct-source CI pins CX commit and tree, adds source identity to release metadata, retains legacy package verification and installer rollback, and validates the direct-source manifest against the immutable distribution plan. CI 45908530208 failed at installer parsing before compilation; READ: repaired literal replacement corruption from the prior accepted installer; COMPILED: retry 1 run [45909430241](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45909430241) passed both installer fixtures, pinned checkout, native build, package checks and publication. PACKAGED: direct-source release ZIP digest matches CI manifest. Original installed M11 unchanged.
 
+- READ: Phase 2.5 document the upstream synchronization procedure, native ABI/offset review, dependency pins, exact-source CI, gameplay gates and rollback. Documentation only; no upstream integration or runtime changes.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
