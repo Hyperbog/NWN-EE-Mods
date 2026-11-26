@@ -170,7 +170,9 @@ if($PSCmdlet.ParameterSetName -eq 'Restore'){
  Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/Hyperbog/NWN-EE-Mods/$SourceCommit/src/first-person/BUILD_PLAN.json" -OutFile $planFile
  $plan=Get-Content -LiteralPath $planFile -Raw|ConvertFrom-Json
  $planVersion=[string]$plan.version
- if($planVersion -cnotmatch '^M[0-9]+(-[A-Za-z0-9]+)?
+ if($planVersion -cnotmatch '^M[0-9]+(-[A-Za-z0-9]+)?$'){throw 'Invalid version in pinned build plan.'}
+ if($Version -and $Version -cne $planVersion){throw 'Version differs from pinned build plan.'}
+ $Version=$planVersion
  $tag="efp-$Version-$SourceCommit"
  $base="https://github.com/Hyperbog/NWN-EE-Mods/releases/download/$tag"
  $package="NWN-EFP-$Version-win-x64.zip"
@@ -186,160 +188,8 @@ if($PSCmdlet.ParameterSetName -eq 'Restore'){
  if($null -ne $plan.direct_source){
   $pin=$plan.direct_source
   if($pin.repository -cne 'Hyperbog/cx' -or
-     ([string]$pin.commit) -cnotmatch '^[0-9a-f]{40} -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile
- AssertHash $zipFile ([string]$manifest.package_sha256)
- $from=Join-Path $work 'package'
- [void][IO.Directory]::CreateDirectory($from)
- Add-Type -AssemblyName System.IO.Compression
- Add-Type -AssemblyName System.IO.Compression.FileSystem
- $zip=[IO.Compression.ZipFile]::OpenRead($zipFile)
- try{
-  foreach($name in $names){
-   $item=$manifest.dlls.PSObject.Properties[$name].Value
-   $wanted[$name]=[string]$item.sha256
-   $entry=@($zip.Entries|Where-Object{$_.FullName -ceq $name})
-   if($entry.Count -ne 1 -or $entry[0].Length -ne $item.size_bytes){throw "Invalid ZIP member: $name"}
-   [IO.Compression.ZipFileExtensions]::ExtractToFile($entry[0],(Join-Path $from $name),$false)
-  }
- }finally{$zip.Dispose()}
- VerifySet $from $wanted
-}
-Closed
-VerifySet $game $before
-$backup=Join-Path $work 'previous-runtime'
-[void][IO.Directory]::CreateDirectory($backup)
-foreach($name in $names){[IO.File]::Copy((Join-Path $game $name),(Join-Path $backup $name),$false)}
-VerifySet $backup $before
-WriteJson (Join-Path $backup 'backup.json') ([ordered]@{game=$game;exe_sha256=$exeSha;before=$before;after=$wanted})
-Write-Host "ROLLBACK BACKUP: $backup"
-ReplaceSet $from $wanted $before $backup
-WriteJson (Join-Path $work 'install-result.json') ([ordered]@{result='SWITCHED_AND_VERIFIED';source_commit=$SourceCommit;version=$Version;before=$before;after=$wanted;backup=$backup})
-Write-Host "SWITCHED_AND_VERIFIED; version.dll SHA256=$($wanted['version.dll'])"
-Write-Host "Game configuration unchanged. Start NWN:EE for gameplay testing."
-){throw 'Invalid version in pinned build plan.'}
- if($Version -and $Version -cne $planVersion){throw 'Version differs from pinned build plan.'}
- $Version=$planVersion
- $tag="efp-$Version-$SourceCommit"
- $base="https://github.com/Hyperbog/NWN-EE-Mods/releases/download/$tag"
- $package="NWN-EFP-$Version-win-x64.zip"
- $manifestFile=Join-Path $work 'release-manifest.json'
- $zipFile=Join-Path $work $package
- try{Invoke-WebRequest -UseBasicParsing -Uri "$base/release-manifest.json" -OutFile $manifestFile}
- catch{throw "Release $tag is not accessible. Check GitHub Actions/Releases. No game files changed. $_"}
- $manifest=Get-Content -LiteralPath $manifestFile -Raw|ConvertFrom-Json
- if($manifest.version -cne $Version -or $manifest.mod_source_commit -cne $SourceCommit -or
-    $manifest.cx_checkpoint -cne '2470f0d27be0a29c152456aa60222f1f4fc25c34' -or $manifest.package -cne $package){
-  throw 'Release manifest does not identify the requested source commit and package.'
- }
- $Version=[string]$manifest.version
- Invoke-WebRequest -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile
- AssertHash $zipFile ([string]$manifest.package_sha256)
- $from=Join-Path $work 'package'
- [void][IO.Directory]::CreateDirectory($from)
- Add-Type -AssemblyName System.IO.Compression
- Add-Type -AssemblyName System.IO.Compression.FileSystem
- $zip=[IO.Compression.ZipFile]::OpenRead($zipFile)
- try{
-  foreach($name in $names){
-   $item=$manifest.dlls.PSObject.Properties[$name].Value
-   $wanted[$name]=[string]$item.sha256
-   $entry=@($zip.Entries|Where-Object{$_.FullName -ceq $name})
-   if($entry.Count -ne 1 -or $entry[0].Length -ne $item.size_bytes){throw "Invalid ZIP member: $name"}
-   [IO.Compression.ZipFileExtensions]::ExtractToFile($entry[0],(Join-Path $from $name),$false)
-  }
- }finally{$zip.Dispose()}
- VerifySet $from $wanted
-}
-Closed
-VerifySet $game $before
-$backup=Join-Path $work 'previous-runtime'
-[void][IO.Directory]::CreateDirectory($backup)
-foreach($name in $names){[IO.File]::Copy((Join-Path $game $name),(Join-Path $backup $name),$false)}
-VerifySet $backup $before
-WriteJson (Join-Path $backup 'backup.json') ([ordered]@{game=$game;exe_sha256=$exeSha;before=$before;after=$wanted})
-Write-Host "ROLLBACK BACKUP: $backup"
-ReplaceSet $from $wanted $before $backup
-WriteJson (Join-Path $work 'install-result.json') ([ordered]@{result='SWITCHED_AND_VERIFIED';source_commit=$SourceCommit;version=$Version;before=$before;after=$wanted;backup=$backup})
-Write-Host "SWITCHED_AND_VERIFIED; version.dll SHA256=$($wanted['version.dll'])"
-Write-Host "Game configuration unchanged. Start NWN:EE for gameplay testing."
- -or
-     ([string]$pin.tree) -cnotmatch '^[0-9a-f]{40} -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile
- AssertHash $zipFile ([string]$manifest.package_sha256)
- $from=Join-Path $work 'package'
- [void][IO.Directory]::CreateDirectory($from)
- Add-Type -AssemblyName System.IO.Compression
- Add-Type -AssemblyName System.IO.Compression.FileSystem
- $zip=[IO.Compression.ZipFile]::OpenRead($zipFile)
- try{
-  foreach($name in $names){
-   $item=$manifest.dlls.PSObject.Properties[$name].Value
-   $wanted[$name]=[string]$item.sha256
-   $entry=@($zip.Entries|Where-Object{$_.FullName -ceq $name})
-   if($entry.Count -ne 1 -or $entry[0].Length -ne $item.size_bytes){throw "Invalid ZIP member: $name"}
-   [IO.Compression.ZipFileExtensions]::ExtractToFile($entry[0],(Join-Path $from $name),$false)
-  }
- }finally{$zip.Dispose()}
- VerifySet $from $wanted
-}
-Closed
-VerifySet $game $before
-$backup=Join-Path $work 'previous-runtime'
-[void][IO.Directory]::CreateDirectory($backup)
-foreach($name in $names){[IO.File]::Copy((Join-Path $game $name),(Join-Path $backup $name),$false)}
-VerifySet $backup $before
-WriteJson (Join-Path $backup 'backup.json') ([ordered]@{game=$game;exe_sha256=$exeSha;before=$before;after=$wanted})
-Write-Host "ROLLBACK BACKUP: $backup"
-ReplaceSet $from $wanted $before $backup
-WriteJson (Join-Path $work 'install-result.json') ([ordered]@{result='SWITCHED_AND_VERIFIED';source_commit=$SourceCommit;version=$Version;before=$before;after=$wanted;backup=$backup})
-Write-Host "SWITCHED_AND_VERIFIED; version.dll SHA256=$($wanted['version.dll'])"
-Write-Host "Game configuration unchanged. Start NWN:EE for gameplay testing."
-){throw 'Invalid version in pinned build plan.'}
- if($Version -and $Version -cne $planVersion){throw 'Version differs from pinned build plan.'}
- $Version=$planVersion
- $tag="efp-$Version-$SourceCommit"
- $base="https://github.com/Hyperbog/NWN-EE-Mods/releases/download/$tag"
- $package="NWN-EFP-$Version-win-x64.zip"
- $manifestFile=Join-Path $work 'release-manifest.json'
- $zipFile=Join-Path $work $package
- try{Invoke-WebRequest -UseBasicParsing -Uri "$base/release-manifest.json" -OutFile $manifestFile}
- catch{throw "Release $tag is not accessible. Check GitHub Actions/Releases. No game files changed. $_"}
- $manifest=Get-Content -LiteralPath $manifestFile -Raw|ConvertFrom-Json
- if($manifest.version -cne $Version -or $manifest.mod_source_commit -cne $SourceCommit -or
-    $manifest.cx_checkpoint -cne '2470f0d27be0a29c152456aa60222f1f4fc25c34' -or $manifest.package -cne $package){
-  throw 'Release manifest does not identify the requested source commit and package.'
- }
- $Version=[string]$manifest.version
- Invoke-WebRequest -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile
- AssertHash $zipFile ([string]$manifest.package_sha256)
- $from=Join-Path $work 'package'
- [void][IO.Directory]::CreateDirectory($from)
- Add-Type -AssemblyName System.IO.Compression
- Add-Type -AssemblyName System.IO.Compression.FileSystem
- $zip=[IO.Compression.ZipFile]::OpenRead($zipFile)
- try{
-  foreach($name in $names){
-   $item=$manifest.dlls.PSObject.Properties[$name].Value
-   $wanted[$name]=[string]$item.sha256
-   $entry=@($zip.Entries|Where-Object{$_.FullName -ceq $name})
-   if($entry.Count -ne 1 -or $entry[0].Length -ne $item.size_bytes){throw "Invalid ZIP member: $name"}
-   [IO.Compression.ZipFileExtensions]::ExtractToFile($entry[0],(Join-Path $from $name),$false)
-  }
- }finally{$zip.Dispose()}
- VerifySet $from $wanted
-}
-Closed
-VerifySet $game $before
-$backup=Join-Path $work 'previous-runtime'
-[void][IO.Directory]::CreateDirectory($backup)
-foreach($name in $names){[IO.File]::Copy((Join-Path $game $name),(Join-Path $backup $name),$false)}
-VerifySet $backup $before
-WriteJson (Join-Path $backup 'backup.json') ([ordered]@{game=$game;exe_sha256=$exeSha;before=$before;after=$wanted})
-Write-Host "ROLLBACK BACKUP: $backup"
-ReplaceSet $from $wanted $before $backup
-WriteJson (Join-Path $work 'install-result.json') ([ordered]@{result='SWITCHED_AND_VERIFIED';source_commit=$SourceCommit;version=$Version;before=$before;after=$wanted;backup=$backup})
-Write-Host "SWITCHED_AND_VERIFIED; version.dll SHA256=$($wanted['version.dll'])"
-Write-Host "Game configuration unchanged. Start NWN:EE for gameplay testing."
- -or
+     ([string]$pin.commit) -cnotmatch '^[0-9a-f]{40}$' -or
+     ([string]$pin.tree) -cnotmatch '^[0-9a-f]{40}$' -or
      $manifest.build_mode -cne 'direct' -or
      $manifest.cx_source_repository -cne $pin.repository -or
      $manifest.cx_source_commit -cne $pin.commit -or
@@ -348,52 +198,6 @@ Write-Host "Game configuration unchanged. Start NWN:EE for gameplay testing."
   }
  }elseif($manifest.build_mode -or $manifest.cx_source_commit -or $manifest.cx_source_tree){
   throw 'Unexpected direct source metadata for historical build plan.'
- }
- $Version=[string]$manifest.version
- Invoke-WebRequest -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile
- AssertHash $zipFile ([string]$manifest.package_sha256)
- $from=Join-Path $work 'package'
- [void][IO.Directory]::CreateDirectory($from)
- Add-Type -AssemblyName System.IO.Compression
- Add-Type -AssemblyName System.IO.Compression.FileSystem
- $zip=[IO.Compression.ZipFile]::OpenRead($zipFile)
- try{
-  foreach($name in $names){
-   $item=$manifest.dlls.PSObject.Properties[$name].Value
-   $wanted[$name]=[string]$item.sha256
-   $entry=@($zip.Entries|Where-Object{$_.FullName -ceq $name})
-   if($entry.Count -ne 1 -or $entry[0].Length -ne $item.size_bytes){throw "Invalid ZIP member: $name"}
-   [IO.Compression.ZipFileExtensions]::ExtractToFile($entry[0],(Join-Path $from $name),$false)
-  }
- }finally{$zip.Dispose()}
- VerifySet $from $wanted
-}
-Closed
-VerifySet $game $before
-$backup=Join-Path $work 'previous-runtime'
-[void][IO.Directory]::CreateDirectory($backup)
-foreach($name in $names){[IO.File]::Copy((Join-Path $game $name),(Join-Path $backup $name),$false)}
-VerifySet $backup $before
-WriteJson (Join-Path $backup 'backup.json') ([ordered]@{game=$game;exe_sha256=$exeSha;before=$before;after=$wanted})
-Write-Host "ROLLBACK BACKUP: $backup"
-ReplaceSet $from $wanted $before $backup
-WriteJson (Join-Path $work 'install-result.json') ([ordered]@{result='SWITCHED_AND_VERIFIED';source_commit=$SourceCommit;version=$Version;before=$before;after=$wanted;backup=$backup})
-Write-Host "SWITCHED_AND_VERIFIED; version.dll SHA256=$($wanted['version.dll'])"
-Write-Host "Game configuration unchanged. Start NWN:EE for gameplay testing."
-){throw 'Invalid version in pinned build plan.'}
- if($Version -and $Version -cne $planVersion){throw 'Version differs from pinned build plan.'}
- $Version=$planVersion
- $tag="efp-$Version-$SourceCommit"
- $base="https://github.com/Hyperbog/NWN-EE-Mods/releases/download/$tag"
- $package="NWN-EFP-$Version-win-x64.zip"
- $manifestFile=Join-Path $work 'release-manifest.json'
- $zipFile=Join-Path $work $package
- try{Invoke-WebRequest -UseBasicParsing -Uri "$base/release-manifest.json" -OutFile $manifestFile}
- catch{throw "Release $tag is not accessible. Check GitHub Actions/Releases. No game files changed. $_"}
- $manifest=Get-Content -LiteralPath $manifestFile -Raw|ConvertFrom-Json
- if($manifest.version -cne $Version -or $manifest.mod_source_commit -cne $SourceCommit -or
-    $manifest.cx_checkpoint -cne '2470f0d27be0a29c152456aa60222f1f4fc25c34' -or $manifest.package -cne $package){
-  throw 'Release manifest does not identify the requested source commit and package.'
  }
  $Version=[string]$manifest.version
  Invoke-WebRequest -UseBasicParsing -Uri "$base/$package" -OutFile $zipFile

@@ -3,7 +3,10 @@ $ErrorActionPreference='Stop'
 $installer=Join-Path $PSScriptRoot '..\Install-EFP.ps1'
 $tokens=$null; $errors=$null
 [void][System.Management.Automation.Language.Parser]::ParseFile($installer,[ref]$tokens,[ref]$errors)
-if($errors.Count){throw ($errors|Out-String)}
+if($errors.Count){
+ $details=@($errors|ForEach-Object{"Line $($_.Extent.StartLineNumber): $($_.Message)"})
+ throw ($details -join [Environment]::NewLine)
+}
 $root=Join-Path $env:TEMP ('efp-test-'+[Guid]::NewGuid().ToString('N'))
 $gameRoot=Join-Path $root 'game'
 $game=Join-Path $gameRoot 'bin\win32'
