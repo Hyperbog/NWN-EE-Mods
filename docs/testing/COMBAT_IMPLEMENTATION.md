@@ -27,3 +27,8 @@ COMPILED/PACKAGED (2026-11-26 local, 2026-11-27 UTC): [run 45931914373](https://
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Phase 4.1E complete. Authorize only controlled test installation using exact distribution commit above and reviewed installer; restore original clearance configuration first. Record SWITCHED_AND_VERIFIED, all installed hashes and printed rollback path privately. Restore via same script -RestoreBackup and original WorkDir if necessary. Original M11 remains installed until user reports otherwise. Phase 4.1F begins with matched first/third-person combat per checklist revision 3; issue #5 and all other P1 remain open.
+
+
+## Phase 4.1F initial observation
+
+See [initial gameplay report](RESULTS/2026-11-26-M11-combat-initial.md): restored combat animation and positive movement immersion, enemy clipping during lunges (#9), full acceptance pending. Preserve candidate source and behavior.

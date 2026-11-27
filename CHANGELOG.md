@@ -44,6 +44,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - COMPILED/PACKAGED: Phase 4.1E run 45931914373 passed first attempt; exact combat candidate b54673b published with verified CI/release digest agreement and five-DLL manifest. Controlled installation authorized; runtime symbol/self-check and gameplay pending.
 
+- OBSERVED: initial combat candidate report confirms restored combat animation and immersive animated movement; enemy-lunge clipping recorded separately as #9. Full checklist and exact installed identity remain pending. No runtime changes.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
