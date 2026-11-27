@@ -28,6 +28,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 3.2 standardized results template for all 18 scenarios, build provenance, five installed DLL checksums and sanitized evidence. OBSERVED: R3 combat synchronization reported working for tested sword/melee; prioritize #5 in Phase 4, preserving later improvements. No runtime changes.
 
+- READ: Phase 3.3 map actual M11 log emitters, cadence, gates and evidence gaps to all 18 scenarios; reconcile inactive probe documentation. Phase 3 complete; issue #5 first for diagnose-first stabilization. No runtime edits or probe activation.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

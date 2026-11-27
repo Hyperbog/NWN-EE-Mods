@@ -80,4 +80,4 @@ Record weapon/attack type and phase, target, visible body/weapon synchronization
 - Acceptance decision and rationale; no release approval by compilation alone:
 - Rollback required/performed? Record exact backup identity privately and observed outcome; preserve saves and configuration.
 
-Keep raw logs and personal paths out of Git. Use the reviewed installer and backup from the selected release if restoration is needed. A recorded failure is not a confirmed root cause.
+Use the [subsystem log map](../LOG_MAP.md) for emitter names, gates, cadence and interpretation. Keep raw logs and personal paths out of Git. Use the reviewed installer and backup from the selected release if restoration is needed. A recorded failure is not a confirmed root cause.
