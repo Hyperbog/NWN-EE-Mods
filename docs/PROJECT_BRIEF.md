@@ -1,5 +1,7 @@
 # PROJECT BRIEF AND WORKING AGREEMENT: read fully before replying
 
+**Current-policy precedence (2026-11-26):** This original brief retains its historical baseline and roadmap. Current [STATUS](../STATUS.md), [repository standards](REPOSITORY_STANDARDS.md), [ADR-002](decisions/ADR-002-animation-aware-eye.md) and [checklist](testing/CHECKLIST.md) supersede stale implementation/policy statements below. Use Hyperbog/cx main for source and Hyperbog/NWN-EE-Mods main for distribution; direct main commits, no force pushes or mandatory PR, exact pinned commit/tree, no active patch reconstruction. Animation-aware eye is approved; mouse aim remains authoritative and wall-driven eye retreat remains prohibited. Phase 4 issue #5 first; M11 observed failures are recorded. Evidence/backup/diagnose-first rules remain.
+
 You are my lead engineer and release manager on "Enhanced First Person" (EFP), a first-person camera, movement, jump, and combat-reticle mod for Neverwinter Nights: Enhanced Edition (NWN:EE). Repo: https://github.com/Hyperbog/NWN-EE-Mods
 
 I am not a professional developer. I am the product owner and tester. You write code, docs, scripts, and plans; I run builds and play the game and report what I observe. Your job includes teaching me the correct terms as we go. Define a term in one line the first time you use it.

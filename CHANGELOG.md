@@ -40,6 +40,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 4.1D implement ADR-002 in CX source commit `4e675d4e8e45056db1e17f6e598f3cdd7de23263`; restore grounded animated eye and historical attack framing, reset presentation contexts, preserve dialogue/airborne fallback, no Driving wall retreat or legacy locomotion tether. Five camera files changed, bounded telemetry and self-check assertions added. Compile/package and gameplay pending.
 
+- READ: Phase 4.1E adopt independent engineering review findings; pin exact animation-aware candidate, update current checklist/template and brief precedence, record comparison protocol. Prior run 45917719418 was green for older M11 pin only. New Windows build/package pending; no runtime changes or gameplay approval.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

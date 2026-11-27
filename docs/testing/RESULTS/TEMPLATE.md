@@ -59,7 +59,7 @@ PASS / FAIL / NOT TESTED per checklist. Preserve submitted results exactly; sepa
 
 ### Combat subresults (11)
 
-Record weapon/attack type and phase, target, visible body/weapon synchronization with the actual attack, camera/eye behavior and reticle feedback separately. Record the reference build (R3 for previously tested sword/melee combat; exact artifact identity pending). Ranged and other untested variants remain separate. A missing camera sway is not by itself a missing native attack animation; preserve ADR-001 fixed-eye behavior.
+Record actual action/target/outcome, native hand/weapon wind-up/strike/recovery, animation-aware eye/aim/recovery and reticle separately. Match first and third person for three cycles where safe; note first attack after load and after idle. Record viewport, FOV, sensitivity, DPI, renderer, fphead.mode, fphead.eyelock, fpclear.enabled, animcam.enabled, attackfollow.enabled and roll toggles. R3 verified historical runtime is the sword/melee behavioral reference; J4 is the full-source proxy. Ranged and other unavailable variants stay separate. [ADR-002](../../decisions/ADR-002-animation-aware-eye.md) supersedes fixed-eye animation restriction; no collision-driven eye retreat. A missing camera response is not proof of missing native clip playback.
 
 ## Failure record (repeat for each failed variant)
 

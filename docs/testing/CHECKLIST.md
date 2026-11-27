@@ -1,20 +1,20 @@
 # Enhanced First Person gameplay acceptance checklist
 
-Revision 2 — Phase 3.1 (READ). IDs 01–16 retain their original scope; 17–18 isolate previously reported defects. [Original checklist](https://github.com/Hyperbog/NWN-EE-Mods/blob/6d297703d1b69beb0c78371cb8b1cd04f0e6e214/docs/testing/CHECKLIST.md) and [M11 results](RESULTS/2026-11-26-M11.md) remain historical evidence, not results under this revision.
+Revision 3 — Phase 4.1E (READ); [revision 2](https://github.com/Hyperbog/NWN-EE-Mods/blob/335be4376fd8cc15774c0a9e0f3a29a23da02294/docs/testing/CHECKLIST.md) remains the historical test contract. IDs 01–16 retain their original scope; 17–18 isolate previously reported defects. [Original checklist](https://github.com/Hyperbog/NWN-EE-Mods/blob/6d297703d1b69beb0c78371cb8b1cd04f0e6e214/docs/testing/CHECKLIST.md) and [M11 results](RESULTS/2026-11-26-M11.md) remain historical evidence, not results under this revision.
 
 ## Before testing
 
 - Use the explicitly selected exact-commit release only. Record date/time zone, release tag, distribution commit, CX commit/tree if available, game build, executable and all five installed DLL SHA-256 hashes against the release manifest. See [status](../../STATUS.md) and [installer](../INSTALLER.md).
 - Preserve cx.cfg, saves and rollback backup. Close NWN before installation or restore. Use a disposable save in a repeatable location. Record module/area, race/model, equipment, controls and relevant settings.
 - Current installed diagnostic candidate: original M11 distribution commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`; version.dll `fe81fb1b6cf5b58d920cb477000da8f4b0147cc062961af634c12be42a2cdcec`. Later direct-source packages are not installed or gameplay-approved. M5-rc1 is an observed dialogue baseline only.
-- No installation or new gameplay session is requested by this documentation change.
+- Install only after the selected candidate is PACKAGED and explicitly authorized. [ADR-002](../decisions/ADR-002-animation-aware-eye.md) governs the new combat candidate; original M11 results retain revision 2 criteria.
 
 ## Numbered scenarios
 
 | ID | Procedure | Observable PASS criterion |
 | --- | --- | --- |
 | 01 | Open settings; change one noncritical setting, restart, verify and restore. | Menu accessible; chosen value persists; mandatory Action Camera preserved. |
-| 02 | Idle; rotate mouse horizontally and vertically. | Stable eye relative to actor; responsive orientation; no independent animation jitter. |
+| 02 | Idle; rotate mouse horizontally and vertically. | Believable animated eye alignment; responsive mouse orientation; no unwanted jitter or drift. |
 | 03 | Clear space: walk/run, strafe left/right, reverse, all available diagonals. | Correct camera-relative travel and locomotion animation; no unexpected turn. |
 | 04 | Release each movement input alone and in combinations. | Travel and walk/run animation stop normally; no sustained gait or displacement. |
 | 05 | Straight wall: hold forward 10 s, release, observe 5 s; turn away and move. | Inward motion stops; gait stops after release; clear escape works; no camera pushback or sustained jitter. |
@@ -23,16 +23,18 @@ Revision 2 — Phase 3.1 (READ). IDs 01–16 retain their original scope; 17–1
 | 08 | Diagonal into wall; release blocked axis, keep/request clear axis; release all; escape. | Explicit clear direction works; stable eye; no trapping/penetration. Automatic continuous wall sliding not required. |
 | 09 | Living stationary NPC: approach, hold 10 s, release, turn away and move. | Intended collision prevents penetration; stable eye; stopping and escape work. |
 | 10 | Open/close NPC dialogue twice; select reply and resume aiming. | First-person orientation held, cursor usable, normal aiming restored. |
-| 11 | Melee attacks in open space and near obstacle; ranged if available. Record (a) visible body/weapon animation, (b) eye/framing, (c) expected reticle feedback separately. | Intended attack animation visible, eye stable relative to actor, feedback appropriate to action, no severe self-model obstruction. Missing attack-driven eye motion alone is not failure. |
+| 11 | Matched melee attacks in first/third person, three cycles each where safe; open space first, near obstacle after acceptable open-space result; second rig/equipment and ranged if available. Record actual action, visible hand/weapon, eye/aim/recovery and reticle separately. | Executed attacks show synchronized body/weapon motion, believable animation-aware eye and readable target, mouse aim retained, no severe self-obstruction or excessive drift; feedback evaluated separately. A native miss is not animation failure. |
 | 12 | Equip/unequip helmet idle and following wall contact. | No unexpected gait, displacement or trapping; acceptable body/head visibility. |
-| 13 | Jump flat, uphill and downhill; three attempts each. | Intended jump, coherent trajectory and landing; regain control without trapping or independent eye displacement. |
+| 13 | Jump flat, uphill and downhill; three attempts each. | Intended jump, coherent trajectory and landing; regain control without trapping, double elevation or abrupt eye handoff. |
 | 14 | Z cursor release/recapture; settings and chat entry. | Cursor works; mandatory Action Camera resumes; text entry does not drive movement. |
 | 15 | Save to disposable slot and load it. | No crash; camera/controls resume; original saves unaffected. |
 | 16 | Area transition and resume movement. | Camera follows new actor location; no lingering offset, drive or loss of controls. |
 | 17 | Identify dead NPC versus remains and intended collision behavior; walk/run across intended nonblocking entity; attempt escape after contact. | Confirmed nonblocking entity permits traversal; no trapping; preserve living NPC/solid-object collision. Unknown entity class or intended solidity is NOT TESTED, with symptom recorded. |
-| 18 | In safe disposable area, attempt jump onto stationary NPC; observe descent, landing, actor/eye height and escape. | Coherent eye/actor motion, no severe vertical clipping, forced independent camera displacement or trapping; clear ground movement resumes. Standing on NPC is not required. |
+| 18 | In safe disposable area, attempt jump onto stationary NPC; observe descent, landing, actor/eye height and escape. | Coherent eye/actor motion, no severe vertical clipping, unintended eye handoff or trapping; clear ground movement resumes. Standing on NPC is not required. |
 
 ## Execution and evidence
+
+For scenario 11 record resolution, FOV, sensitivity, DPI, motion/clearance settings, equipment and renderer. Keep mouse still during a matched stationary swing; compare first attack after load vs after idle. Check forward travel while attacking at level and downward pitch, and first frame on landing/dialogue transitions. See [review disposition](ENGINEERING_REVIEW.md).
 
 For 04–09 and 17–18 use three attempts per relevant variant where safe; for 13 use three per surface. Record successful/attempted counts per variant. Stop an unsafe or blocking reproduction; do not force further attempts. Record unattempted variants separately. For other scenarios record tested actions and any unavailable variant (e.g. ranged weapon).
 
