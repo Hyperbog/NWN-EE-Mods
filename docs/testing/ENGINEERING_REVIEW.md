@@ -18,3 +18,6 @@ READ: product-owner supplied engineering handoff reviewing distribution `335be43
 
 ## Evidence gate
 Windows CI must compile and publish exact distribution SHA and source pin. Verify manifest, release ZIP and five DLL hashes; artifact digest distinct. Installer uses immutable distribution SHA and retains backup. No install until package verification; stop for unusable controls/crash and restore exact recorded backup. Source pin reversal is a forward revert, not installed rollback. Overall gameplay acceptance withheld until observed checklist and blocker resolution.
+
+
+**Superseding owner decision:** redundant additional attack-follow layer is retired, not opt-in. The earlier toggle experiment applies only to historical builds that contain it. Do not propose re-enabling it in the removal candidate. Retain animated head and torso framing and existing clearance.

@@ -52,6 +52,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: #9 wall-adjacent combat acceptable with expected clipping, eight-item isolation checklist completed; #4 ground bodies still obstruct. READ: CX `3e7d7ec9da65f4507df642d0a66f5f0f35a6b3e8` makes additive attack follow opt-in, changes only default and UI text; compilation/package and default verification pending.
 
+- READ: product-owner direction supersedes unshipped opt-in decision; CX `61787ce17747b0027e4e574d06000bbb2e58caaa` removes redundant AttackCameraFollow implementation and registrations/calls completely. Keep retired code in history only; no new runtime package yet.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

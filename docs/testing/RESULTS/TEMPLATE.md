@@ -59,7 +59,7 @@ PASS / FAIL / NOT TESTED per checklist. Preserve submitted results exactly; sepa
 
 ### Combat subresults (11)
 
-Record actual action/target/outcome, native hand/weapon wind-up/strike/recovery, animation-aware eye/aim/recovery and reticle separately. Match first and third person for three cycles where safe; note first attack after load and after idle. Record viewport, FOV, sensitivity, DPI, renderer, fphead.mode, fphead.eyelock, fpclear.enabled, animcam.enabled, attackfollow.enabled and roll toggles. R3 verified historical runtime is the sword/melee behavioral reference; J4 is the full-source proxy. Ranged and other unavailable variants stay separate. [ADR-002](../../decisions/ADR-002-animation-aware-eye.md) supersedes fixed-eye animation restriction; no collision-driven eye retreat. A missing camera response is not proof of missing native clip playback.
+Record actual action/target/outcome, native hand/weapon wind-up/strike/recovery, animation-aware eye/aim/recovery and reticle separately. Match first and third person for three cycles where safe; note first attack after load and after idle. Record viewport, FOV, sensitivity, DPI, renderer, fphead.mode, fphead.eyelock, fpclear.enabled, animcam.enabled and applicable roll settings. Record attackfollow.enabled only for older builds that still contain the retired layer. R3 verified historical runtime is the sword/melee behavioral reference; J4 is the full-source proxy. Ranged and other unavailable variants stay separate. [ADR-002](../../decisions/ADR-002-animation-aware-eye.md) supersedes fixed-eye animation restriction; no collision-driven eye retreat. A missing camera response is not proof of missing native clip playback.
 
 ## Failure record (repeat for each failed variant)
 
