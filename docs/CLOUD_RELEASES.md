@@ -45,3 +45,18 @@ COMPILED/PACKAGED: [Windows CI 45939756819](https://github.com/Hyperbog/NWN-EE-M
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled installation authorized for exact distribution commit above. Preserve config and rollback snapshot; after installation back up cx.cfg and remove only obsolete attackfollow.* keys if present with game closed. Generic unknown-key preservation unchanged. Test lunge, head/torso synchronization, locomotion immersion and absence of retired controls; record exact installed hashes, startup log and gameplay. If rollback necessary use same reviewed installer, -RestoreBackup and original WorkDir; older combat build requires attackfollow.enabled=0 restored explicitly. Issue #9 open until observed verification. Issue #4 next; no global acceptance.
+
+
+## Advanced settings removal candidate
+
+COMPILED/PACKAGED: [Windows CI 45943802132](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45943802132), attempt 1, build 140323800841 and publish 140325582345 passed. Checkout and logged manifest match distribution 545eb66d7b1fd0c842443a463c84c30cc8a048bb, CX d4f8ac98b1d759d33724b37f547253fb61d1349c/tree bc058a44fe6b668f53937912f32a301d411613d7. [Exact prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-545eb66d7b1fd0c842443a463c84c30cc8a048bb), ZIP SHA-256 a0f1e5be82e7d45fe7eb9ac7df027359ad12baab7d2335938c71216964990ed9 matches CI manifest and GitHub asset metadata; publisher SHA256SUMS check passed. Actions artifact 15174221457 SHA-256 8da7c35f8d4d11062b30faf5b4056c2585c79f339bf56949b20e679dcebb5a95 agrees with upload/download logs and API. Installer fixtures passed. Only version.dll hash differs from previous package. No independent local binary rehash or in-game self-check; native symbol check skipped because runner lacks nwmain.exe.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | 86950d122c0765986ca9e64eb9ea07bb32aef26b513b8f8e839aa96a21217370 |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for exact release commit; close NWN, preserve config backup and installer rollback snapshot, capture successful installer output and fresh cx.log. Verify Advanced rows/disclosure absent across CX submenus, ordinary controls and status available, settings persist on restart, layout at 720p/1080p where supported, Reset affects displayed User controls only (back up and restore test settings; do not alter hidden engineering values), combat and camera immersion preserved. #10 remains open pending scoped observation. #12 death/load input investigation follows. Prior e28ea1e package retained; restore with pinned installer and printed backup if needed.

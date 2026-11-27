@@ -66,6 +66,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: pin reviewed Issue #10 source d4f8ac98b1d759d33724b37f547253fb61d1349c / bc058a44fe6b668f53937912f32a301d411613d7 for native Windows CI. Only four UI files differ from previous accepted combat behavior source. Windows build and release checks pending; do not install until verified. Previous release e28ea1efc74ad7d06b5f7f71737512b20d09d93f remains available. #12 follows scoped menu validation.
 
+- COMPILED/PACKAGED: Issue #10 menu candidate 545eb66d7b1fd0c842443a463c84c30cc8a048bb passed Windows CI 45943802132 on attempt 1; exact release manifest/asset digest agreement, controlled install authorized; gameplay pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
