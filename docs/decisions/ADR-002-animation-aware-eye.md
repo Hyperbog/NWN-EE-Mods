@@ -1,6 +1,6 @@
 # ADR-002 — Animation-aware first-person eye and combat framing
 
-Status: Accepted product direction, implementation and gameplay verification pending. Date: 2026-11-26.
+Status: Accepted product direction; [source implementation](../testing/COMBAT_IMPLEMENTATION.md) committed, compilation and gameplay verification pending. Date: 2026-11-26.
 
 ## Context
 

@@ -38,6 +38,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: clearance-disabled combat test fails; product owner explicitly requests historical animation-aware eye/framing. READ: ADR-002 supersedes fixed-eye animation prohibition only; retain no wall-driven camera displacement and later gameplay improvements. Phase 4.1D next; no runtime changes.
 
+- READ: Phase 4.1D implement ADR-002 in CX source commit `4e675d4e8e45056db1e17f6e598f3cdd7de23263`; restore grounded animated eye and historical attack framing, reset presentation contexts, preserve dialogue/airborne fallback, no Driving wall retreat or legacy locomotion tether. Five camera files changed, bounded telemetry and self-check assertions added. Compile/package and gameplay pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
