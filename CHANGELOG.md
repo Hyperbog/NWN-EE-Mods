@@ -99,6 +99,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 13C.4 pins immediate jump synchronization candidate 2943c1e622b36655785ab49444b7b84b258a4716 / 369722135b4911bf2f6f81da931331217d4bf21b for Windows CI. Remote comparison against continuous-eye baseline confirms only PoseService.cs changed (+2/-0). Reuse existing ObjectWorld on-demand compose before camera rig reads. No changes to input, physics, lens, or camera motion. Original jump trace retained. Build/package verification pending; do not install until verified. Prior release 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd retained for rollback. #13 open; #12 queued.
 
+- COMPILED/PACKAGED: Phase 13C.4 f7dcea89543beaff76485d898f942aa9a60507f5 passed Windows CI 46074343466 attempt 1; manifest and release asset checksum agree. Controlled gameplay test authorized.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

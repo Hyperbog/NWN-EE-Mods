@@ -1,4 +1,16 @@
-# EFP status — Phase 13C.4 synchronization Windows build requested
+# EFP status — Phase 13C.4 synchronization packaged
+
+COMPILED/PACKAGED: Phase 13C.4 [Windows CI 46074343466](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46074343466), attempt 1, build 140758442277 and publish 140760083727 passed. Checkout and manifest match distribution f7dcea89543beaff76485d898f942aa9a60507f5, CX 2943c1e622b36655785ab49444b7b84b258a4716/tree 369722135b4911bf2f6f81da931331217d4bf21b. [Exact synchronization prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-f7dcea89543beaff76485d898f942aa9a60507f5), ZIP 33,694,598 bytes SHA-256 a4cf8c77aa8ae2e52c22d9336f3fd41743c742470f1284eeb8dd570618fd66ef agrees between manifest and release asset metadata; publisher checksum passed. Artifact 15233754004 SHA-256 16bfb5e9e34b2c2ac021ef883c66f24c811146e2b8ae3241e5eabef072af6926 agrees with upload/download logs and API. Installer fixtures passed. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or gameplay verification.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | 6b6aab97a32bd9c1d0901e1b8253c8c4a3e329c2811d4e4aa55ef043ac1dd5ff |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for this exact release. Only version.dll hash differs from previous continuous-eye release 6e9dafd, retained for rollback. Close NWN; preserve config and installer backup; capture installer output. In a fresh session with general.logs=1 at 90 horizontal, test stationary and moving jump onset (no pre-hop), flight/landing, mouse turning, combat and movement. Upload fresh cx.log and rotated log if relevant; compare tracked status, actorStep.Z + offsetStep.Z at takeoff, and projection against prior samples. Restore previous logging preference after testing. No measured input-to-display latency; effectiveness of transform refresh remains unverified. No additional runtime changes. #13 remains open, #12 queued.
 
 READ: Phase 13C.4 pins immediate jump synchronization candidate 2943c1e622b36655785ab49444b7b84b258a4716 / 369722135b4911bf2f6f81da931331217d4bf21b for Windows CI. Remote comparison against continuous-eye baseline confirms only PoseService.cs changed (+2/-0). Reuse existing ObjectWorld on-demand compose before camera rig reads. No changes to input, physics, lens, or camera motion. Original jump trace retained. Build/package verification pending; do not install until verified. Prior release 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd retained for rollback. #13 open; #12 queued.
 
@@ -28,7 +40,7 @@ OBSERVED: owner reports all eight Phase 13B.2 horizontal FOV checks PASS. Scoped
 
 [Horizontal FOV results](docs/testing/RESULTS/2026-11-27-M11-horizontal-fov.md)
 
-**Current build gate: READ.** Synchronization source pinned for Windows CI; package and gameplay validation pending.
+**Current build gate: COMPILED/PACKAGED.** Controlled synchronization candidate installation authorized; gameplay validation pending.
 
 COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46016676307), attempt 1, build 140565457630 and publish 140568045150 passed. Checkout and logged manifest match distribution 1b69659f16e90f4e942738c64ec4790ed92fc506, CX 9840ead195486427478bbc38c4d08f5a3293dfa1/tree 3ac1761fab8c70a3478655bca7e5f63939293a68. [Exact horizontal FOV prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-1b69659f16e90f4e942738c64ec4790ed92fc506), ZIP 33,694,790 bytes SHA-256 59017952e8d81f796f1550ea4f6a2f58e34c57d21f4df5e99a11b8f76d008c1c matches CI manifest and GitHub asset metadata; publisher SHA256SUMS passed. Artifact 15206596549 SHA-256 2135e68b3c194c60e2c431f94797a4ac60f2c5c47f83c042d39f2c6a4cebe3ab matches upload/download logs and API. Installer fixtures passed. Only version.dll hash differs from prior diagnostic package. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or in-game verification.
 

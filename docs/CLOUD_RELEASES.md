@@ -105,3 +105,18 @@ COMPILED/PACKAGED: Phase 13C.2 [Windows CI 46020973112](https://github.com/Hyper
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled installation authorized for exact release. Only version.dll hash differs from accepted horizontal-FOV release 1b69659, which remains rollback baseline. Close NWN; preserve config and installer backup; capture installation output. Fresh session with general.logs=1: at 90 horizontal perform stationary jumps, moving jumps, and a jump with mouse turning; check natural takeoff/flight/landing, no self-clipping or artificial adjustment, combat and movement unchanged. Upload fresh cx.log (include rotated log if relevant); compare matched FOV and actor-relative eye transitions and tracked status. Restore prior logging preference after testing. Existing tracker may still fall back if a rig sample is invalid; no gameplay success claim until tested. Temporary trace retained for verification; #13 open, #12 queued.
+
+
+## Immediate jump synchronization candidate
+
+COMPILED/PACKAGED: Phase 13C.4 [Windows CI 46074343466](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46074343466), attempt 1, build 140758442277 and publish 140760083727 passed. Checkout and manifest match distribution f7dcea89543beaff76485d898f942aa9a60507f5, CX 2943c1e622b36655785ab49444b7b84b258a4716/tree 369722135b4911bf2f6f81da931331217d4bf21b. [Exact synchronization prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-f7dcea89543beaff76485d898f942aa9a60507f5), ZIP 33,694,598 bytes SHA-256 a4cf8c77aa8ae2e52c22d9336f3fd41743c742470f1284eeb8dd570618fd66ef agrees between manifest and release asset metadata; publisher checksum passed. Artifact 15233754004 SHA-256 16bfb5e9e34b2c2ac021ef883c66f24c811146e2b8ae3241e5eabef072af6926 agrees with upload/download logs and API. Installer fixtures passed. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or gameplay verification.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | 6b6aab97a32bd9c1d0901e1b8253c8c4a3e329c2811d4e4aa55ef043ac1dd5ff |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for this exact release. Only version.dll hash differs from previous continuous-eye release 6e9dafd, retained for rollback. Close NWN; preserve config and installer backup; capture installer output. In a fresh session with general.logs=1 at 90 horizontal, test stationary and moving jump onset (no pre-hop), flight/landing, mouse turning, combat and movement. Upload fresh cx.log and rotated log if relevant; compare tracked status, actorStep.Z + offsetStep.Z at takeoff, and projection against prior samples. Restore previous logging preference after testing. No measured input-to-display latency; effectiveness of transform refresh remains unverified. No additional runtime changes. #13 remains open, #12 queued.
