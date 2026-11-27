@@ -50,6 +50,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: #9 extended verification with attackfollow.enabled=0: seven PASS, zero FAIL, combat near walls pending; retain animated eye and immersion, plan minimal default-off change after final test. No runtime edit.
 
+- OBSERVED: #9 wall-adjacent combat acceptable with expected clipping, eight-item isolation checklist completed; #4 ground bodies still obstruct. READ: CX `3e7d7ec9da65f4507df642d0a66f5f0f35a6b3e8` makes additive attack follow opt-in, changes only default and UI text; compilation/package and default verification pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
