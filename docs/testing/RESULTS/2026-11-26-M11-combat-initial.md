@@ -25,3 +25,20 @@ READ: CameraService L338–340 layers AnimationCameraMotion, AttackCameraFollow 
 ## Additional attack-follow isolation — preliminary result
 
 OBSERVED: product owner reports `attackfollow.enabled=0`, clipping eliminated, combat immersion preserved: "I performed a small test, but it looks good at the moment." Limited coverage; no new log, config bytes, counts, target/rig/equipment or independent installed hashes provided. The result supports the additive attack-follow layer as a contributor in the tested condition, not a proven geometric mechanism or universal fix. No native collision or renderer change warranted for this symptom yet. Keep the existing candidate and original config backup, temporarily retain only this override for extended testing (replaces earlier instruction to restore immediately). Test several repeat lunges against the same target, then a different available character/equipment/target combination, confirm head bob, attack framing, recovery and no new clipping; record unavailable variants and stop on severe obstruction. Upload fresh cx.log after the session. If reproduced success, consider a separate minimal default-off change respecting explicit user overrides, with migration/compatibility evaluated before build. No new runtime edit or package. Issue #9 remains open; #5/full checklist still pending.
+
+## Issue #9 extended verification — 2026-11-26 23:16 local
+
+OBSERVED: owner submitted extended checklist under the temporary `attackfollow.enabled=0` override; 7 PASS, 0 FAIL, 1 PENDING (not yet tested). No inferred per-variant repetition counts, exact model/weapon identities, new log, configuration bytes or installed hash evidence.
+
+| Test | Owner-reported result |
+| --- | --- |
+| Repeated lunge attacks | PASS |
+| Different melee weapons | PASS |
+| Unarmed combat | PASS |
+| Different character models | PASS |
+| Different armor and helmets | PASS |
+| Combat near walls | PENDING |
+| Walking and running immersion | PASS |
+| Attack-to-movement transitions | PASS |
+
+These results support retaining the historical animated head/torso camera while making the additive AttackCameraFollow layer opt-in. They do not establish a universal collision fix or the exact geometric cause. Keep current candidate and override unchanged until wall-adjacent combat is observed; avoid forcing a reproduction if blocked. Distinguish enemy clipping, wall clipping, camera retreat/jitter, and movement trapping. Once remaining test is recorded, consider a separate minimal default-off source change respecting explicit saved overrides, followed by compile/package and verification with default configuration. No runtime changes now. Issue #9 remains open; #5 and full revision 3 acceptance remain pending. Existing wall/diagonal and vertical-contact defects stay separate.

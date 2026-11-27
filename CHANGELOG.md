@@ -48,6 +48,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: #9 preliminary isolation result, attackfollow.enabled=0 eliminated reported lunge clipping while preserving immersion in a small test. Extended verification pending; no runtime change.
 
+- OBSERVED: #9 extended verification with attackfollow.enabled=0: seven PASS, zero FAIL, combat near walls pending; retain animated eye and immersion, plan minimal default-off change after final test. No runtime edit.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
