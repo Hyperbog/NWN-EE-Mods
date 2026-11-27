@@ -34,6 +34,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 4.1B verify J4 archive and published jump source blob; compare J4/M11 combat paths, identify confirmed eye-integration changes and retained pose/render code, document isolation gate. No runtime edits or confirmed root cause.
 
+- READ/OBSERVED: Phase 4.1C existing M11 logs show four recognized melee animation-state samples and up to 0.977 m requested adaptive clearance. Source traces shared color-record translation; causal link unconfirmed. Existing-setting isolation test pending; no runtime changes.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
