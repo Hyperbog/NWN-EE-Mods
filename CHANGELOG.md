@@ -54,6 +54,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: product-owner direction supersedes unshipped opt-in decision; CX `61787ce17747b0027e4e574d06000bbb2e58caaa` removes redundant AttackCameraFollow implementation and registrations/calls completely. Keep retired code in history only; no new runtime package yet.
 
+- READ: pin CX `61787ce17747b0027e4e574d06000bbb2e58caaa` / `32a9a8ce432ca3bc9824074e75dacdb88fd2945c` for the attack-follow removal build. Three-file source diff verified against prior combat candidate; Windows compilation and package checks pending, previous release preserved.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
