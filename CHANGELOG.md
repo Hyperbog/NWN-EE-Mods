@@ -91,6 +91,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 13C.2 pins simplified continuous animated eye source 0ae674ac58cd0cf2579d8f99d832f52fa04968e7 / 17c95a8484b1825aa8bd8296ede84508f410581b for native Windows CI. Remote comparison against accepted horizontal FOV source confirms only CameraService.cs changed (9 additions, 8 deletions). Remove airborne restriction, keep existing pose validation and fallback, no extra camera system or physics change. Original jump trace retained. Build/package verification pending; do not install until verified. Accepted horizontal FOV release 1b69659f16e90f4e942738c64ec4790ed92fc506 preserved for rollback. #12 queued.
 
+- COMPILED/PACKAGED: Phase 13C.2 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd passed Windows CI 46020973112 attempt 1; manifest and release asset checksum agree. Controlled gameplay test authorized.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

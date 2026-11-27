@@ -1,4 +1,16 @@
-# EFP status — Phase 13C.2 continuous eye Windows build requested
+# EFP status — Phase 13C.2 continuous eye packaged
+
+COMPILED/PACKAGED: Phase 13C.2 [Windows CI 46020973112](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46020973112), attempt 1, build 140580228608 and publish 140582072700 passed. Checkout and logged manifest match distribution 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd, CX 0ae674ac58cd0cf2579d8f99d832f52fa04968e7/tree 17c95a8484b1825aa8bd8296ede84508f410581b. [Exact continuous animated eye prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd), ZIP 33,694,292 bytes SHA-256 73509022036694eff19fd97f9b0919daaf5417668cd100ce2683dd3ff9b2f421 agrees between CI manifest and GitHub asset metadata; publisher SHA256SUMS passed. Artifact 15207089961 SHA-256 cb2baea081a7fd845375498e8d3f69d30b8f38db62bed523e76a4fa5e574f462 agrees with upload/download logs and API. Installer fixtures passed. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or in-game verification.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | 24f9d257199b6673395c2f5c2b5a1e7653bee9fc42e70c071a31d1bfe73600b6 |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for exact release. Only version.dll hash differs from accepted horizontal-FOV release 1b69659, which remains rollback baseline. Close NWN; preserve config and installer backup; capture installation output. Fresh session with general.logs=1: at 90 horizontal perform stationary jumps, moving jumps, and a jump with mouse turning; check natural takeoff/flight/landing, no self-clipping or artificial adjustment, combat and movement unchanged. Upload fresh cx.log (include rotated log if relevant); compare matched FOV and actor-relative eye transitions and tracked status. Restore prior logging preference after testing. Existing tracker may still fall back if a rig sample is invalid; no gameplay success claim until tested. Temporary trace retained for verification; #13 open, #12 queued.
 
 READ: Phase 13C.2 pins simplified continuous animated eye source 0ae674ac58cd0cf2579d8f99d832f52fa04968e7 / 17c95a8484b1825aa8bd8296ede84508f410581b for native Windows CI. Remote comparison against accepted horizontal FOV source confirms only CameraService.cs changed (9 additions, 8 deletions). Remove airborne restriction, keep existing pose validation and fallback, no extra camera system or physics change. Original jump trace retained. Build/package verification pending; do not install until verified. Accepted horizontal FOV release 1b69659f16e90f4e942738c64ec4790ed92fc506 preserved for rollback. #12 queued.
 
@@ -8,7 +20,7 @@ OBSERVED: owner reports all eight Phase 13B.2 horizontal FOV checks PASS. Scoped
 
 [Horizontal FOV results](docs/testing/RESULTS/2026-11-27-M11-horizontal-fov.md)
 
-**Current build gate: READ.** Simplified jump eye source pinned for Windows build; package and gameplay validation pending. Previous horizontal-FOV package remains scoped accepted.
+**Current build gate: COMPILED/PACKAGED.** Controlled continuous eye installation authorized; gameplay validation pending. Previous horizontal-FOV package remains scoped accepted.
 
 COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46016676307), attempt 1, build 140565457630 and publish 140568045150 passed. Checkout and logged manifest match distribution 1b69659f16e90f4e942738c64ec4790ed92fc506, CX 9840ead195486427478bbc38c4d08f5a3293dfa1/tree 3ac1761fab8c70a3478655bca7e5f63939293a68. [Exact horizontal FOV prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-1b69659f16e90f4e942738c64ec4790ed92fc506), ZIP 33,694,790 bytes SHA-256 59017952e8d81f796f1550ea4f6a2f58e34c57d21f4df5e99a11b8f76d008c1c matches CI manifest and GitHub asset metadata; publisher SHA256SUMS passed. Artifact 15206596549 SHA-256 2135e68b3c194c60e2c431f94797a4ac60f2c5c47f83c042d39f2c6a4cebe3ab matches upload/download logs and API. Installer fixtures passed. Only version.dll hash differs from prior diagnostic package. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or in-game verification.
 

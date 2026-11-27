@@ -90,3 +90,18 @@ COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-M
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled installation authorized for exact release commit. Close NWN; preserve cfg and installer rollback snapshot; capture installation output. Driving uses new driving.hfov, default 90, legacy driving.fov preserved for rollback. No manual conversion required. With logging enabled in a fresh session, test 90 horizontal at 2560x1440 (drawFov about 58.716); repeat after aspect change if supported (e.g. 4:3 gives 73.740); return to normal resolution. Check new slider label and persistence, peripheral perspective, reticle target selection, dialogue and camera-mode transitions, combat and movement immersion. Capture fresh cx.log and tested resolutions/FOVs; restore previous logging preference. Jump eye discontinuity is intentionally not corrected at this checkpoint and is not a new regression by itself. Prior diagnostic release 1dcf212 remains rollback baseline. #13 stays open; jump continuity refinement follows scoped FOV acceptance; #12 queued.
+
+
+## Continuous animated eye candidate
+
+COMPILED/PACKAGED: Phase 13C.2 [Windows CI 46020973112](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46020973112), attempt 1, build 140580228608 and publish 140582072700 passed. Checkout and logged manifest match distribution 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd, CX 0ae674ac58cd0cf2579d8f99d832f52fa04968e7/tree 17c95a8484b1825aa8bd8296ede84508f410581b. [Exact continuous animated eye prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd), ZIP 33,694,292 bytes SHA-256 73509022036694eff19fd97f9b0919daaf5417668cd100ce2683dd3ff9b2f421 agrees between CI manifest and GitHub asset metadata; publisher SHA256SUMS passed. Artifact 15207089961 SHA-256 cb2baea081a7fd845375498e8d3f69d30b8f38db62bed523e76a4fa5e574f462 agrees with upload/download logs and API. Installer fixtures passed. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or in-game verification.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | 24f9d257199b6673395c2f5c2b5a1e7653bee9fc42e70c071a31d1bfe73600b6 |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for exact release. Only version.dll hash differs from accepted horizontal-FOV release 1b69659, which remains rollback baseline. Close NWN; preserve config and installer backup; capture installation output. Fresh session with general.logs=1: at 90 horizontal perform stationary jumps, moving jumps, and a jump with mouse turning; check natural takeoff/flight/landing, no self-clipping or artificial adjustment, combat and movement unchanged. Upload fresh cx.log (include rotated log if relevant); compare matched FOV and actor-relative eye transitions and tracked status. Restore prior logging preference after testing. Existing tracker may still fall back if a rig sample is invalid; no gameplay success claim until tested. Temporary trace retained for verification; #13 open, #12 queued.
