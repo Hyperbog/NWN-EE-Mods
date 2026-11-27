@@ -70,3 +70,17 @@ COMPILED/PACKAGED: [Windows CI 45939756819](https://github.com/Hyperbog/NWN-EE-M
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled installation authorized for exact distribution commit above. Preserve config and rollback snapshot; after installation back up cx.cfg and remove only obsolete attackfollow.* keys if present with game closed. Generic unknown-key preservation unchanged. Test lunge, head/torso synchronization, locomotion immersion and absence of retired controls; record exact installed hashes, startup log and gameplay. If rollback necessary use same reviewed installer, -RestoreBackup and original WorkDir; older combat build requires attackfollow.enabled=0 restored explicitly. Issue #9 open until observed verification. Issue #4 next; no global acceptance.
+
+## Final removal-candidate gameplay observation
+
+OBSERVED: owner reported successful installation after the installer correctly refused a running game. Exact successful installer output, five installed DLL hashes, post-install cx.cfg and fresh log have not been supplied. Owner subsequently submitted all five requested gameplay checks as PASS:
+
+| Check | Reported result |
+| --- | --- |
+| Synchronized combat animations | PASS |
+| Natural movement and head bob | PASS |
+| Lunge attacks without enemy clipping | PASS |
+| Attack-to-movement transitions | PASS |
+| Retired attack-follow menu absent | PASS |
+
+Candidate identity is user-reported, supported by absent retired menu, not independently hash-verified INSTALLED evidence. Expected distribution e28ea1efc74ad7d06b5f7f71737512b20d09d93f, CX 61787ce17747b0027e4e574d06000bbb2e58caaa. Accept this as scoped combat/immersion behavioral baseline; close #9 on reported scoped behavioral acceptance, reopen on recurrence or contradictory provenance. #5 restoration observed; full revision 3 checklist and remaining reticle/dialogue/jump/movement coverage not established, retain #5 open pending broader verification. Next target #4: classify dead creature versus remains and actual native blocker before changing movement; preserve living NPC/solid-object collision and accepted camera behavior. No runtime edits or new package. Do not claim all clipping eliminated, full acceptance or independently verified installation. Obtain exact installer hash evidence and fresh cx.log alongside next diagnostic.

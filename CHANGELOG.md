@@ -58,6 +58,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - COMPILED/PACKAGED: removal candidate `e28ea1efc74ad7d06b5f7f71737512b20d09d93f` passed CI 45939756819 on attempt 1, all five DLLs and release ZIP checks; controlled install authorized, gameplay pending.
 
+- OBSERVED: all five final removal-candidate checks PASS, including no enemy-lunge clipping and no retired menu. Accept scoped combat/immersion behavioral baseline, #9 closure on observed evidence; independently verified installed hashes and broader checklist pending. Next #4; no runtime change.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
