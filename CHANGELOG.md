@@ -30,6 +30,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 3.3 map actual M11 log emitters, cadence, gates and evidence gaps to all 18 scenarios; reconcile inactive probe documentation. Phase 3 complete; issue #5 first for diagnose-first stabilization. No runtime edits or probe activation.
 
+- READ: Phase 4.1A recover R3 package name and archived source provenance; independently compare cumulative J4 to M11 (11 changed files). Exact R3 identity remains pending local evidence; no runtime edits.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
