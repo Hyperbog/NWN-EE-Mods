@@ -42,6 +42,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 4.1E adopt independent engineering review findings; pin exact animation-aware candidate, update current checklist/template and brief precedence, record comparison protocol. Prior run 45917719418 was green for older M11 pin only. New Windows build/package pending; no runtime changes or gameplay approval.
 
+- COMPILED/PACKAGED: Phase 4.1E run 45931914373 passed first attempt; exact combat candidate b54673b published with verified CI/release digest agreement and five-DLL manifest. Controlled installation authorized; runtime symbol/self-check and gameplay pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
