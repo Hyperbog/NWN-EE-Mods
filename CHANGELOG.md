@@ -83,6 +83,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 13B.2 pins reviewed horizontal FOV source 9840ead195486427478bbc38c4d08f5a3293dfa1 / 3ac1761fab8c70a3478655bca7e5f63939293a68 for native Windows CI. Exact Codex first-checkpoint tree; four modified files, 96 additions/39 deletions. Driving horizontal FOV only; jump continuity correction deliberately excluded and temporary diagnostic retained. Windows compilation/package verification pending; do not install until verified. Prior diagnostic release 1dcf212e05295e8f23d8c5dddb29cbed6395f8e6 remains available for rollback. #12 queued.
 
+- COMPILED/PACKAGED: Phase 13B.2 horizontal FOV 1b69659f16e90f4e942738c64ec4790ed92fc506 passed Windows CI 46016676307 attempt 1; exact release manifest and asset digest agree. Controlled installation authorized; gameplay pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

@@ -75,3 +75,18 @@ COMPILED/PACKAGED: [Windows CI 45946371514](https://github.com/Hyperbog/NWN-EE-M
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled diagnostic installation authorized for exact release commit. Close NWN completely; preserve config and printed rollback snapshot; capture successful installer output. Record prior general.logs value, back up cx.cfg, set general.logs=1 with game closed. Fresh session, disposable save, same first-person configuration and stationary mouse, flat ground with nearby straight edge and distant landmark. Two stationary jumps at affected vertical FOV, repeat once at 60 degrees if symptom occurs; record actual resolution/aspect/renderer, FOV, symptom phase and timestamp (short clip helpful). Close game, preserve fresh cx.log including [efpjump] (96-line session cap; include rotated log if relevant), restore prior logging value. Compare stationary edge stretching separately. Matched Alloy world snapshot supplies projection evidence; native-unavailable, missing and other-camera are incomplete evidence. No diagnosis or corrective behavior established yet. Prior accepted menu release 545eb66 remains rollback baseline; #13 open, #12 queued. Remove temporary trace after verified correction.
+
+
+## Horizontal FOV candidate
+
+COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46016676307), attempt 1, build 140565457630 and publish 140568045150 passed. Checkout and logged manifest match distribution 1b69659f16e90f4e942738c64ec4790ed92fc506, CX 9840ead195486427478bbc38c4d08f5a3293dfa1/tree 3ac1761fab8c70a3478655bca7e5f63939293a68. [Exact horizontal FOV prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-1b69659f16e90f4e942738c64ec4790ed92fc506), ZIP 33,694,790 bytes SHA-256 59017952e8d81f796f1550ea4f6a2f58e34c57d21f4df5e99a11b8f76d008c1c matches CI manifest and GitHub asset metadata; publisher SHA256SUMS passed. Artifact 15206596549 SHA-256 2135e68b3c194c60e2c431f94797a4ac60f2c5c47f83c042d39f2c6a4cebe3ab matches upload/download logs and API. Installer fixtures passed. Only version.dll hash differs from prior diagnostic package. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or in-game verification.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | c9ea8105274645648c8421db1fc6aaf7f82bf7cf2eb837e0b1cc08ab430e4d8e |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for exact release commit. Close NWN; preserve cfg and installer rollback snapshot; capture installation output. Driving uses new driving.hfov, default 90, legacy driving.fov preserved for rollback. No manual conversion required. With logging enabled in a fresh session, test 90 horizontal at 2560x1440 (drawFov about 58.716); repeat after aspect change if supported (e.g. 4:3 gives 73.740); return to normal resolution. Check new slider label and persistence, peripheral perspective, reticle target selection, dialogue and camera-mode transitions, combat and movement immersion. Capture fresh cx.log and tested resolutions/FOVs; restore previous logging preference. Jump eye discontinuity is intentionally not corrected at this checkpoint and is not a new regression by itself. Prior diagnostic release 1dcf212 remains rollback baseline. #13 stays open; jump continuity refinement follows scoped FOV acceptance; #12 queued.

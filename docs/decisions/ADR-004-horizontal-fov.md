@@ -1,6 +1,6 @@
 # ADR-004 — Horizontal FOV and modern first-person conventions
 
-Status: Accepted; first horizontal-FOV patch integrated, build and gameplay validation pending.
+Status: Accepted; first horizontal-FOV patch compiled and packaged, gameplay validation pending.
 
 Owner: express FOV horizontally to align with modern FPS conventions; align future changes with modern conventions. This supplements ADR-002 animation-aware eye, ADR-003 input/menu/tracking and single intended EFP experience. No universal claim that all modern games use horizontal FOV.
 
@@ -11,3 +11,18 @@ Jump discontinuity is separately evidenced by [diagnostic results](../testing/RE
 ## Phase 13B.1 integration checkpoint
 
 READ: Phase 13B.1 authorized; Codex horizontal FOV patch 1 applied verbatim to CX 9840ead195486427478bbc38c4d08f5a3293dfa1, tree 3ac1761fab8c70a3478655bca7e5f63939293a68, parent 9558f70498d48dc0f2dffe79812c460faa33341c. Every original blob prefix, hunk context/count and resulting blob prefix matched; complete tree matches Codex's declared first checkpoint. Recursive tree comparison confirms exactly four modified files (DbCamera.cs, SeamFrame.cs, CameraKnobs.cs, CameraService.cs), 96 additions/39 deletions. Driving setting is now driving.hfov, 10–120 horizontal degrees, default 90; old driving.fov retained as unknown configuration for rollback, startup announces new default if only legacy key present. No silent reinterpretation; prior 90 vertical becomes new default 90 horizontal (58.7155 vertical at 16:9). Chase, Top Down and Free Camera keep vertical semantics. Uses viewport aspect and shared DB calculation, retains current lens if dimensions invalid. Codex reports managed Linux/Windows Release builds and self-checks, off-game projection and configuration fixture PASS; not independently reproduced. Native Windows build, install and gameplay pending. Verify 2560x1440 drawFov=58.716 at hfov=90, aspect changes, native/Alloy and GUI transitions, reticle picking, persistence and mode switching. Patch 2 jump continuity deliberately not applied; refine valid-rig landing transition before integration, review yaw-relative offset and camera identity, extend settled trace beyond blend. Keep temporary jump diagnostic for comparison. Distribution BUILD_PLAN still pins diagnostic 9558f70 until separate build checkpoint; #12 queued.
+
+
+## Phase 13B.2 compiled/package checkpoint
+
+COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/46016676307), attempt 1, build 140565457630 and publish 140568045150 passed. Checkout and logged manifest match distribution 1b69659f16e90f4e942738c64ec4790ed92fc506, CX 9840ead195486427478bbc38c4d08f5a3293dfa1/tree 3ac1761fab8c70a3478655bca7e5f63939293a68. [Exact horizontal FOV prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-1b69659f16e90f4e942738c64ec4790ed92fc506), ZIP 33,694,790 bytes SHA-256 59017952e8d81f796f1550ea4f6a2f58e34c57d21f4df5e99a11b8f76d008c1c matches CI manifest and GitHub asset metadata; publisher SHA256SUMS passed. Artifact 15206596549 SHA-256 2135e68b3c194c60e2c431f94797a4ac60f2c5c47f83c042d39f2c6a4cebe3ab matches upload/download logs and API. Installer fixtures passed. Only version.dll hash differs from prior diagnostic package. Native symbol check skipped (runner lacks nwmain.exe); no independent local binary rehash or in-game verification.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | c9ea8105274645648c8421db1fc6aaf7f82bf7cf2eb837e0b1cc08ab430e4d8e |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for exact release commit. Close NWN; preserve cfg and installer rollback snapshot; capture installation output. Driving uses new driving.hfov, default 90, legacy driving.fov preserved for rollback. No manual conversion required. With logging enabled in a fresh session, test 90 horizontal at 2560x1440 (drawFov about 58.716); repeat after aspect change if supported (e.g. 4:3 gives 73.740); return to normal resolution. Check new slider label and persistence, peripheral perspective, reticle target selection, dialogue and camera-mode transitions, combat and movement immersion. Capture fresh cx.log and tested resolutions/FOVs; restore previous logging preference. Jump eye discontinuity is intentionally not corrected at this checkpoint and is not a new regression by itself. Prior diagnostic release 1dcf212 remains rollback baseline. #13 stays open; jump continuity refinement follows scoped FOV acceptance; #12 queued.
