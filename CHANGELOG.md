@@ -24,6 +24,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 3.1 formalize repeatable gameplay checklist revision 2, preserving IDs 01–16 and adding remains/NPC landing as 17–18. Clarify combat subresults, wall escape, repetition counts and evidence rules; original M11 results preserved, no runtime changes or new test session.
 
+- OBSERVED: supplemental revision 2 M11 checklist reports 11 PASS/7 FAIL; two logs reviewed and sanitized evidence recorded separately. No new runtime change or confirmed root cause.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
