@@ -1,6 +1,6 @@
 # ADR-004 — Horizontal FOV and modern first-person conventions
 
-Status: Accepted; first horizontal-FOV patch compiled and packaged, gameplay validation pending.
+Status: Accepted; horizontal-FOV patch passed scoped owner gameplay validation, projection trace and broader aspect coverage outstanding.
 
 Owner: express FOV horizontally to align with modern FPS conventions; align future changes with modern conventions. This supplements ADR-002 animation-aware eye, ADR-003 input/menu/tracking and single intended EFP experience. No universal claim that all modern games use horizontal FOV.
 
@@ -26,3 +26,8 @@ COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-M
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled installation authorized for exact release commit. Close NWN; preserve cfg and installer rollback snapshot; capture installation output. Driving uses new driving.hfov, default 90, legacy driving.fov preserved for rollback. No manual conversion required. With logging enabled in a fresh session, test 90 horizontal at 2560x1440 (drawFov about 58.716); repeat after aspect change if supported (e.g. 4:3 gives 73.740); return to normal resolution. Check new slider label and persistence, peripheral perspective, reticle target selection, dialogue and camera-mode transitions, combat and movement immersion. Capture fresh cx.log and tested resolutions/FOVs; restore previous logging preference. Jump eye discontinuity is intentionally not corrected at this checkpoint and is not a new regression by itself. Prior diagnostic release 1dcf212 remains rollback baseline. #13 stays open; jump continuity refinement follows scoped FOV acceptance; #12 queued.
+
+
+## Phase 13B.2 observed acceptance
+
+OBSERVED: owner reports all eight Phase 13B.2 horizontal FOV checks PASS. Scoped acceptance of horizontal FOV gameplay behavior; exact installed checksum, new matched projection trace and alternate aspect coverage not supplied. Owner also reports jumping still causes a weird camera adjustment and supplies two screenshots. Jump handoff correction was deliberately excluded from this build; symptom remains open, not evidence that FOV conversion failed. Prior seven matched jumps established constant sampled lens and abrupt actor-relative eye offset changes. Screenshots alone do not quantify camera displacement or prove new lens changes. Preserve horizontal FOV source 9840ead195486427478bbc38c4d08f5a3293dfa1 and release 1b69659f16e90f4e942738c64ec4790ed92fc506 as scoped accepted baseline. Next Phase 13C.1: refine reviewed jump continuity patch, especially start landing recovery only on valid animated eye, camera identity, airborne yaw handling, sample settled beyond blend; retain diagnostics for verification. No runtime changes, #13 remains open, #12 queued.

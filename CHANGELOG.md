@@ -85,6 +85,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - COMPILED/PACKAGED: Phase 13B.2 horizontal FOV 1b69659f16e90f4e942738c64ec4790ed92fc506 passed Windows CI 46016676307 attempt 1; exact release manifest and asset digest agree. Controlled installation authorized; gameplay pending.
 
+- OBSERVED: owner reports all eight Phase 13B.2 horizontal FOV checks PASS. Scoped acceptance of horizontal FOV gameplay behavior; exact installed checksum, new matched projection trace and alternate aspect coverage not supplied. Owner also reports jumping still causes a weird camera adjustment and supplies two screenshots. Jump handoff correction was deliberately excluded from this build; symptom remains open, not evidence that FOV conversion failed. Prior seven matched jumps established constant sampled lens and abrupt actor-relative eye offset changes. Screenshots alone do not quantify camera displacement or prove new lens changes. Preserve horizontal FOV source 9840ead195486427478bbc38c4d08f5a3293dfa1 and release 1b69659f16e90f4e942738c64ec4790ed92fc506 as scoped accepted baseline. Next Phase 13C.1: refine reviewed jump continuity patch, especially start landing recovery only on valid animated eye, camera identity, airborne yaw handling, sample settled beyond blend; retain diagnostics for verification. No runtime changes, #13 remains open, #12 queued.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
