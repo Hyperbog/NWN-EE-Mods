@@ -32,6 +32,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: Phase 4.1A recover R3 package name and archived source provenance; independently compare cumulative J4 to M11 (11 changed files). Original R3 incremental package subsequently recovered and verified (15/15 immutable hashes, matching original source and five R2 backups, historical R3 build/runtime hash records agree). J1 subsequently recovers all five original R3 DLLs (actual hashes match R3 and J1 manifests) and exact pre-J1 jump fixtures; 18/18 package checks pass. Full R3 tree remains unverified. No runtime edits.
 
+- READ: Phase 4.1B verify J4 archive and published jump source blob; compare J4/M11 combat paths, identify confirmed eye-integration changes and retained pose/render code, document isolation gate. No runtime edits or confirmed root cause.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
