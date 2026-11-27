@@ -1,6 +1,6 @@
 # ADR-001 — Fixed actor-root eye; wall clipping accepted
 
-Status: Accepted product decision; M11 partial gameplay acceptance. Date: 2026-11-26.
+Status: Partially superseded by [ADR-002](ADR-002-animation-aware-eye.md) on 2026-11-26. Historical M11 decision preserved below; its prohibition on animation-driven eye displacement is superseded. No collision-driven camera retreat and separation of native movement/presentation remain accepted.
 
 An architecture decision record (ADR) preserves one design decision and its rationale.
 

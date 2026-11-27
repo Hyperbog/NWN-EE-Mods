@@ -36,6 +36,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ/OBSERVED: Phase 4.1C existing M11 logs show four recognized melee animation-state samples and up to 0.977 m requested adaptive clearance. Source traces shared color-record translation; causal link unconfirmed. Existing-setting isolation test pending; no runtime changes.
 
+- OBSERVED: clearance-disabled combat test fails; product owner explicitly requests historical animation-aware eye/framing. READ: ADR-002 supersedes fixed-eye animation prohibition only; retain no wall-driven camera displacement and later gameplay improvements. Phase 4.1D next; no runtime changes.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
