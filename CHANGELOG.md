@@ -75,6 +75,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: pin reviewed Issue #13 diagnostic source 9558f70498d48dc0f2dffe79812c460faa33341c / 749203fbf376649e2fd7ad501a3a39724ab20cc6 for native Windows CI. Exactly three files differ from accepted menu source, 134 insertions and 4 deletions. Temporary bounded [efpjump] logging only; no intended change to camera, projection or jump physics. Windows build and package checks pending; do not install until verified. Previous accepted menu release 545eb66d7b1fd0c842443a463c84c30cc8a048bb remains available. #12 remains queued.
 
+- COMPILED/PACKAGED: Issue #13 diagnostic 1dcf212e05295e8f23d8c5dddb29cbed6395f8e6 passed Windows CI 45946371514 attempt 1; exact release manifest and asset digest agree. Controlled diagnostic install authorized; measurement pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed

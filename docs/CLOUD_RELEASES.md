@@ -60,3 +60,18 @@ COMPILED/PACKAGED: [Windows CI 45943802132](https://github.com/Hyperbog/NWN-EE-M
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Controlled installation authorized for exact release commit; close NWN, preserve config backup and installer rollback snapshot, capture successful installer output and fresh cx.log. Verify Advanced rows/disclosure absent across CX submenus, ordinary controls and status available, settings persist on restart, layout at 720p/1080p where supported, Reset affects displayed User controls only (back up and restore test settings; do not alter hidden engineering values), combat and camera immersion preserved. #10 remains open pending scoped observation. #12 death/load input investigation follows. Prior e28ea1e package retained; restore with pinned installer and printed backup if needed.
+
+
+## Jump framing diagnostic candidate
+
+COMPILED/PACKAGED: [Windows CI 45946371514](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45946371514), attempt 1; build 140331886207 and publish 140333621480 passed. Checkout and logged manifest match distribution 1dcf212e05295e8f23d8c5dddb29cbed6395f8e6, CX 9558f70498d48dc0f2dffe79812c460faa33341c/tree 749203fbf376649e2fd7ad501a3a39724ab20cc6. [Exact diagnostic prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-1dcf212e05295e8f23d8c5dddb29cbed6395f8e6), ZIP 33,693,037 bytes SHA-256 aa962131eb5a833453d131ecfa16c6978b12d98f4ce12a5a84ea8e0a90243d49 matches CI manifest and GitHub asset metadata; publisher SHA256SUMS check passed. Artifact 15174214306 SHA-256 8cd5160a6384c28987bbc2c9224d04da565bc78a1f20677bac067aed324970d9 agrees with upload/download logs and API. Installer fixtures passed. Only version.dll hash differs from accepted menu package. No independent local binary rehash; native symbol check skipped (runner lacks nwmain.exe); in-game self-check and diagnostic observations pending.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | b29e65bb1c86c6df52995e7a4d7612f53c51e16cc05e47f0f9e1eed44997f93a |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled diagnostic installation authorized for exact release commit. Close NWN completely; preserve config and printed rollback snapshot; capture successful installer output. Record prior general.logs value, back up cx.cfg, set general.logs=1 with game closed. Fresh session, disposable save, same first-person configuration and stationary mouse, flat ground with nearby straight edge and distant landmark. Two stationary jumps at affected vertical FOV, repeat once at 60 degrees if symptom occurs; record actual resolution/aspect/renderer, FOV, symptom phase and timestamp (short clip helpful). Close game, preserve fresh cx.log including [efpjump] (96-line session cap; include rotated log if relevant), restore prior logging value. Compare stationary edge stretching separately. Matched Alloy world snapshot supplies projection evidence; native-unavailable, missing and other-camera are incomplete evidence. No diagnosis or corrective behavior established yet. Prior accepted menu release 545eb66 remains rollback baseline; #13 open, #12 queued. Remove temporary trace after verified correction.
