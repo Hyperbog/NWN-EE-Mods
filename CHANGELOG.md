@@ -68,6 +68,9 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - COMPILED/PACKAGED: Issue #10 menu candidate 545eb66d7b1fd0c842443a463c84c30cc8a048bb passed Windows CI 45943802132 on attempt 1; exact release manifest/asset digest agreement, controlled install authorized; gameplay pending.
 
+- OBSERVED (2026-11-27): owner reports all seven Issue #10 checks PASS: Advanced absent, normal controls functional, restart persistence, layout, displayed-only Reset, combat synchronization, camera immersion. Scoped menu acceptance met; close #10 on observed behavior, reopen on recurrence. Exact installed hashes, fresh log and tested resolution count not supplied; no independent INSTALLED evidence. Source d4f8ac98, distribution release 545eb66, CI 45943802132. #12 next.
+- READ/OBSERVED: new #13 tracks stretching above ~60 FOV and apparent jump FOV change. Current slider is vertical degrees; rectilinear perspective at 16:9 yields ~91.5 horizontal at 60 vertical. Verify actual viewport/projection before altering semantics. Airborne RestoreAnimatedEye uses root+eye-height fallback, resets animated pose; same configured FOV written in active Driving grounded and airborne. Apparent zoom from eye-position handoff is plausible, actual renderer change unconfirmed. Record actual viewport/renderer and matched stationary jump/landmark samples; no speculative clamp, projection rewrite, or camera change. Preserve accepted baseline. Queue #13 after #12 unless owner redirects.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
