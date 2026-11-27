@@ -30,3 +30,18 @@ COMPILED/PACKAGED (2026-11-26 local, 2026-11-27 UTC): [run 45931914373](https://
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
 Phase 4.1E complete. Authorize only controlled test installation using exact distribution commit above and reviewed installer; restore original clearance configuration first. Record SWITCHED_AND_VERIFIED, all installed hashes and printed rollback path privately. Restore via same script -RestoreBackup and original WorkDir if necessary. Original M11 remains installed until user reports otherwise. Phase 4.1F begins with matched first/third-person combat per checklist revision 3; issue #5 and all other P1 remain open.
+
+
+## Attack-follow removal candidate
+
+COMPILED/PACKAGED: [Windows CI 45939756819](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45939756819), attempt 1, both build (140311108403) and publish (140312670606) passed. Checkout and CI manifest match distribution e28ea1efc74ad7d06b5f7f71737512b20d09d93f, CX 61787ce17747b0027e4e574d06000bbb2e58caaa, tree 32a9a8ce432ca3bc9824074e75dacdb88fd2945c. [Exact prerelease](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-e28ea1efc74ad7d06b5f7f71737512b20d09d93f) ZIP SHA-256 db0a43d1fe3fab39781a6111eeb30dfd7f5fc46b5853c607481ba7796a420f68 agrees with CI manifest and GitHub asset digest; publish SHA256SUMS check passed. Actions artifact 15172267859 SHA-256 3264eb45acf5bed71dde26be18c865c131a7b9fa062f80dd1584596f141c8fbb matches upload/download logs and API. Five DLLs verified by CI; only version.dll hash differs from previous combat package. No independent local binary rehash performed. Native symbol check skipped (nwmain.exe absent on runner); in-game checks pending.
+
+| DLL | Expected SHA-256 |
+| --- | --- |
+| version.dll | eabe6cb06ed25ac175eab31004d39b21124d7614f9d93b747ca9308ecdee8e34 |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+Controlled installation authorized for exact distribution commit above. Preserve config and rollback snapshot; after installation back up cx.cfg and remove only obsolete attackfollow.* keys if present with game closed. Generic unknown-key preservation unchanged. Test lunge, head/torso synchronization, locomotion immersion and absence of retired controls; record exact installed hashes, startup log and gameplay. If rollback necessary use same reviewed installer, -RestoreBackup and original WorkDir; older combat build requires attackfollow.enabled=0 restored explicitly. Issue #9 open until observed verification. Issue #4 next; no global acceptance.

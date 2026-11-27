@@ -56,6 +56,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: pin CX `61787ce17747b0027e4e574d06000bbb2e58caaa` / `32a9a8ce432ca3bc9824074e75dacdb88fd2945c` for the attack-follow removal build. Three-file source diff verified against prior combat candidate; Windows compilation and package checks pending, previous release preserved.
 
+- COMPILED/PACKAGED: removal candidate `e28ea1efc74ad7d06b5f7f71737512b20d09d93f` passed CI 45939756819 on attempt 1, all five DLLs and release ZIP checks; controlled install authorized, gameplay pending.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
