@@ -26,6 +26,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: supplemental revision 2 M11 checklist reports 11 PASS/7 FAIL; two logs reviewed and sanitized evidence recorded separately. No new runtime change or confirmed root cause.
 
+- READ: Phase 3.2 standardized results template for all 18 scenarios, build provenance, five installed DLL checksums and sanitized evidence. OBSERVED: R3 combat synchronization reported working for tested sword/melee; prioritize #5 in Phase 4, preserving later improvements. No runtime changes.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
