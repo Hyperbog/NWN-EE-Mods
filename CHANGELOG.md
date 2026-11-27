@@ -77,6 +77,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - COMPILED/PACKAGED: Issue #13 diagnostic 1dcf212e05295e8f23d8c5dddb29cbed6395f8e6 passed Windows CI 45946371514 attempt 1; exact release manifest and asset digest agree. Controlled diagnostic install authorized; measurement pending.
 
+- OBSERVED: diagnostic cx.log (1,030,903 bytes, 4,264 lines, SHA-256 c21e1477e654a73f23d1f5c820c902f2fb6f7ced68ee12858af8b1107080fac7), 2026-11-27 09:10:10–09:11:17 local. Startup identifies CX 9558f70498d48dc0f2dffe79812c460faa33341c, game 8193.37-17; CameraService.SelfCheck passed, separate pre-existing SSAO self-check failure. All 77 [efpjump] records match Alloy world snapshot 2560x1440 aspect 1.77778; 3 jumps at 60 vertical (33 records), 4 at 90 vertical (44). Requested/before/after/draw angle equal in every sample, projection scales constant within each setting (0.97428/1.73205 and 0.56250/1.00000), drawEyeDelta=0.0000 at recorded precision. Actor-relative eye changes 0.1573–0.1831 m at takeoff, 0.1335–0.1675 m at landing; airborne offset fixed (0,0,1.6500). Measured discontinuity supports eye handoff cause rather than sampled FOV change. No continuous presented-frame proof or independent DLL checksum. Owner explicitly approves horizontal player-facing FOV and modern FPS conventions. Separate lens conversion from jump handoff correction; no runtime changes in this checkpoint.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
