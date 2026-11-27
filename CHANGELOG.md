@@ -46,6 +46,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: initial combat candidate report confirms restored combat animation and immersive animated movement; enemy-lunge clipping recorded separately as #9. Full checklist and exact installed identity remain pending. No runtime changes.
 
+- OBSERVED: #9 preliminary isolation result, attackfollow.enabled=0 eliminated reported lunge clipping while preserving immersion in a small test. Extended verification pending; no runtime change.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
