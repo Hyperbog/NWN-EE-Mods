@@ -101,6 +101,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - COMPILED/PACKAGED: Phase 13C.4 f7dcea89543beaff76485d898f942aa9a60507f5 passed Windows CI 46074343466 attempt 1; manifest and release asset checksum agree. Controlled gameplay test authorized.
 
+- OBSERVED: owner rejects Phase 13C.4 (odd jump onset remains, jump feels sluggish and arc suddenly drops). Requires immediate input response and smooth ascent/descent. No fresh log, installed hash or measured input-to-display timing supplied for this candidate; existing cx.log belongs to Phase 13C.2 and cannot establish cause of the new regression. READ: discard two-line ObjectWorld refresh by forward revert source de04afb0eb4e6f2bb229df73713d409deb4f99f6, exact restored tree 17c95a8484b1825aa8bd8296ede84508f410581b, identical to previous continuous-eye source 0ae674ac58cd0cf2579d8f99d832f52fa04968e7. No force push, no new corrective code. Restore distribution pin to exact previously packaged source 0ae674ac; use existing verified release 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd for rollback rather than requiring a new build. Historical rejected release retained for provenance, not an active candidate. Ask owner for fresh regression log before uninstall if available, then verify rollback. Stop speculative camera corrections. Inspect existing input/ballistic step and post-walk movement/ground-contact timing, distinguish actor path from visual eye and actual model placement; use evidence before another implementation. Issue #13 remains open; #12 queued. Continuous-eye baseline has residual pre-hop, not full jump acceptance.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
