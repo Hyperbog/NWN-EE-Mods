@@ -62,6 +62,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - READ: owner requests removal of Advanced in-game settings (#10), mouse-priority combat tracking (#11), death cursor release and first-person load restoration (#12); ADR-003 records scoped requirements and proposed ordering. No runtime change.
 
+- READ: Codex supplied Issue #10 patch applied verbatim to CX d4f8ac98b1d759d33724b37f547253fb61d1349c, tree bc058a44fe6b668f53937912f32a301d411613d7, parent 61787ce17747b0027e4e574d06000bbb2e58caaa. All four old blob identifiers and all hunk contexts/counts matched; resulting four blobs match provided abbreviated hashes (2b14c41, 9f3002e, 348bc60, cd75034). Full recursive tree comparison against parent confirms exactly four UI files changed, 95 additions and 149 deletions. Removes Advanced panel rows/disclosure/state and related tooltip handling; visible User rows and player-facing status remain, nav dots and Reset use visible User controls, hidden settings preserved. Codex reports managed Release compilation with zero errors (150 warnings outside changed files) and isolated Linux KnobPanel.SelfCheck PASS, not independently reproduced. Windows NativeAOT build, packaged release and gameplay remain pending. Distribution BUILD_PLAN remains on prior combat removal source pending separate compile/package gate. Test 720p/1080p layout, no Advanced controls, ordinary settings persistence, visible reset and hidden values preserved, and disabled Advanced master read-only notice. #10 remains open; #12 follows this isolated integration and verification. No other runtime changes.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
