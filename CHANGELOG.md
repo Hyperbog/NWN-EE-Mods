@@ -60,6 +60,8 @@ All notable changes to Enhanced First Person will be documented here using the [
 
 - OBSERVED: all five final removal-candidate checks PASS, including no enemy-lunge clipping and no retired menu. Accept scoped combat/immersion behavioral baseline, #9 closure on observed evidence; independently verified installed hashes and broader checklist pending. Next #4; no runtime change.
 
+- READ: owner requests removal of Advanced in-game settings (#10), mouse-priority combat tracking (#11), death cursor release and first-person load restoration (#12); ADR-003 records scoped requirements and proposed ordering. No runtime change.
+
 ## M11 development candidate — 2026-11-26
 
 ### Changed
