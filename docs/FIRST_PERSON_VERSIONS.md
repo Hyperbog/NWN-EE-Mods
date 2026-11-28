@@ -17,12 +17,18 @@
 | M10 | READ: retired stationary-eye/local-path experiment | [M10](history/M10_STATIONARY_EYE_AND_LOCAL_PATH.md) |
 | M11 | OBSERVED: installed candidate; gameplay acceptance not met | [M11](history/M11_FIXED_EYE_NATIVE_MOVEMENT.md), [results](testing/RESULTS/2026-11-26-M11.md) |
 
-## Current build and installed candidate
+## Current build and designated rollback
+
+[Designated Phase 13C.2 rollback release](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd) — distribution `6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd`, CX `0ae674ac58cd0cf2579d8f99d832f52fa04968e7`, tree `17c95a8484b1825aa8bd8296ede84508f410581b`. NWN:EE 8193.37-17, nwmain.exe SHA-256 `3b7cb1252e0edb2ce22d7971f333aade027039ae30a45b4bc64732c3e6bec73a`; ZIP SHA-256 `73509022036694eff19fd97f9b0919daaf5417668cd100ce2683dd3ff9b2f421`; version.dll SHA-256 `24f9d257199b6673395c2f5c2b5a1e7653bee9fc42e70c071a31d1bfe73600b6`.
+
+READ: [BUILD_PLAN.json](../src/first-person/BUILD_PLAN.json) selects the continuous-eye tree. The installed DLL set is unknown. See [STATUS.md](../STATUS.md) and [installer guide](INSTALLER.md). Phase 13C.4 is rejected; the same-tree rebuild is not the designated rollback.
+
+## Historical build and installation records — 2026-11-26 (superseded)
 
 READ: [BUILD_PLAN.json](../src/first-person/BUILD_PLAN.json) pins [CX M11](https://github.com/Hyperbog/cx/commit/b7895eda58cb1124e98a27109a1acc79e8544c6b) directly. M1–M5 and M11 are preserved as Git commits and annotated tags; M6–M10 are retired historical experiments. See [legacy recovery](history/LEGACY_RECONSTRUCTION.md). COMPILED: direct-source CI [45909430241](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45909430241) passed; its preview has not been installed or gameplay-tested.
 
 COMPILED: original M11 run [45849781085](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45849781085); integrated main run [45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45895431828) succeeded, including publication.
 
-INSTALLED: the tested runtime remains the original M11 release at source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`, with version.dll SHA-256 `fe81fb1b6cf5b58d920cb477000da8f4b0147cc062961af634c12be42a2cdcec`. The later build is not the installed/tested binary. Do not infer behavioral acceptance from compilation or publication. See [STATUS.md](../STATUS.md) for evidence and the [README](../README.md) for pinned installation/rollback.
+Historical INSTALLED evidence: the tested runtime was the original M11 release at source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`, with version.dll SHA-256 `fe81fb1b6cf5b58d920cb477000da8f4b0147cc062961af634c12be42a2cdcec`. This does not establish today's installed binary. Do not infer behavioral acceptance from compilation or publication. See [STATUS.md](../STATUS.md) for evidence and the [README](../README.md) for pinned installation/rollback.
 
 Historical local stage commands are not current installation guidance. Preserve existing releases and source records; semantic version migration is later work.

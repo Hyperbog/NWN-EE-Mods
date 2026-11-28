@@ -1,5 +1,21 @@
 # EFP status — Phase 13C.4 rejected; continuous eye restored
 
+## Current installation identity — Phase 13D.0
+
+[Designated Phase 13C.2 rollback release](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd) — distribution `6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd`, CX `0ae674ac58cd0cf2579d8f99d832f52fa04968e7`, tree `17c95a8484b1825aa8bd8296ede84508f410581b`. NWN:EE 8193.37-17, nwmain.exe SHA-256 `3b7cb1252e0edb2ce22d7971f333aade027039ae30a45b4bc64732c3e6bec73a`; ZIP SHA-256 `73509022036694eff19fd97f9b0919daaf5417668cd100ce2683dd3ff9b2f421`; version.dll SHA-256 `24f9d257199b6673395c2f5c2b5a1e7653bee9fc42e70c071a31d1bfe73600b6`.
+
+| DLL | Expected SHA-256 for designated rollback |
+| --- | --- |
+| version.dll | 24f9d257199b6673395c2f5c2b5a1e7653bee9fc42e70c071a31d1bfe73600b6 |
+| cx_openal.dll | 3963b06e319180700be0bcc0d027336664bb3a4975876b4a5442f10746fab5b4 |
+| phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
+| shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
+| vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+The release is PACKAGED, not globally gameplay-approved; residual jump pre-hop remains. The later [rebuild](https://github.com/Hyperbog/NWN-EE-Mods/releases/tag/efp-M11-1d56d9c4d8fac89134bed93da28604ce1a000296) has the same CX tree but different version.dll bytes (`0f5ad20658d86ce9ed168570f45a669422d4283c8195761e22c10d01f8bde1f8`). CODEX verified both archives; current installed DLL hashes remain unknown. Follow [INSTALLER.md](docs/INSTALLER.md) for reinstall or personal snapshot restoration. Do not use the embedded ZIP unzip/delete instructions. Check all five hashes against the exact release manifest.
+
+## Historical checkpoints and evidence (not installation instructions)
+
 OBSERVED: owner rejects Phase 13C.4 (odd jump onset remains, jump feels sluggish and arc suddenly drops). Requires immediate input response and smooth ascent/descent. No fresh log, installed hash or measured input-to-display timing supplied for this candidate; existing cx.log belongs to Phase 13C.2 and cannot establish cause of the new regression. READ: discard two-line ObjectWorld refresh by forward revert source de04afb0eb4e6f2bb229df73713d409deb4f99f6, exact restored tree 17c95a8484b1825aa8bd8296ede84508f410581b, identical to previous continuous-eye source 0ae674ac58cd0cf2579d8f99d832f52fa04968e7. No force push, no new corrective code. Restore distribution pin to exact previously packaged source 0ae674ac; use existing verified release 6e9dafd9215c4a86b903ef8c1e54e39fd005fbdd for rollback rather than requiring a new build. Historical rejected release retained for provenance, not an active candidate. Ask owner for fresh regression log before uninstall if available, then verify rollback. Stop speculative camera corrections. Inspect existing input/ballistic step and post-walk movement/ground-contact timing, distinguish actor path from visual eye and actual model placement; use evidence before another implementation. Issue #13 remains open; #12 queued. Continuous-eye baseline has residual pre-hop, not full jump acceptance.
 
 [Regression result](docs/testing/RESULTS/2026-11-27-M11-jump-sync.md)
@@ -13,6 +29,8 @@ COMPILED/PACKAGED: Phase 13C.4 [Windows CI 46074343466](https://github.com/Hyper
 | phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+**Historical authorization only — superseded; do not install from this record.**
 
 Controlled installation authorized for this exact release. Only version.dll hash differs from previous continuous-eye release 6e9dafd, retained for rollback. Close NWN; preserve config and installer backup; capture installer output. In a fresh session with general.logs=1 at 90 horizontal, test stationary and moving jump onset (no pre-hop), flight/landing, mouse turning, combat and movement. Upload fresh cx.log and rotated log if relevant; compare tracked status, actorStep.Z + offsetStep.Z at takeoff, and projection against prior samples. Restore previous logging preference after testing. No measured input-to-display latency; effectiveness of transform refresh remains unverified. No additional runtime changes. #13 remains open, #12 queued.
 
@@ -33,6 +51,8 @@ COMPILED/PACKAGED: Phase 13C.2 [Windows CI 46020973112](https://github.com/Hyper
 | phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+**Historical authorization only — superseded; do not install from this record.**
 
 Controlled installation authorized for exact release. Only version.dll hash differs from accepted horizontal-FOV release 1b69659, which remains rollback baseline. Close NWN; preserve config and installer backup; capture installation output. Fresh session with general.logs=1: at 90 horizontal perform stationary jumps, moving jumps, and a jump with mouse turning; check natural takeoff/flight/landing, no self-clipping or artificial adjustment, combat and movement unchanged. Upload fresh cx.log (include rotated log if relevant); compare matched FOV and actor-relative eye transitions and tracked status. Restore prior logging preference after testing. Existing tracker may still fall back if a rig sample is invalid; no gameplay success claim until tested. Temporary trace retained for verification; #13 open, #12 queued.
 
@@ -56,6 +76,8 @@ COMPILED/PACKAGED: [Windows CI 46016676307](https://github.com/Hyperbog/NWN-EE-M
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
+**Historical authorization only — superseded; do not install from this record.**
+
 Controlled installation authorized for exact release commit. Close NWN; preserve cfg and installer rollback snapshot; capture installation output. Driving uses new driving.hfov, default 90, legacy driving.fov preserved for rollback. No manual conversion required. With logging enabled in a fresh session, test 90 horizontal at 2560x1440 (drawFov about 58.716); repeat after aspect change if supported (e.g. 4:3 gives 73.740); return to normal resolution. Check new slider label and persistence, peripheral perspective, reticle target selection, dialogue and camera-mode transitions, combat and movement immersion. Capture fresh cx.log and tested resolutions/FOVs; restore previous logging preference. Jump eye discontinuity is intentionally not corrected at this checkpoint and is not a new regression by itself. Prior diagnostic release 1dcf212 remains rollback baseline. #13 stays open; jump continuity refinement follows scoped FOV acceptance; #12 queued.
 
 READ: Phase 13B.1 authorized; Codex horizontal FOV patch 1 applied verbatim to CX 9840ead195486427478bbc38c4d08f5a3293dfa1, tree 3ac1761fab8c70a3478655bca7e5f63939293a68, parent 9558f70498d48dc0f2dffe79812c460faa33341c. Every original blob prefix, hunk context/count and resulting blob prefix matched; complete tree matches Codex's declared first checkpoint. Recursive tree comparison confirms exactly four modified files (DbCamera.cs, SeamFrame.cs, CameraKnobs.cs, CameraService.cs), 96 additions/39 deletions. Driving setting is now driving.hfov, 10–120 horizontal degrees, default 90; old driving.fov retained as unknown configuration for rollback, startup announces new default if only legacy key present. No silent reinterpretation; prior 90 vertical becomes new default 90 horizontal (58.7155 vertical at 16:9). Chase, Top Down and Free Camera keep vertical semantics. Uses viewport aspect and shared DB calculation, retains current lens if dimensions invalid. Codex reports managed Linux/Windows Release builds and self-checks, off-game projection and configuration fixture PASS; not independently reproduced. Native Windows build, install and gameplay pending. Verify 2560x1440 drawFov=58.716 at hfov=90, aspect changes, native/Alloy and GUI transitions, reticle picking, persistence and mode switching. Patch 2 jump continuity deliberately not applied; refine valid-rig landing transition before integration, review yaw-relative offset and camera identity, extend settled trace beyond blend. Keep temporary jump diagnostic for comparison. Distribution BUILD_PLAN now pins horizontal FOV source; prior diagnostic release preserved; #12 queued.
@@ -75,6 +97,8 @@ COMPILED/PACKAGED: [Windows CI 45946371514](https://github.com/Hyperbog/NWN-EE-M
 | phonon.dll | ca3dbc01dbc24492717011e80f6a51404ca143ae344ca660971d2c983f1e058d |
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
+
+**Historical authorization only — superseded; do not install from this record.**
 
 Controlled diagnostic installation authorized for exact release commit. Close NWN completely; preserve config and printed rollback snapshot; capture successful installer output. Record prior general.logs value, back up cx.cfg, set general.logs=1 with game closed. Fresh session, disposable save, same first-person configuration and stationary mouse, flat ground with nearby straight edge and distant landmark. Two stationary jumps at affected vertical FOV, repeat once at 60 degrees if symptom occurs; record actual resolution/aspect/renderer, FOV, symptom phase and timestamp (short clip helpful). Close game, preserve fresh cx.log including [efpjump] (96-line session cap; include rotated log if relevant), restore prior logging value. Compare stationary edge stretching separately. Matched Alloy world snapshot supplies projection evidence; native-unavailable, missing and other-camera are incomplete evidence. No diagnosis or corrective behavior established yet. Prior accepted menu release 545eb66 remains rollback baseline; #13 open, #12 queued. Remove temporary trace after verified correction.
 
@@ -96,6 +120,8 @@ COMPILED/PACKAGED: [Windows CI 45943802132](https://github.com/Hyperbog/NWN-EE-M
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
+**Historical authorization only — superseded; do not install from this record.**
+
 Controlled installation authorized for exact release commit; close NWN, preserve config backup and installer rollback snapshot, capture successful installer output and fresh cx.log. Verify Advanced rows/disclosure absent across CX submenus, ordinary controls and status available, settings persist on restart, layout at 720p/1080p where supported, Reset affects displayed User controls only (back up and restore test settings; do not alter hidden engineering values), combat and camera immersion preserved. #10 remains open pending scoped observation. #12 death/load input investigation follows. Prior e28ea1e package retained; restore with pinned installer and printed backup if needed.
 
 **New requirements (READ):** [ADR-003](docs/decisions/ADR-003-player-settings-combat-tracking-lifecycle.md) records #10 remove Advanced in-game settings, #11 mouse-priority enemy tracking setting, #12 death cursor release and first-person restoration on load. Recommended #12 lifecycle safety first, then #10, #4, #11; no runtime edits. #4 remains queued. Repeated five PASS report confirms scoped baseline, not independent install provenance.
@@ -114,6 +140,8 @@ COMPILED/PACKAGED: [Windows CI 45939756819](https://github.com/Hyperbog/NWN-EE-M
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
+**Historical authorization only — superseded; do not install from this record.**
+
 Controlled installation authorized for exact distribution commit above. Preserve config and rollback snapshot; after installation back up cx.cfg and remove only obsolete attackfollow.* keys if present with game closed. Generic unknown-key preservation unchanged. Test lunge, head/torso synchronization, locomotion immersion and absence of retired controls; record exact installed hashes, startup log and gameplay. If rollback necessary use same reviewed installer, -RestoreBackup and original WorkDir; older combat build requires attackfollow.enabled=0 restored explicitly. OBSERVED: all five final removal checks PASS, scoped behavioral baseline accepted; #9 closure on observed behavior only. Exact installed hashes and fresh log pending; #4 next, no global acceptance.
 
 **Historical combat candidate:** compile/package issue #5 candidate, CX `4e675d4e8e45056db1e17f6e598f3cdd7de23263`, tree `c0dd20c6c874162182103bc43f49a8190a4101bd`. COMPILED/PACKAGED: run 45931914373 succeeded, exact controlled test installation authorized. Original M11 superseded in reported gameplay by combat candidate; exact installed hashes still pending. [Engineering review disposition](docs/testing/ENGINEERING_REVIEW.md) and checklist revision 3 govern the next test. This historical pin was superseded by the removal candidate.
@@ -128,11 +156,15 @@ COMPILED/PACKAGED (2026-11-26 local, 2026-11-27 UTC): [run 45931914373](https://
 | shaderc_shared.dll | 8e13592eac48b94755e4aa4c41552b210b41ca906d0bfe35b0a6d47a97d0b7c6 |
 | vma.dll | 504da73d9a8bb5acca40d8b563d8898c536329de07a1638f8cd9dbe1126d661e |
 
+**Historical authorization only — superseded; do not install from this record.**
+
 Phase 4.1E complete. Authorize only controlled test installation using exact distribution commit above and reviewed installer; restore original clearance configuration first. Record SWITCHED_AND_VERIFIED, all installed hashes and printed rollback path privately. Restore via same script -RestoreBackup and original WorkDir if necessary. Original M11 remains installed until user reports otherwise. Phase 4.1F begins with matched first/third-person combat per checklist revision 3; issue #5 and all other P1 remain open.
 
 OBSERVED: [initial combat candidate results](docs/testing/RESULTS/2026-11-26-M11-combat-initial.md) report restored combat animation and immersive animation-linked locomotion/head bob. Preserve this behavior as the combat/immersion reference. Enemy-lunge clipping remains, separately tracked as [#9](https://github.com/Hyperbog/NWN-EE-Mods/issues/9) (P1, needs-repro). OBSERVED follow-up: owner reports model stays apart from enemy; new log confirms candidate banner and camera self-check pass, recognized melee eye displacement 0.229–0.318 m (not signed forward). #9 preliminary OBSERVED pass: attackfollow.enabled=0 eliminated clipping in a small test while preserving immersion. Extended OBSERVED verification: wall-adjacent combat acceptable with expected animation-dependent clipping; eight-item isolation checklist complete. Corpses still obstruct movement (#4). READ: product owner rejects retaining discarded EFP features as optional/opt-in. Source 61787ce17747b0027e4e574d06000bbb2e58caaa tree 32a9a8ce432ca3bc9824074e75dacdb88fd2945c supersedes unshipped opt-in commit 3e7d7ec; deletes AttackCameraFollow implementation, registration, diagnostics, reset and both call sites. Head/torso camera and clearance unchanged. Build pin selects removal source; CI and packaging passed. Keep override on installed older runtime; new build ignores retired keys. #9 passed scoped packaged-removal gameplay verification; installed identity remains pending. Exact geometric mechanism unconfirmed. Exact installed identity and full checklist remain pending; #5 stays open until verification. No runtime changes or new installation requested.
 
 Phase 0 evidence exit criteria met on 2026-11-26. Phase 1.1 documentation and CI configuration consolidated into main under the product owner's revised main-only development policy (2026-11-26). COMPILED: integrated main CI run [45895431828](https://github.com/Hyperbog/NWN-EE-Mods/actions/runs/45895431828) completed build and publication successfully; original installed candidate unchanged. Gameplay release acceptance is NOT met.
+
+**Historical authorization only — superseded; do not install from this record.**
 
 Candidate: M11, source commit `7a26ce3a909f13f7c5dee2afbc022febc2616f4e`. Historical baseline: M5-rc1, OBSERVED for NPC dialogue only. M11 is the installed diagnostic candidate, not a globally accepted baseline.
 
