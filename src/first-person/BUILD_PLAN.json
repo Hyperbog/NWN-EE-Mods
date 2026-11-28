@@ -1,10 +1,10 @@
 {
-  "version": "M11",
+  "version": "M11-CX0143",
   "base": "2470f0d27be0a29c152456aa60222f1f4fc25c34",
-  "packaging_revision": 4,
+  "packaging_revision": 5,
   "direct_source": {
     "repository": "Hyperbog/cx",
-    "commit": "74ce743838726ce60d6b98747c0a39ba9e9a3ef4",
-    "tree": "549adfe7520d5bc29cbdae1deea018b3f9013380"
+    "commit": "d9461489f66a81c785a257f689b2495e8d0ebbb3",
+    "tree": "4942236e949c7ec5066bc671c7d6adce34259b2b"
   }
 }
