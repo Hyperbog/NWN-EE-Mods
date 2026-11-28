@@ -50,6 +50,9 @@ try{
  Add-Type -AssemblyName System.IO.Compression.FileSystem
  $package='NWN-EFP-M11-win-x64.zip'
  $zip=Join-Path $root $package
+ # Documentation members must never be extracted into the game runtime.
+ $docs=@('README.txt','LICENSES.txt','LICENSE-EFP.txt','THIRD_PARTY_NOTICES.md')
+ foreach($name in $docs){Put (Join-Path $payload $name) "package documentation: $name"}
  [IO.Compression.ZipFile]::CreateFromDirectory($payload,$zip)
  $commit='a'*40
  $manifest=@{version='M11';mod_source_commit=$commit;cx_checkpoint='2470f0d27be0a29c152456aa60222f1f4fc25c34';package=$package;package_sha256=(Sha $zip);dlls=$dlls}
@@ -123,6 +126,7 @@ try{
  foreach($name in $names){Assert ((Sha (Join-Path $game $name)) -eq $old[$name]) "Direct restore mismatch $name"}
  Assert ((Get-Content (Join-Path $game 'cx.cfg') -Raw) -eq 'keep configuration') 'Configuration changed'
  Assert ((Get-Content (Join-Path $game 'test.sav') -Raw) -eq 'keep save') 'Save changed'
+ foreach($name in $docs){Assert (-not (Test-Path -LiteralPath (Join-Path $game $name))) "Unexpected extracted documentation: $name"}
  Write-Host 'PASS: legacy/direct portable installer fixtures, pinned source/version, process/hash refusal, backup and rollback.'
 }finally{
  Remove-Variable -Name EfpInstallerFixtureState -Scope Global -ErrorAction SilentlyContinue
